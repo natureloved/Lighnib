@@ -342,13 +342,11 @@ for (let i = 1; i <= RECEIPT_COUNT; i++) {
   await j("POST", `${API_URL}/api/scope/${scope.id}/settle-payment`, {
     body: { amountSats: RECEIPT_SATS },
   });
-  out.receipts.push({
-    id: receipt.id,
-    orderId,
-    amountSats: RECEIPT_SATS,
-    paymentHash: inv.payment_hash,
-    verified: true,
-  });
+  // Store the FULL bound receipt (incl. preimage + Nostr event) so a
+  // third party can verify it offline from this file alone — paste it
+  // into /receipts "Verify a receipt you receive". No secrets: the
+  // preimage is public settlement proof, not a credential.
+  out.receipts.push(receipt);
   log(`receipt ${i}/${RECEIPT_COUNT}: ${receipt.id} — ${RECEIPT_SATS} sats, verified`);
 }
 

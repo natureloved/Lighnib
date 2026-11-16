@@ -1,6 +1,6 @@
 {
   "check": "e2e-live-web-pay-flow",
-  "startedAt": "2026-11-16T19:16:48.061Z",
+  "startedAt": "2026-11-16T21:06:34.915Z",
   "steps": [
     {
       "name": "api-health",
@@ -10,17 +10,17 @@
     {
       "name": "lnbits-health",
       "ok": true,
-      "detail": "LNbits up 00:37:21"
+      "detail": "LNbits up 00:10:56"
     },
     {
       "name": "web-login-scope",
       "ok": true,
-      "detail": "scope scope_mwjna6cs_dmacqo, ₦50,000/day = 33,333 sats, state=LOGGED_IN"
+      "detail": "scope scope_mwjr7ctk_tc34jt, ₦50,000/day = 33,333 sats, state=LOGGED_IN"
     },
     {
       "name": "web-pay-flow-settles",
       "ok": true,
-      "detail": "receipt rcpt_mwjna8fn, hash=9f5caad06ff0744b…, walletPayCalls=1"
+      "detail": "receipt rcpt_mwjr7ey3, hash=7985cdddfb9402a7…, walletPayCalls=1"
     },
     {
       "name": "receipt-verified-via-api",
@@ -35,7 +35,7 @@
     {
       "name": "wallet-tab-live-remaining",
       "ok": true,
-      "detail": "spent=150 remaining=33183 state=RECEIPTED expires=2026-11-17T03:16:48.172Z"
+      "detail": "spent=150 remaining=33183 state=RECEIPTED expires=2026-11-17T05:06:35.048Z"
     },
     {
       "name": "web-over-budget-refused",
@@ -55,7 +55,7 @@
     {
       "name": "revoke-scope",
       "ok": true,
-      "detail": "state=REVOKED revokedAt=2026-11-16T19:16:53.473Z"
+      "detail": "state=REVOKED revokedAt=2026-11-16T21:06:40.259Z"
     },
     {
       "name": "revoked-scope-never-pays",
@@ -70,5 +70,5 @@
   ],
   "pass": true,
   "verdict": "PASS — web pay flow verified live end-to-end: login → INV-9 → budget → wallet pay → bound receipt → explainer → wallet tab → over-budget + INV-9 blocks → revoke. All against a real NWC wallet on test sats.",
-  "finishedAt": "2026-11-16T19:16:53.482Z"
+  "finishedAt": "2026-11-16T21:06:40.272Z"
 }

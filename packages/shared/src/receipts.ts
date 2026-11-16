@@ -80,34 +80,69 @@ export function buildBoundReceipt(input: ReceiptInput): BoundReceipt {
   };
 }
 
+/** Per-check verification detail, for the third-party verify flow:
+ *  a verifier pastes a receipt JSON and sees exactly which check
+ *  failed, instead of a bare true/false. Runs anywhere — browser,
+ *  server, or a third party's machine — with no trust in our API. */
+export interface ReceiptVerificationDetail {
+  valid: boolean;
+  settled: boolean;
+  complete: boolean;
+  hashFormat: boolean;
+  preimageFormat: boolean;
+  preimageMatchesHash: boolean;
+  nostrEventMatches: boolean;
+}
+
+export function verifyReceiptDetail(receipt: BoundReceipt): ReceiptVerificationDetail {
+  const settled = receipt.status === "SETTLED";
+  const complete =
+    Boolean(receipt.vendorName) && Boolean(receipt.purpose) && receipt.amountSats > 0;
+  const hashFormat = HEX_64.test(receipt.paymentHash);
+  const preimageFormat = HEX_64.test(receipt.preimage);
+  const preimageMatchesHash =
+    hashFormat &&
+    preimageFormat &&
+    sha256Hex(hexToBytes(receipt.preimage)) === receipt.paymentHash.toLowerCase();
+  let nostrEventMatches = false;
+  try {
+    const content = JSON.parse(receipt.nostrEvent.content) as Record<string, unknown>;
+    nostrEventMatches =
+      content.type === "lighnib-receipt" &&
+      content.receiptId === receipt.id &&
+      content.orderId === receipt.orderId &&
+      content.supplierId === receipt.supplierId &&
+      content.vendor === receipt.vendorName &&
+      content.purpose === receipt.purpose &&
+      content.amountSats === receipt.amountSats &&
+      content.paymentHash === receipt.paymentHash.toLowerCase() &&
+      content.preimage === receipt.preimage.toLowerCase();
+  } catch {
+    nostrEventMatches = false;
+  }
+  const valid =
+    settled &&
+    complete &&
+    hashFormat &&
+    preimageFormat &&
+    preimageMatchesHash &&
+    nostrEventMatches;
+  return {
+    valid,
+    settled,
+    complete,
+    hashFormat,
+    preimageFormat,
+    preimageMatchesHash,
+    nostrEventMatches,
+  };
+}
+
 /** Verify a bound receipt: settled, complete, preimage matches hash,
  *  and the public Nostr event content matches the receipt fields
  *  (so a tampered amount/vendor cannot pass as the same receipt). */
 export function verifyReceipt(receipt: BoundReceipt): boolean {
-  if (receipt.status !== "SETTLED") return false;
-  if (!receipt.vendorName || !receipt.purpose) return false;
-  if (receipt.amountSats <= 0) return false;
-  if (!HEX_64.test(receipt.paymentHash) || !HEX_64.test(receipt.preimage)) return false;
-  if (
-    sha256Hex(hexToBytes(receipt.preimage)) !== receipt.paymentHash.toLowerCase()
-  ) {
-    return false;
-  }
-  try {
-    const content = JSON.parse(receipt.nostrEvent.content) as Record<string, unknown>;
-    if (content.type !== "lighnib-receipt") return false;
-    if (content.receiptId !== receipt.id) return false;
-    if (content.orderId !== receipt.orderId) return false;
-    if (content.supplierId !== receipt.supplierId) return false;
-    if (content.vendor !== receipt.vendorName) return false;
-    if (content.purpose !== receipt.purpose) return false;
-    if (content.amountSats !== receipt.amountSats) return false;
-    if (content.paymentHash !== receipt.paymentHash.toLowerCase()) return false;
-    if (content.preimage !== receipt.preimage.toLowerCase()) return false;
-  } catch {
-    return false;
-  }
-  return true;
+  return verifyReceiptDetail(receipt).valid;
 }
 
 /** Human-readable receipt line, used by the AI explainer + voice readout. */

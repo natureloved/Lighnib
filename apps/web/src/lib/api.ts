@@ -87,6 +87,23 @@ export const api = {
   listReceipts: () => req<BoundReceipt[]>("/api/receipts"),
   verifyReceipt: (id: string) =>
     req<{ exists: boolean; valid: boolean }>(`/api/receipts/${id}/verify`),
+  verifyPasted: (receipt: unknown) =>
+    req<{
+      valid: boolean;
+      checks: {
+        valid: boolean;
+        settled: boolean;
+        complete: boolean;
+        hashFormat: boolean;
+        preimageFormat: boolean;
+        preimageMatchesHash: boolean;
+        nostrEventMatches: boolean;
+      } | null;
+      reason?: string;
+    }>("/api/receipts/verify-pasted", {
+      method: "POST",
+      body: JSON.stringify(receipt),
+    }),
 
   explainReceipt: (receiptId: string) =>
     req<{ text: string; source: "llm" | "template" }>(`/api/explainer/${receiptId}`, {

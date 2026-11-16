@@ -38,6 +38,7 @@ import {
   getReceipt,
   listReceipts,
   recordBinding,
+  verifyPastedReceipt,
   verifyReceiptById,
 } from "./receipts";
 import {
@@ -168,6 +169,9 @@ app.get("/api/receipts/:id", async (request, reply) => {
 });
 app.get("/api/receipts/:id/verify", async (request) => {
   return verifyReceiptById((request.params as { id: string }).id);
+});
+app.post("/api/receipts/verify-pasted", async (request) => {
+  return verifyPastedReceipt(request.body);
 });
 
 /* --- Disputes (INV-7, hold window) --- */

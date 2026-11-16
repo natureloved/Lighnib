@@ -13,7 +13,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { ngnToSats } from "../packages/shared/src/index";
+import { ngnToSats, verifyReceipt } from "../packages/shared/src/index";
 
 const DEMO_BTC_NGN = 150_000_000; // demo placeholder rate (config/locale.ts)
 
@@ -43,12 +43,18 @@ test("demo-data.json contract: 1+1+1+10+2, no secrets, all receipts verified", (
   assert.equal(scope.dailyBudgetSats, 33_333);
   assert.equal(scope.dailyBudgetFiat, 50_000);
   // 10 receipts, all verified, all for the allowlisted supplier.
+  // Each entry is the FULL bound receipt (incl. preimage + Nostr event),
+  // so a third party can verify it offline from this file alone.
   const receipts = data.receipts as Record<string, unknown>[];
   assert.equal(receipts.length, 10);
   for (const r of receipts) {
-    assert.equal(r.verified, true);
+    assert.equal(verifyReceipt(r as never), true);
     assert.equal(r.amountSats, 100);
+    assert.equal(r.supplierId, "supplier-balogun-001");
+    assert.equal(r.status, "SETTLED");
     assert.match(String(r.paymentHash), /^[0-9a-f]{64}$/);
+    assert.match(String(r.preimage), /^[0-9a-f]{64}$/);
+    assert.ok((r.nostrEvent as Record<string, unknown>).content);
   }
   // 2 blocked payments: wallet QUOTA_EXCEEDED + app INV-9, in that order.
   const blocked = data.blocked as Record<string, unknown>[];

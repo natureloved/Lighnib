@@ -16,3 +16,9 @@ tests/*.map
 scripts/e2e-live.mjs
 scripts/e2e-live.d.mts
 scripts/*.map
+
+# Local-only LNbits install + data (test instance, never commit)
+.local/
+
+# Stray LNbits runtime data (auth keys — NEVER commit)
+data/

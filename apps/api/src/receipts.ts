@@ -9,6 +9,8 @@ import {
   decodeBolt11,
   parseLighnibMemo,
   verifyReceipt,
+  verifyReceiptDetail,
+  type ReceiptVerificationDetail,
   InvoiceBindingRegistry,
   type BindingCheck,
   type BoundReceipt,
@@ -62,4 +64,44 @@ export function verifyReceiptById(id: string): { exists: boolean; valid: boolean
   const receipt = receipts.get(id);
   if (!receipt) return { exists: false, valid: false };
   return { exists: true, valid: verifyReceipt(receipt) };
+}
+
+/**
+ * Third-party verify: a verifier pastes a receipt JSON they received
+ * (e.g. from a merchant's phone) and gets per-check results. No stored
+ * state is consulted — the receipt proves itself via the preimage/hash
+ * binding and the Nostr event cross-check. Malformed input is a
+ * verification failure, not a crash.
+ */
+export function verifyPastedReceipt(input: unknown): {
+  valid: boolean;
+  checks: ReceiptVerificationDetail | null;
+  reason?: string;
+} {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return { valid: false, checks: null, reason: "NOT_A_RECEIPT_OBJECT" };
+  }
+  const r = input as Partial<BoundReceipt>;
+  const required = [
+    "id",
+    "orderId",
+    "supplierId",
+    "vendorName",
+    "purpose",
+    "amountSats",
+    "paymentHash",
+    "preimage",
+    "status",
+    "nostrEvent",
+  ] as const;
+  for (const field of required) {
+    if (r[field] === undefined || r[field] === null || r[field] === "") {
+      return { valid: false, checks: null, reason: `MISSING_FIELD_${field}` };
+    }
+  }
+  if (typeof r.nostrEvent !== "object" || typeof r.nostrEvent.content !== "string") {
+    return { valid: false, checks: null, reason: "MISSING_FIELD_nostrEvent" };
+  }
+  const checks = verifyReceiptDetail(r as BoundReceipt);
+  return { valid: checks.valid, checks };
 }

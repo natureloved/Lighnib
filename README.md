@@ -29,6 +29,18 @@ Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC — do not use it.**
 3. **Pay** (1 min): open `/pay`, pick supplier-balogun-001 (the seeded
    demo supplier), paste a supplier invoice. A bound receipt appears on
    settlement — AI-explained, spoken in Pidgin.
+3b. **Verify a receipt like a third party** (1 min): open `/receipts`.
+   Every settled payment is a bound receipt card (amount + vendor +
+   purpose + hash + preimage). Copy any receipt JSON and paste it into
+   "Verify a receipt you receive" — the check runs in your own browser
+   (no trust in our server) with a server cross-check: preimage hashes
+   to the payment hash, the public Nostr receipt matches the card. Hit
+   "Explain this receipt" for the AI explainer (template fallback when
+   no LLM key is set) and "Replay readout" to hear it spoken.
+   Open the app as `http://localhost:3000` (not `127.0.0.1` — Next 16
+   blocks the dev HMR websocket for the 127.0.0.1 origin and the page
+   never hydrates; `allowedDevOrigins` now covers it, but localhost is
+   the tested path).
 4. **Watch the two enforcers** (1 min):
    - A ₦70,000 invoice → **the app refuses it first** (over the ₦50,000
      scope, INV-2) before the wallet is ever asked. The wallet is the
@@ -38,12 +50,78 @@ Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC — do not use it.**
      before the wallet is ever asked** (INV-9 hash mismatch).
 5. **Dispute** (code only — not live): the `/dispute` route and the
    dispute state machine exist and are unit-tested, but the live mediator
-   hold is CUT for the MVP (see spike verdict). Do not demo a live dispute
-   on the current wallet service.
+   hold is CUT for the MVP (see Wednesday decision below). The page says
+   so in plain language. Do not demo a live dispute on the current
+   wallet service.
 
 Demo data is seeded by `npm run seed` (1 merchant + 1 supplier + 1 named
 mediator + 10 bound receipts + 2 blocked payments). No real funds, no
 token, no account to create.
+
+## Wednesday build (2026-11-18) — receipts polish + AI explainer + TTS + dispute decision
+
+- **Bound receipts, polished:** `/receipts` now shows the seeded receipts
+  as verifiable cards (amount + vendor + purpose + hash + preimage), each
+  with Verify, Copy receipt JSON, Explain (AI explainer + source label)
+  and Replay/Mute readout. **Third-party verify:** paste any receipt JSON
+  into "Verify a receipt you receive" — the check runs in the verifier's
+  own browser via the shared `verifyReceiptDetail` (per-check results:
+  settled, complete, hash/preimage format, preimage→hash, Nostr event
+  match) with a server cross-check at `POST /api/receipts/verify-pasted`
+  that consults no stored state. Verified live in headless Chrome:
+  a real seeded receipt verifies (7/7 checks), a tampered vendor fails
+  only the Nostr cross-check. `seed/demo-data.json` now stores the FULL
+  bound receipts (preimage included — public settlement proof, not a
+  secret), so anyone can verify them offline from the file alone.
+- **AI explainer:** the LLM path (`LLM_API_URL` + `LLM_API_KEY` +
+  `LLM_MODEL`) was verified live against a local OpenAI-compatible stub:
+  `source=llm`, correct request shape (model + 2 messages), and a 500
+  from the provider falls back to the template — never throws. The
+  template fallback is the live demo path (no LLM key in this
+  environment) and was verified live on the API and in the e2e. **The
+  real-provider LLM path is UNTESTED** (no key exists here) — do not
+  claim a real LLM explained a receipt until a key is set and the call
+  is seen live.
+- **TTS (Web Speech API):** verified in headless Chrome — `speechSynthesis`
+  exists, `speak()` is called without throwing, Replay/Mute are wired,
+  and the honest label ("No dedicated Pidgin voice — English voice
+  reading Pidgin text") shows on every spoken receipt. **But:** the
+  headless VM has zero installed voices, so `speak()` is a silent no-op
+  here — no audio was heard on this machine. Real audio must be checked
+  on a real device (Thursday Tecno test).
+- **Dispute decision — CUT CLEANLY (Wed 18 Nov).** Timeboxed
+  investigation: a hold-capable NWC service DOES exist — Alby Hub merged
+  hold-invoice support (getAlby/hub#1298, spec #2065 closed, v1.24.7
+  current) and the NIP-47 hold methods are real. It is NOT within this
+  build's reach here: Docker is unusable on this VM (Alby Hub's
+  documented install path), an LDK node needs on-chain funding + channel
+  liquidity + P2P peers, and this VM blocks the network paths a node
+  needs (all public Nostr relays fail the wss handshake with a TLS
+  interception error — verified live). Standing it up would eat
+  Thursday's must-dos for a stretch goal, so the mediator stays cut:
+  the `/dispute` page now carries the cut in plain language ("records a
+  dispute claim — it holds no funds"), the state machine/routes/tests
+  stay as the design, and the post-MVP path is named: **Alby Hub
+  (hold invoices merged) as the wallet service**. Nothing in the app or
+  docs claims a live dispute runs.
+- **Dev-server quirk found live:** opening the app as
+  `http://127.0.0.1:3000` makes Next 16 block the dev HMR websocket and
+  the page never hydrates (buttons dead, receipts never load — no
+  console error). Use `http://localhost:3000`. Fixed for both origins
+  with `allowedDevOrigins: ["127.0.0.1"]` in `next.config.mjs`.
+- **Stack restore (Wed):** a service restart wiped `/tmp` (LNbits venv +
+  data, relay, demo wallets). Rebuilt persistently under `.local/`
+  (gitignored): `scripts/start-lnbits.sh` + `lnbits==1.7.1` venv,
+  nwcprovider 1.2.1 installed manually from the release zip (the API
+  install path fails — the extensions manifest fetch is mangled by the
+  sandbox proxy), extension activated + enabled for the admin account,
+  provider relay re-pointed at the local relay
+  (`ext_nwcprovider.sqlite3 config.relay = ws://localhost:7777`), admin
+  password set via first-install. Seed + e2e re-verified live after the
+  restore (13/13).
+- **Tests:** `npm test` → **74 pass, 0 fail** (was 62). `npm run build`
+  and `npm run typecheck` pass. Live e2e re-run after the restore:
+  **13/13 pass**.
 
 ## Tuesday build (2026-11-17) — web pay flow verified live
 
@@ -100,8 +178,10 @@ token, no account to create.
   wallet."}` (FakeWallet has no hold implementation). **Per the build
   spec §7.3, the mediator is CUT and the MVP is receipt-only.** The
   dispute state machine, routes and unit tests stay in the code as the
-  design for a hold-capable wallet service (e.g. LND-backed NWC service);
-  nothing in the demo claims a live dispute runs today.
+  design for a hold-capable wallet service; nothing in the demo claims a
+  live dispute runs today. Wednesday's timeboxed investigation confirmed
+  the cut and named the post-MVP path (Alby Hub, hold invoices merged —
+  see Wednesday build above).
 
 ## Setup
 
@@ -110,10 +190,27 @@ npm install
 npm run dev        # web :3000 + api :3001 (concurrently)
 npm run seed       # demo world: 1 merchant + 1 supplier + 1 mediator + 10 receipts + 2 blocked
 npm run e2e:live   # live end-to-end check of the web pay flow (needs seed + dev servers)
-npm test           # state-machine + INV-1–INV-9 + web-flow + seed unit tests (62)
+npm test           # state-machine + INV-1–INV-9 + web-flow + seed + Wednesday unit tests (74)
 npm run build      # build all workspaces
 npm run typecheck  # tsc -b (root) + per-workspace typechecks
 ```
+
+Local wallet service (test sats only — LNbits 1.7.1 + nwcprovider 1.2.1
++ local NWC relay; the seed starts the relay itself if it is down):
+
+```bash
+./scripts/start-lnbits.sh   # LNbits on :5000 (persistent install under .local/)
+```
+
+A service restart wipes `/tmp`, so the LNbits venv + data live under
+`.local/` (gitignored), not `/tmp`. First run on a fresh data folder:
+set the admin password once via
+`PUT /api/v1/auth/first_install` (`first_install_token` is
+`lighnib-first-install-2026` unless `LNBITS_FIRST_INSTALL_TOKEN` is
+changed), install + activate + enable the nwcprovider extension, and
+point its relay at the local relay (`ws://localhost:7777`) — see
+WEDNESDAY-REPORT.md for the exact commands. The seed then works
+unchanged.
 
 Docker (one command):
 
@@ -194,9 +291,12 @@ fixed Aug 2025). Dedicated LNbits wallet per merchant. Phoenix has NO NWC.
 - **Disputes decide within minutes (NIP-47 hold window) — when a
   hold-capable wallet service is used.** The Day-1 spike (2026-11-16)
   proved the LNbits/FakeWallet service has no hold invoices, so the live
-  mediator hold is CUT for the MVP; the dispute state machine stays as
-  code + tests. Production disputes (hours/days, longer escrow) are a
-  next iteration.
+  mediator hold is CUT for the MVP (Wednesday decision: a hold-capable
+  service exists — Alby Hub, hold invoices merged — but is not runnable
+  on this VM; post-MVP path). The dispute state machine stays as code +
+  tests and the `/dispute` page says plainly that it records a claim
+  and holds no funds. Production disputes (hours/days, longer escrow)
+  are a next iteration.
 - **No dedicated Pidgin TTS.** Spoken receipts use the Web Speech API —
   an English voice reading Pidgin text, honestly labelled in the UI.
 - **Test sats only.** MVP settles on Lightning; ₦/FCFA is display-only.
@@ -211,11 +311,15 @@ fixed Aug 2025). Dedicated LNbits wallet per merchant. Phoenix has NO NWC.
 2. Bound receipts / day
 3. Overspend blocks (wallet QUOTA_EXCEEDED)
 4. Wrong-supplier blocks (app INV-9 refusal)
-5. Dispute resolution time (minutes, inside the hold window)
+5. Dispute resolution time (minutes, inside the hold window — post-MVP
+   metric; the live hold is cut, so this is 0 / not measured in the MVP)
 
 ## Next iteration
 
-- Longer-escrow production disputes (beyond the NIP-47 hold window)
+- Live mediator hold via a hold-capable wallet service (Alby Hub —
+  hold invoices merged in getAlby/hub#1298, spec #2065, v1.24.7) once
+  it can run with real channels; longer-escrow production disputes
+  (beyond the NIP-47 hold window)
 - Wave / MoMo payout leg settling receipts in FCFA/₦
 - Senegal skin (FCFA, French/Wolof, Dakar market association mediator)
 - Supplier directory (SpendMap) once the login lane is proven

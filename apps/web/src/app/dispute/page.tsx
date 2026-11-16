@@ -9,9 +9,13 @@ import { getSession } from "@/lib/session";
 
 /**
  * /dispute — open a dispute against a bound receipt (INV-7).
- * Disputes decide within the NIP-47 hold window (10 min demo).
- * Only the named mediator ({LOCALE.mediator}) releases, and only to a
- * party named in the receipt. Past the deadline: auto-refund to buyer.
+ *
+ * LIVE MEDIATOR HOLD: CUT (Wed 18 Nov decision, see README).
+ * The wallet service has no hold invoices, so opening a dispute here
+ * records the dispute claim against the bound receipt — it does NOT
+ * hold any funds, and no mediator release moves money. The receipt
+ * is the proof; the named mediator judges from it. Post-MVP path:
+ * Alby Hub (hold invoices merged, getAlby/hub#1298 + #2065).
  */
 function DisputeInner() {
   const params = useSearchParams();
@@ -58,10 +62,19 @@ function DisputeInner() {
     <>
       <h1>{LOCALE.copy.disputeTitle}</h1>
       <p>{LOCALE.copy.disputeBody}</p>
+      <div className="error">
+        <strong>Live mediator hold CUT for the MVP.</strong> Our wallet
+        service has no hold invoices, so this page records a dispute claim
+        against the bound receipt — <strong>it holds no funds</strong> and
+        no release here moves money. The receipt is the proof; the named
+        mediator ({LOCALE.mediator}) judges from it. The dispute state
+        machine below is the design for a hold-capable wallet service
+        (post-MVP: Alby Hub). Do not demo this as a live escrow.
+      </div>
       <p className="small">
-        Mediator: <strong>{LOCALE.mediator}</strong> · Hold window:{" "}
-        {LOCALE.holdWindowMinutes} minutes — dispute must decide inside am.
-        Production dispute (hours/days) na next iteration.
+        Mediator: <strong>{LOCALE.mediator}</strong> · Hold window (design):{" "}
+        {LOCALE.holdWindowMinutes} minutes — a live dispute must decide inside
+        am. Production dispute (hours/days) na next iteration.
       </p>
 
       <div className="card">
@@ -100,9 +113,10 @@ function DisputeInner() {
             <p className="small">Released to: {dispute.releasedTo}</p>
           )}
           <p className="small">
-            Mediator release happens on the mediator view (demo: mediator
-            releases via the API). If deadline pass, funds auto-refund to
-            buyer.
+            Design preview only: the mediator release below records a
+            ruling against the receipt. No funds are held or moved — the
+            live hold is cut (see the notice at the top). If deadline pass,
+            the design auto-refunds to buyer.
           </p>
           <button className="secondary" onClick={timeoutCheck}>
             Check timeout (auto-refund?)
