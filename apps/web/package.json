@@ -1,0 +1,24 @@
+{
+  "description": "Lighnib web — Next.js PWA. NWC calls happen client-side in the browser; the NWC secret lives in browser memory only, never localStorage/server/logs.",
+  "license": "MIT",
+  "name": "@lighnib/web",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev -p 3000",
+    "start": "next start -p 3000",
+    "typecheck": "tsc --noEmit"
+  },
+  "version": "0.1.0",
+  "dependencies": {
+    "@getalby/sdk": "^9.0.0",
+    "@lighnib/shared": "*",
+    "next": "^16.4.6",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0"
+  }
+}

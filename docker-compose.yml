@@ -1,0 +1,47 @@
+# Lighnib — docker-compose
+# One-command setup: `docker compose up` then `npm run dev` works.
+# LNbits ≥1.7.1 (1.7.1 shipped 2026-11-11 after the critical 1.7.0
+# security release). FakeWallet funding source for the demo only —
+# never real funds. LNbits data lives in a named docker volume.
+#
+# NOTE: this compose file is for the demo skeleton. The live NWC spike
+# (LNbits setup, real wallet connections) is a separate agent's work
+# under hackathon-ideation-engine/runs/2026-11-16-dakar-winners-2026/spike/.
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - API_PORT=3001
+      - API_HOST=0.0.0.0
+      # LLM_API_URL / LLM_API_KEY optional — explainer falls back to template.
+    depends_on:
+      - lnbits
+
+  lnbits:
+    image: lnbits/lnbits:1.7.1
+    ports:
+      - "5000:5000"
+    environment:
+      - LNBITS_BACKEND_WALLET_CLASS=FakeWallet
+      - LNBITS_ADMIN_UI=true
+    volumes:
+      - lnbits-data:/app/data
+
+volumes:
+  lnbits-data:

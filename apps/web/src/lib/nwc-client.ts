@@ -1,0 +1,68 @@
+/**
+ * nwc-client.ts — client-side NWC calls (browser only).
+ *
+ * All NWC calls happen HERE, in the browser. The secret is handed to
+ * @getalby/sdk's NWCClient from browser memory only (NwcSessionMemory.use)
+ * and is never stored, logged, or sent to the API.
+ *
+ * Least privilege (INV-8): the only method this module exposes is
+ * payInvoice. No balance reads, no transaction history, no get_info —
+ * the wallet pubkey (identity) is parsed from the connection URI itself.
+ */
+
+"use client";
+
+import { NWCClient } from "@getalby/sdk";
+import { nwcSession } from "./session";
+
+/** Parse the wallet pubkey out of a `nostr+walletconnect://<pubkey>?…` URI. */
+export function parseWalletPubkey(nwcUri: string): string | null {
+  const m = /^nostr\+walletconnect:\/\/([0-9a-f]{64})/i.exec(nwcUri.trim());
+  return m ? m[1].toLowerCase() : null;
+}
+
+export function isValidNwcUri(nwcUri: string): boolean {
+  return parseWalletPubkey(nwcUri) !== null && nwcUri.includes("secret=");
+}
+
+export interface PayResult {
+  preimage: string;
+  feesPaidSats: number;
+}
+
+/**
+ * Pay a BOLT11 invoice with the connected wallet.
+ * Throws on wallet refusal (e.g. QUOTA_EXCEEDED — over budget).
+ */
+export async function payInvoice(invoice: string): Promise<PayResult> {
+  return nwcSession.use(async (secret) => {
+    // The NWCClient needs the full URI; the secret comes from memory only.
+    // We rebuild the URI from the stored secret via the session holder.
+    const uri = secret; // secret holds the full nostr+walletconnect:// URI
+    const client = new NWCClient({ nostrWalletConnectUrl: uri });
+    try {
+      const res = (await client.payInvoice({ invoice })) as {
+        preimage?: string;
+        fees_paid?: number;
+      };
+      if (!res.preimage) {
+        throw new Error("Wallet did not return a preimage — payment not settled");
+      }
+      return { preimage: res.preimage, feesPaidSats: res.fees_paid ?? 0 };
+    } finally {
+      (client as unknown as { close?: () => void }).close?.();
+    }
+  });
+}
+
+/**
+ * Store a pasted NWC connection URI in browser memory only.
+ * The full URI (including the secret) is the bearer token — it is kept
+ * in the NwcSessionMemory holder and nowhere else.
+ */
+export function connectWallet(nwcUri: string, ttlMs: number): string {
+  const pubkey = parseWalletPubkey(nwcUri);
+  if (!pubkey) throw new Error("Invalid NWC connection URI");
+  nwcSession.set(nwcUri.trim(), ttlMs);
+  return pubkey;
+}

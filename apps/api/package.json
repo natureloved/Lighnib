@@ -1,0 +1,19 @@
+{
+  "description": "Lighnib API — holds NO funds, never sees the NWC secret. Validates scope, INV-9 bindings, bound receipts and disputes from public data only.",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "name": "@lighnib/api",
+  "private": true,
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "version": "0.1.0",
+  "dependencies": {
+    "@fastify/cors": "^11.4.3",
+    "fastify": "^5.12.8",
+    "@lighnib/shared": "*"
+  }
+}
