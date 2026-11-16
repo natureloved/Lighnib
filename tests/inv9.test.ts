@@ -61,11 +61,20 @@ function buildInvoice(opts: { amountHrp: string; hashHex: string; description: s
     const d5 = convertBits(data8, 8, 5, true);
     return [type, (d5.length >> 5) & 31, d5.length & 31, ...d5];
   };
+  // BOLT11: 35-bit timestamp (7 groups) FIRST, then tagged fields, then
+  // the 65-byte signature. (An earlier version of this builder omitted
+  // the timestamp — and the decoder omitted the skip — so the two wrong
+  // halves round-tripped while real invoices failed. Regression: the
+  // real-invoice test below.)
+  const ts = Math.floor(Date.now() / 1000);
+  const timestamp5: number[] = [];
+  for (let i = 6; i >= 0; i--) timestamp5.push(Math.floor(ts / 32 ** i) % 32);
   const data5 = [
+    ...timestamp5,
     ...field(1, hashBytes),
     ...field(13, descBytes),
     // signature placeholder (65 bytes of zeros) — decoder does not verify sig
-    ...field(16, new Array(65).fill(0)),
+    ...convertBits(new Array(65).fill(0), 8, 5, true),
   ];
   return bech32Encode(opts.amountHrp, data5);
 }
@@ -153,9 +162,42 @@ test("BOLT11 decode round-trip: hash + amount + memo from a built invoice", () =
   });
 });
 
+/**
+ * REGRESSION (found by the Tue live e2e, 2026-11-16): the decoder did not
+ * skip the 35-bit BOLT11 timestamp, so it parsed the timestamp as the
+ * first tag and returned null for every REAL invoice — while the test
+ * builder (which also omitted the timestamp) round-tripped fine. This
+ * fixture is a real invoice minted by the local LNbits 1.7.1 during the
+ * e2e debug (150 sats, memo Lighnib:order#ORD-DEBUG-2). Decoding does not
+ * check expiry, so it stays a valid fixture even after the invoice lapses.
+ */
+test("BOLT11 decode: real LNbits invoice decodes (timestamp skipped)", () => {
+  const invoice =
+    "lnbc1500n1p40k4t9dz2f35kw6rwd93r5mmjv3jhyg602fzz63z9gf25wtfj8feh2ursd35k2u3dvfskcmm8w4hz6vpsxyxqrrsssp5dm2av6h936dg7mntg6rrdk3myg6dxagn679kzqkt2r7ty65dmw3qpp5yhzz548uft0y2wtueyfl7cz7egf3qsqm2vtsegxjfkv6zavkt8csx9eg88j27phar5qgrlvrt649tctydcgxl06q93z0jc633xs6et0nn8a48grx4acvx2unmxqz96sgz36fakenxk9sgvvjka5erdrq08qpemkznm";
+  const decoded = decodeBolt11(invoice);
+  assert.ok(decoded, "real LNbits invoice should decode");
+  assert.equal(decoded.amountSats, 150);
+  assert.equal(
+    decoded.paymentHash,
+    "25c42a54fc4ade45397cc913ff605eca1310401b53170ca0d24d99a1759659f1",
+  );
+  assert.equal(decoded.expirySeconds, 3600);
+  assert.equal(decoded.description, "Lighnib:order#ORD-DEBUG-2:supplier-balogun-001");
+  assert.deepEqual(parseLighnibMemo(decoded.description), {
+    orderId: "ORD-DEBUG-2",
+    supplierId: "supplier-balogun-001",
+  });
+});
+
 test("BOLT11 decode rejects bad checksum and garbage", () => {
   const invoice = buildInvoice({ amountHrp: "lnbc12500u", hashHex: HASH, description: MEMO });
-  const corrupted = invoice.slice(0, -2) + (invoice.endsWith("q") ? "p" : "q") + invoice.slice(-1);
+  // Corrupt one checksum character — guaranteed to differ from the original,
+  // so the string actually changes (the old version could no-op when the
+  // replacement char equalled the char already there).
+  const idx = invoice.length - 2;
+  const replacement = invoice[idx] === "q" ? "p" : "q";
+  const corrupted = invoice.slice(0, idx) + replacement + invoice.slice(idx + 1);
+  assert.notEqual(corrupted, invoice);
   assert.equal(bech32Decode(corrupted), null);
   assert.equal(decodeBolt11(corrupted), null);
   assert.equal(decodeBolt11("not an invoice"), null);

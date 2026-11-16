@@ -106,13 +106,20 @@ export function decodeBolt11(invoice: string): DecodedInvoice | null {
         : "unknown";
   if (network === "unknown") return null;
 
+  const d = dec.data;
+  // BOLT11 layout after the HRP: timestamp (7 groups of 5 bits = 35 bits),
+  // then tagged fields, then the 65-byte signature (104 groups).
+  // The timestamp is NOT a tagged field — parsing must start after it,
+  // and stop before the signature, or the first tag reads garbage.
+  if (d.length < 7 + 104) return null;
+  const tagEnd = d.length - 104;
+
   // Tagged fields: 5 bits type, 10 bits length, then length*5 bits data.
   let paymentHash: string | null = null;
   let description: string | null = null;
   let expirySeconds = 3600;
-  let i = 0;
-  const d = dec.data;
-  while (i + 3 <= d.length) {
+  let i = 7; // skip the 35-bit timestamp
+  while (i + 3 <= tagEnd) {
     const type = d[i];
     const len = (d[i + 1] << 5) | d[i + 2];
     const field = d.slice(i + 3, i + 3 + len);
@@ -125,9 +132,11 @@ export function decodeBolt11(invoice: string): DecodedInvoice | null {
     } else if (type === 13 && bytes) {
       // tag `d` — description
       description = new TextDecoder().decode(new Uint8Array(bytes));
-    } else if (type === 6 && bytes && bytes.length > 0) {
-      // tag `x` — expiry seconds
-      expirySeconds = bytes.reduce((acc, b) => acc * 256 + b, 0);
+    } else if (type === 6 && field.length > 0) {
+      // tag `x` — expiry seconds, a big-endian integer over 5-bit
+      // groups. (convertBits would reject it: 15 bits is 1 byte + 7
+      // leftover bits, and pad=false refuses ≥5 leftover bits.)
+      expirySeconds = field.reduce((acc, g) => acc * 32 + g, 0);
     }
   }
   if (!paymentHash) return null;

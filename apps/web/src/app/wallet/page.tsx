@@ -1,21 +1,59 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LOCALE } from "@lighnib/shared";
+import { LOCALE, remainingBudgetSats } from "@lighnib/shared";
 import { api } from "@/lib/api";
-import { getSession, logoutSession, subscribeSession } from "@/lib/session";
+import { getSession, logoutSession, setSession, subscribeSession } from "@/lib/session";
 
 /**
  * /wallet — connection / budget / revoke view.
- * Revoke = logout (INV-4): wipes the NWC secret from browser memory and
- * revokes the scope server-side. A revoked scope never pays again.
+ * The scope shown here is REFRESHED from the API on mount (and on demand),
+ * so "remaining" is the live tracked spend — not the snapshot from login
+ * time. Revoke = logout (INV-4): wipes the NWC secret from browser memory
+ * and revokes the scope server-side. A revoked scope never pays again.
  */
 export default function WalletPage() {
   const [session, setSessionState] = useState(getSession());
   const [error, setError] = useState<string | null>(null);
   const [revoked, setRevoked] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
 
   useEffect(() => subscribeSession(() => setSessionState(getSession())), []);
+
+  // Live refresh: the API is the source of truth for tracked spend.
+  useEffect(() => {
+    const scope = getSession().scope;
+    if (!scope) return;
+    let cancelled = false;
+    api
+      .getScope(scope.id)
+      .then((fresh) => {
+        if (cancelled) return;
+        setSession({ scope: fresh });
+        setRefreshedAt(new Date().toLocaleTimeString());
+      })
+      .catch(() => {
+        // API unreachable — keep the login-time snapshot, say so below.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function refresh() {
+    if (!session.scope) return;
+    setRefreshing(true);
+    try {
+      const fresh = await api.getScope(session.scope.id);
+      setSession({ scope: fresh });
+      setRefreshedAt(new Date().toLocaleTimeString());
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setRefreshing(false);
+    }
+  }
 
   async function revoke() {
     setError(null);
@@ -49,7 +87,7 @@ export default function WalletPage() {
   }
 
   const s = session.scope;
-  const remaining = s.dailyBudgetSats - s.spentTodaySats;
+  const remaining = remainingBudgetSats(s);
   return (
     <>
       <h1>{LOCALE.copy.walletTitle}</h1>
@@ -58,6 +96,14 @@ export default function WalletPage() {
         <p className="small mono">wallet: {session.walletPubkey}</p>
         <p className="small">State: {s.state}</p>
         <p className="small">Expires: {new Date(s.expiresAt).toLocaleString()}</p>
+        <p className="small">
+          {refreshedAt
+            ? `Scope refreshed from server ${refreshedAt} — remaining na live tracked spend.`
+            : "Showing the scope from login time — refresh to see live tracked spend."}
+        </p>
+        <button className="secondary" onClick={refresh} disabled={refreshing}>
+          {refreshing ? "Refreshing…" : "Refresh scope"}
+        </button>
       </div>
       <div className="card">
         <h2>{LOCALE.copy.scopeLabel}</h2>
@@ -71,6 +117,8 @@ export default function WalletPage() {
         <p>Remaining: {remaining.toLocaleString()} sats</p>
         <p className="small">
           Budget na wallet dey enforce (NWC quota). Server dey re-check am too.
+          (NWC get_budget no dey implemented by this wallet service, so the
+          app dey track spend itself.)
         </p>
       </div>
       <div className="card">

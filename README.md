@@ -20,13 +20,20 @@ Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC — do not use it.**
 
 1. **Run it** (2 min): `docker compose up` — or `npm install && npm run dev`
    (web on http://localhost:3000, api on http://localhost:3001).
-2. **Log in** (30 s): open `/login`, paste an NWC connection URI from your
-   wallet. Scope shows ₦50,000/day. No password, no form.
-3. **Pay** (1 min): open `/pay`, pick supplier-001, paste a supplier invoice.
-   A bound receipt appears on settlement — AI-explained, spoken in Pidgin.
+   Then seed the demo world: `npm run seed` (1 merchant + 1 supplier +
+   1 named mediator + 10 bound receipts + 2 blocked payments, all on
+   local test sats). The seed prints the merchant NWC URI to paste at
+   login. Requires local LNbits 1.7.1 + the local NWC relay — see Setup.
+2. **Log in** (30 s): open `/login`, paste the merchant NWC connection URI
+   from the seed output. Scope shows ₦50,000/day. No password, no form.
+3. **Pay** (1 min): open `/pay`, pick supplier-balogun-001 (the seeded
+   demo supplier), paste a supplier invoice. A bound receipt appears on
+   settlement — AI-explained, spoken in Pidgin.
 4. **Watch the two enforcers** (1 min):
-   - A ₦70,000 invoice → **the wallet refuses** (QUOTA_EXCEEDED, over the
-     ₦50,000 scope).
+   - A ₦70,000 invoice → **the app refuses it first** (over the ₦50,000
+     scope, INV-2) before the wallet is ever asked. The wallet is the
+     backstop: the seed log shows the same invoice refused directly by
+     the wallet with verbatim `QUOTA_EXCEEDED`.
    - An invoice from a supplier not on the allowlist → **the app refuses
      before the wallet is ever asked** (INV-9 hash mismatch).
 5. **Dispute** (code only — not live): the `/dispute` route and the
@@ -34,8 +41,44 @@ Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC — do not use it.**
    hold is CUT for the MVP (see spike verdict). Do not demo a live dispute
    on the current wallet service.
 
-Demo data is seeded in the app (1 merchant + 1 supplier + demo invoices).
-No real funds, no token, no account to create.
+Demo data is seeded by `npm run seed` (1 merchant + 1 supplier + 1 named
+mediator + 10 bound receipts + 2 blocked payments). No real funds, no
+token, no account to create.
+
+## Tuesday build (2026-11-17) — web pay flow verified live
+
+- **Live e2e (13/13 steps pass, `npm run e2e:live`):** the exact web code
+  (`/login` → `/pay` → receipt → `/wallet`) was driven against a real
+  NWC wallet on test sats: login + scope ₦50,000/day, a 150-sat payment
+  settling to a verified bound receipt with a template AI explainer
+  (spoken once), live remaining spend on the Wallet tab (spent 150,
+  remaining 33,183), a ₦70,000 invoice refused by the app scope check
+  with zero wallet requests, the same invoice refused directly by the
+  wallet with verbatim `QUOTA_EXCEEDED`, an unknown-hash invoice refused
+  by INV-9 with zero wallet requests, revoke (scope REVOKED, further
+  payments refused) and logout wiping the secret from memory.
+- **Seed (`npm run seed`, `seed/demo-data.json`):** fresh demo wallets
+  each run, 100,000 test sats (synthetic labelled ledger credit —
+  test-only, same mechanism as the spike), 10 live 100-sat receipts all
+  verified, both blocked payments recorded. Credentials (NWC URIs +
+  admin keys) go to `seed/.demo-credentials.json` (mode 600, gitignored).
+- **Two bugs found live by the e2e and fixed:** (1) the shared BOLT11
+  decoder did not skip the 35-bit timestamp, so it returned null for
+  every real invoice — the test builder shared the same wrong
+  assumption, so the round-trip passed while real invoices failed.
+  Fixed + a real-LNbits-invoice regression test. (2) The web api client
+  sent `Content-Type: application/json` with an empty body on body-less
+  POSTs (explain/cancel/revoke/timeout-check); Fastify 5 rejects that
+  with 400. The client now sends `{}`. Both have regression tests.
+- **Tests:** `npm test` → **62 pass, 0 fail** (was 49). `npm run build`
+  and `npm run typecheck` pass (the root typecheck was broken in the
+  skeleton — the web project is `noEmit` and cannot be a `tsc -b`
+  reference; fixed by typechecking it in the root program instead).
+- **Docker: NOT verified on this VM.** `docker compose` plugin is
+  missing and the daemon cannot start (`iptables … Permission denied
+  (you must be root)` — the secure VM denies NET_ADMIN). `docker compose
+  up` is shipped but unverified here; verify it on a machine with
+  working Docker before relying on it for the demo.
 
 ## Day-1 spike verdict (2026-11-16, LNbits 1.7.1 + nwcprovider 1.2.1, local)
 
@@ -65,8 +108,11 @@ No real funds, no token, no account to create.
 ```bash
 npm install
 npm run dev        # web :3000 + api :3001 (concurrently)
-npm test           # state-machine + INV-1–INV-9 unit tests
+npm run seed       # demo world: 1 merchant + 1 supplier + 1 mediator + 10 receipts + 2 blocked
+npm run e2e:live   # live end-to-end check of the web pay flow (needs seed + dev servers)
+npm test           # state-machine + INV-1–INV-9 + web-flow + seed unit tests (62)
 npm run build      # build all workspaces
+npm run typecheck  # tsc -b (root) + per-workspace typechecks
 ```
 
 Docker (one command):

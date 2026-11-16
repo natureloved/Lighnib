@@ -1,0 +1,119 @@
+{
+  "seededAt": "2026-11-16T19:10:18.493Z",
+  "market": "Lagos, Nigeria",
+  "merchant": {
+    "walletId": "c95fb70429924f70ba1ba8ddb2d27259",
+    "walletPubkey": "e3b96b5ff6e02d1aa8dc435ad0f572dced78122243670283616146abafaf469c",
+    "scopeId": "scope_mwjn1ugp_5zpym5",
+    "fundedTestSats": 100000,
+    "spentTestSats": 1000
+  },
+  "supplier": {
+    "id": "supplier-balogun-001",
+    "name": "Balogun provisions — Mama Nkechi"
+  },
+  "mediator": {
+    "name": "Lagos market association"
+  },
+  "scope": {
+    "id": "scope_mwjn1ugp_5zpym5",
+    "dailyBudgetSats": 33333,
+    "dailyBudgetFiat": 50000,
+    "currency": "NGN",
+    "expiresAt": "2026-11-17T03:10:19.513Z",
+    "state": "LOGGED_IN"
+  },
+  "receipts": [
+    {
+      "id": "rcpt_seed_202611161910_01",
+      "orderId": "ORD-SEED-202611161910-01",
+      "amountSats": 100,
+      "paymentHash": "8756d18c36deffc968352e873e79df74f026cfa45b495a00547ead600c4a37e4",
+      "verified": true
+    },
+    {
+      "id": "rcpt_seed_202611161910_02",
+      "orderId": "ORD-SEED-202611161910-02",
+      "amountSats": 100,
+      "paymentHash": "f1d357cabb97089725df366d7f08f7229ec5ac1cf2294186d1e6bce1a3f7a766",
+      "verified": true
+    },
+    {
+      "id": "rcpt_seed_202611161910_03",
+      "orderId": "ORD-SEED-202611161910-03",
+      "amountSats": 100,
+      "paymentHash": "0bcd2edfc9be3e63485cf255b46f1042bc99b7ac109e4c3ddad0276fe5d9b8a6",
+      "verified": true
+    },
+    {
+      "id": "rcpt_seed_202611161910_04",
+      "orderId": "ORD-SEED-202611161910-04",
+      "amountSats": 100,
+      "paymentHash": "c286ca89325c55f3b117acf84dd20ef2b9999580603d500ffa0d155bd7a4869f",
+      "verified": true
+    },
+    {
+      "id": "rcpt_seed_202611161910_05",
+      "orderId": "ORD-SEED-202611161910-05",
+      "amountSats": 100,
+      "paymentHash": "6629e9af56da64db9d5318a619e7f6fa76386588e7efd37f797b182d1b53e1a6",
+      "verified": true
+    },
+    {
+      "id": "rcpt_seed_202611161910_06",
+      "orderId": "ORD-SEED-202611161910-06",
+      "amountSats": 100,
+      "paymentHash": "045e55a49cfbb8215fa71344729f4033bd3deed532c345e6c81ff442dc3aa15d",
+      "verified": true
+    },
+    {
+      "id": "rcpt_seed_202611161910_07",
+      "orderId": "ORD-SEED-202611161910-07",
+      "amountSats": 100,
+      "paymentHash": "258a2fd1333c5b3dcb09fa490940a7d74048254c5d973370e385d26af54eba87",
+      "verified": true
+    },
+    {
+      "id": "rcpt_seed_202611161910_08",
+      "orderId": "ORD-SEED-202611161910-08",
+      "amountSats": 100,
+      "paymentHash": "a31f42c48f9ace07e3c8a3f985f6e827692af8b681e0c934783bd9cd4c4bf3e2",
+      "verified": true
+    },
+    {
+      "id": "rcpt_seed_202611161910_09",
+      "orderId": "ORD-SEED-202611161910-09",
+      "amountSats": 100,
+      "paymentHash": "74bd00917fec3292e8b75652710896327e2eb7d9ce5ed4f5552a256f26fbc715",
+      "verified": true
+    },
+    {
+      "id": "rcpt_seed_202611161910_10",
+      "orderId": "ORD-SEED-202611161910-10",
+      "amountSats": 100,
+      "paymentHash": "dac128dc9172ef077f80d1a41791d2201f231bf0e05b5c9dc4a4c43efe7c1fc5",
+      "verified": true
+    }
+  ],
+  "blocked": [
+    {
+      "kind": "wallet-quota-exceeded",
+      "orderId": "ORD-SEED-202611161910-OVER",
+      "amountSats": 46667,
+      "amountNgn": 70000,
+      "walletError": "QUOTA_EXCEEDED The wallet has exceeded its spending quota.",
+      "note": "Direct NWC pay, bypassing the app — the wallet itself refuses. In the web flow the app scope check (INV-2) refuses the same invoice first."
+    },
+    {
+      "kind": "app-inv9-unknown-hash",
+      "orderId": "ORD-SEED-202611161910-OVER-WRONG",
+      "amountSats": 50,
+      "supplierId": "supplier-other-999",
+      "appRefusal": "UNKNOWN_INVOICE_HASH",
+      "walletRequestsMade": 0,
+      "merchantBalanceMsatUnchanged": true,
+      "note": "INV-9 refused before any wallet request — balance verified unchanged."
+    }
+  ],
+  "notes": []
+}

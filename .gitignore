@@ -4,3 +4,15 @@ dist/
 *.tsbuildinfo
 .env*
 !.env.example
+# Demo credentials (NWC URIs + LNbits admin keys) — bearer secrets, never commit.
+seed/.demo-credentials.json
+# Files root `tsc -b` (typecheck) emits next to sources — never commit.
+apps/web/src/**/*.js
+apps/web/src/**/*.d.ts
+apps/web/src/**/*.map
+tests/*.js
+tests/*.d.ts
+tests/*.map
+scripts/e2e-live.mjs
+scripts/e2e-live.d.mts
+scripts/*.map

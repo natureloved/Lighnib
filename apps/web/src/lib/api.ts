@@ -9,8 +9,12 @@ import type { BoundReceipt, Dispute, Scope } from "@lighnib/shared";
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
+  // Fastify rejects a POST with `Content-Type: application/json` and an
+  // empty body (FST_ERR_CTP_EMPTY_JSON_BODY). Body-less POSTs (explain,
+  // cancel, revoke, timeout-check) therefore send an empty JSON object.
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
+    ...(init?.body === undefined && init?.method === "POST" ? { body: "{}" } : {}),
     headers: { "Content-Type": "application/json", ...(init?.headers ?? {}) },
   });
   const body = (await res.json()) as T & { error?: string };
@@ -65,6 +69,18 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ paymentHash, supplierId, amountSats }),
     }),
+
+  recordBinding: (input: {
+    paymentHash: string;
+    supplierId: string;
+    orderId: string;
+    amountSats: number;
+    memo: string;
+  }) =>
+    req<{ paymentHash: string; supplierId: string; orderId: string; amountSats: number; memo: string }>(
+      `/api/invoices`,
+      { method: "POST", body: JSON.stringify(input) },
+    ),
 
   createReceipt: (input: Record<string, unknown>) =>
     req<BoundReceipt>("/api/receipts", { method: "POST", body: JSON.stringify(input) }),

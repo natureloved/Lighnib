@@ -4,21 +4,34 @@ import { useEffect, useState } from "react";
 import { LOCALE } from "@lighnib/shared";
 import { api } from "@/lib/api";
 import { payInvoice } from "@/lib/nwc-client";
-import { getSession, subscribeSession } from "@/lib/session";
+import { runPayFlow } from "@/lib/pay-flow";
+import { getSession, setSession, subscribeSession } from "@/lib/session";
 import { speak, stopSpeaking, VOICE_LABEL } from "@/lib/voice";
 
 /**
  * /pay — supplier invoice pay flow with scope remaining.
- * Order of checks (before any wallet request):
- *   1. Decode BOLT11 → payment hash + amount + memo.
- *   2. INV-9: hash↔supplier binding must exist and match.
- *   3. INV-2: scope budget re-check (wallet enforces, server re-checks).
- * Only then is the wallet asked to pay. On settlement a bound receipt
- * is created (INV-5/INV-6) and explained + spoken.
+ * The orchestration lives in lib/pay-flow.ts (decode → INV-9 → INV-2 →
+ * wallet pay → bound receipt → explainer → speak). This page is UI only.
  */
+
+const SUPPLIERS: { id: string; label: string; vendorName: string }[] = [
+  {
+    id: "supplier-balogun-001",
+    label: "supplier-balogun-001 — Balogun provisions, Mama Nkechi (seeded demo supplier)",
+    vendorName: "Balogun provisions — Mama Nkechi",
+  },
+  { id: "supplier-001", label: "supplier-001 — Mama Nkechi provisions", vendorName: "Mama Nkechi provisions" },
+  { id: "supplier-002", label: "supplier-002 — Balogun textiles", vendorName: "Balogun textiles" },
+  {
+    id: "supplier-999",
+    label: "supplier-999 — NOT on the allowlist (demo block)",
+    vendorName: "Unknown supplier",
+  },
+];
+
 export default function PayPage() {
   const [invoice, setInvoice] = useState("");
-  const [supplierId, setSupplierId] = useState("supplier-001");
+  const [supplierId, setSupplierId] = useState("supplier-balogun-001");
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<Awaited<ReturnType<typeof api.createReceipt>> | null>(null);
@@ -45,67 +58,20 @@ export default function PayPage() {
     }
     setBusy(true);
     try {
-      // 1. Decode the invoice.
-      const decoded = await api.decodeInvoice(invoice.trim());
-      if (!decoded.valid || !decoded.paymentHash) {
-        throw new Error("Invoice no valid — check the BOLT11 string.");
-      }
-      const amountSats = decoded.amountSats ?? 0;
-      if (amountSats <= 0) throw new Error("Amountless invoices no dey supported for demo.");
-
-      // 2. INV-9 — before ANY wallet request.
-      const binding = await api.checkBinding(decoded.paymentHash, supplierId, amountSats);
-      if (!binding.allowed) {
-        if (binding.reason === "UNKNOWN_INVOICE_HASH") {
-          throw new Error(
-            "INV-9: this invoice hash no dey recorded for any supplier. App refuse am before wallet see am.",
-          );
-        }
-        throw new Error(`INV-9: payment refused — ${binding.reason}.`);
-      }
-
-      // 3. INV-2 budget re-check (wallet is the primary enforcer).
-      const check = await api.checkSpend(scope.id, amountSats);
-      if (!check.allowed) {
-        throw new Error(
-          `Over budget: ${check.reason}. Remaining ${check.remainingSats.toLocaleString()} sats.`,
-        );
-      }
-
-      // 4. Wallet pays (browser-side NWC, pay_invoice only).
+      const supplier = SUPPLIERS.find((s) => s.id === supplierId) ?? SUPPLIERS[0];
       setStatus("Wallet dey pay…");
-      await api.beginPayment(scope.id, amountSats);
-      let preimage: string;
-      try {
-        const res = await payInvoice(invoice.trim());
-        preimage = res.preimage;
-      } catch (e) {
-        await api.cancelPayment(scope.id);
-        throw e;
-      }
-
-      // 5. Settlement → bound receipt (INV-5/INV-6).
-      await api.settlePayment(scope.id, amountSats);
-      const created = await api.createReceipt({
-        id: `rcpt_${Date.now().toString(36)}`,
-        orderId: decoded.memo?.orderId ?? "unknown",
+      const result = await runPayFlow(api, payInvoice, speak, {
+        scope,
+        walletPubkey: session.walletPubkey ?? "",
         supplierId,
-        vendorName: "Supplier " + supplierId,
-        purpose: decoded.description ?? "supplier order",
-        amountSats,
-        amountFiat: 0,
-        currency: LOCALE.currency,
-        paymentHash: decoded.paymentHash,
-        preimage,
-        payerPubkey: session.walletPubkey ?? "",
+        supplierName: supplier.vendorName,
+        invoice: invoice.trim(),
       });
-      setReceipt(created);
+      // Keep the session scope fresh: the settled scope carries spentToday.
+      setSession({ scope: result.scope });
+      setReceipt(result.receipt);
+      setExplanation(result.explanation);
       setStatus("Payment settled — receipt don land.");
-
-      // 6. AI explainer + spoken readout.
-      const expl = await api.explainReceipt(created.id);
-      setExplanation(expl.text);
-      speak(expl.text);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -142,9 +108,11 @@ export default function PayPage() {
           value={supplierId}
           onChange={(e) => setSupplierId(e.target.value)}
         >
-          <option value="supplier-001">supplier-001 — Mama Nkechi provisions</option>
-          <option value="supplier-002">supplier-002 — Balogun textiles</option>
-          <option value="supplier-999">supplier-999 — NOT on the allowlist (demo block)</option>
+          {SUPPLIERS.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.label}
+            </option>
+          ))}
         </select>
 
         <label htmlFor="invoice">Supplier invoice (BOLT11)</label>

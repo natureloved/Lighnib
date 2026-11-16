@@ -1,0 +1,74 @@
+{
+  "check": "e2e-live-web-pay-flow",
+  "startedAt": "2026-11-16T19:16:48.061Z",
+  "steps": [
+    {
+      "name": "api-health",
+      "ok": true,
+      "detail": "lighnib-api ok, holdsFunds=false"
+    },
+    {
+      "name": "lnbits-health",
+      "ok": true,
+      "detail": "LNbits up 00:37:21"
+    },
+    {
+      "name": "web-login-scope",
+      "ok": true,
+      "detail": "scope scope_mwjna6cs_dmacqo, ₦50,000/day = 33,333 sats, state=LOGGED_IN"
+    },
+    {
+      "name": "web-pay-flow-settles",
+      "ok": true,
+      "detail": "receipt rcpt_mwjna8fn, hash=9f5caad06ff0744b…, walletPayCalls=1"
+    },
+    {
+      "name": "receipt-verified-via-api",
+      "ok": true,
+      "detail": "GET /api/receipts/:id/verify → valid=true"
+    },
+    {
+      "name": "explainer-template-fallback",
+      "ok": true,
+      "detail": "source=template (no LLM key), 406 chars, spoken=1 time(s)"
+    },
+    {
+      "name": "wallet-tab-live-remaining",
+      "ok": true,
+      "detail": "spent=150 remaining=33183 state=RECEIPTED expires=2026-11-17T03:16:48.172Z"
+    },
+    {
+      "name": "web-over-budget-refused",
+      "ok": true,
+      "detail": "Over budget: QUOTA_EXCEEDED. Remaining 33,183 sats. (walletPayCalls delta=0)"
+    },
+    {
+      "name": "wallet-quota-exceeded-backstop",
+      "ok": true,
+      "detail": "wallet returned: QUOTA_EXCEEDED The wallet has exceeded its spending quota."
+    },
+    {
+      "name": "web-inv9-unknown-hash-refused",
+      "ok": true,
+      "detail": "INV-9: this invoice hash no dey recorded for any supplier. App refuse am before wallet see am. (walletPayCalls delta=0)"
+    },
+    {
+      "name": "revoke-scope",
+      "ok": true,
+      "detail": "state=REVOKED revokedAt=2026-11-16T19:16:53.473Z"
+    },
+    {
+      "name": "revoked-scope-never-pays",
+      "ok": true,
+      "detail": "Over budget: SCOPE_REVOKED. Remaining 33,183 sats. (walletPayCalls delta=0)"
+    },
+    {
+      "name": "logout-wipes-secret",
+      "ok": true,
+      "detail": "session connected=false, walletPubkey=null after logoutSession()"
+    }
+  ],
+  "pass": true,
+  "verdict": "PASS — web pay flow verified live end-to-end: login → INV-9 → budget → wallet pay → bound receipt → explainer → wallet tab → over-budget + INV-9 blocks → revoke. All against a real NWC wallet on test sats.",
+  "finishedAt": "2026-11-16T19:16:53.482Z"
+}
