@@ -19,7 +19,15 @@
  */
 
 import type { BoundReceipt, Scope } from "@lighnib/shared";
-import { LOCALE } from "@lighnib/shared";
+import { LOCALE, remainingBudgetSats } from "@lighnib/shared";
+
+/** Map a budget-check reason code to the plain-words refusal a merchant sees. */
+export function budgetRefusalMessage(reason: string | undefined, remainingSats: number): string {
+  if (reason === "SCOPE_REVOKED") return LOCALE.copy.payScopeRevoked;
+  if (reason === "SCOPE_EXPIRED" || reason === "SCOPE_NOT_LIVE")
+    return LOCALE.copy.payScopeExpired;
+  return LOCALE.copy.payOverBudget(remainingSats);
+}
 
 export interface PayFlowApi {
   decodeInvoice: (invoice: string) => Promise<{
@@ -75,30 +83,26 @@ export async function runPayFlow(
   // 1. Decode the invoice.
   const decoded = await api.decodeInvoice(trimmed);
   if (!decoded.valid || !decoded.paymentHash) {
-    throw new Error("Invoice no valid — check the BOLT11 string.");
+    throw new Error(LOCALE.copy.payInvalidInvoice);
   }
   const amountSats = decoded.amountSats ?? 0;
   if (amountSats <= 0) {
-    throw new Error("Amountless invoices no dey supported for demo.");
+    throw new Error(LOCALE.copy.payAmountless);
   }
 
   // 2. INV-9 — before ANY wallet request.
   const binding = await api.checkBinding(decoded.paymentHash, supplierId, amountSats);
   if (!binding.allowed) {
     if (binding.reason === "UNKNOWN_INVOICE_HASH") {
-      throw new Error(
-        "INV-9: this invoice hash no dey recorded for any supplier. App refuse am before wallet see am.",
-      );
+      throw new Error(LOCALE.copy.payUnknownHash);
     }
-    throw new Error(`INV-9: payment refused — ${binding.reason}.`);
+    throw new Error(LOCALE.copy.paySupplierMismatch);
   }
 
   // 3. INV-2 budget re-check (wallet is the primary enforcer).
   const check = await api.checkSpend(scope.id, amountSats);
   if (!check.allowed) {
-    throw new Error(
-      `Over budget: ${check.reason}. Remaining ${check.remainingSats.toLocaleString()} sats.`,
-    );
+    throw new Error(budgetRefusalMessage(check.reason, check.remainingSats));
   }
 
   // 4. Wallet pays (browser-side NWC, pay_invoice only).
@@ -109,6 +113,15 @@ export async function runPayFlow(
     preimage = res.preimage;
   } catch (e) {
     await api.cancelPayment(scope.id);
+    // A wallet quota refusal is the same plain-words message as the
+    // app-side budget check — never surface the raw error code.
+    const msg = (e as Error).message ?? "";
+    const code = (e as { code?: string }).code ?? "";
+    if (/QUOTA_EXCEEDED/i.test(code) || /spending quota/i.test(msg)) {
+      throw new Error(
+        LOCALE.copy.payOverBudget(remainingBudgetSats(scope)),
+      );
+    }
     throw e;
   }
 

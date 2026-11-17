@@ -10,6 +10,14 @@ explained by AI and spoken aloud in Pidgin. Disputes go to one named
 mediator (state machine built and unit-tested; live hold cut — see spike
 verdict below). No password, no screenshot, no bank, no NIN.
 
+**Demo videos (silent screen recordings of the real app on test sats,
+with burned-in Pidgin captions — narration scripts alongside):**
+`~/workspace/demo-videos/lighnib/lighnib-90s.mp4` (84 s) and
+`lighnib-3min.mp4` (112 s). They are **not committed to this repo**
+(kept out by design); upload them with the submission. The videos have
+no audio track — this VM has no voices — so captions + the narration
+scripts carry the words.
+
 **Honest security line:** Budget enforced by the wallet. Supplier enforced
 by the app + bound receipt. Mediator sees any mismatch.
 
@@ -43,11 +51,13 @@ Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC — do not use it.**
    the tested path).
 4. **Watch the two enforcers** (1 min):
    - A ₦70,000 invoice → **the app refuses it first** (over the ₦50,000
-     scope, INV-2) before the wallet is ever asked. The wallet is the
+     scope — the user sees "This invoice pass your daily scope. Wallet
+     go refuse am.") before the wallet is ever asked. The wallet is the
      backstop: the seed log shows the same invoice refused directly by
      the wallet with verbatim `QUOTA_EXCEEDED`.
    - An invoice from a supplier not on the allowlist → **the app refuses
-     before the wallet is ever asked** (INV-9 hash mismatch).
+     before the wallet is ever asked** ("This invoice no dey recorded
+     for any supplier for this portal." — INV-9 hash mismatch).
 5. **Dispute** (code only — not live): the `/dispute` route and the
    dispute state machine exist and are unit-tested, but the live mediator
    hold is CUT for the MVP (see Wednesday decision below). The page says
@@ -57,6 +67,61 @@ Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC — do not use it.**
 Demo data is seeded by `npm run seed` (1 merchant + 1 supplier + 1 named
 mediator + 10 bound receipts + 2 blocked payments). No real funds, no
 token, no account to create.
+
+## Thursday build (2026-11-19) — Pidgin copy, Slow 3G, videos, clean clone
+
+- **Pidgin copy pass:** every user-facing string on the happy path is
+  now Pidgin/English — login ("Wallet connection code"), pay ("Supplier
+  invoice code"), wallet, receipts, dispute, and all refusal messages
+  ("This invoice pass your daily scope. Wallet go refuse am.",
+  "This invoice no dey recorded for any supplier for this portal.").
+  Technical codes (INV-9, QUOTA_EXCEEDED, BOLT11, NWC, get_budget) no
+  longer appear in the UI; a test bans them from `config/locale.ts`
+  copy. Scope states are plain words ("You never log in", "Scope
+  remaining", "This login don revoke"). Honest labels kept: English
+  voice reading Pidgin text, dispute cut, template explainer.
+- **Bug E found live by the browser pass (critical, fixed + verified):**
+  the in-memory session (INV-8: NWC secret browser-memory only) was
+  lost on navigation — login → pay showed "You never log in". Root
+  cause: plain `<a href>` links full-reload, and `<Link><button>`
+  nesting also full-reloads in this Next 16 build (proven with a
+  `window.__marker` probe). Fix: all in-app navigation now uses Next
+  `Link` for text links and `router.push()` on button onClick. A
+  regression test bans both patterns in `apps/web/src`. Verified live
+  in headless Chrome: after login, /pay shows the live scope, Pay is
+  enabled, and a second visit to /pay stays logged in.
+- **Slow-3G load test (production build, cold load, ~245 KB, 26–27
+  requests):** unthrottled load 155–639 ms, FCP 56–504 ms; **Slow 3G
+  (500 kbps, 400 ms RTT): load ~4.05 s, FCP ~850–900 ms, React mounted
+  + login interactive in all 8 runs** (desktop + Tecno-like 720×1600
+  viewport). LCP is not emitted in this headless build — FCP + load
+  event are the reported paint metrics. No fix was needed; the happy
+  path works on a slow connection.
+- **Demo videos:** 90-sec (`lighnib-90s.mp4`, 84 s) and 3-min
+  (`lighnib-3min.mp4`, 112 s), assembled with ffmpeg from real
+  Playwright recordings of the production build on test sats (login →
+  pay → bound receipt → receipts → wallet → both enforcers → dispute
+  cut, plus a second clip: scope raised to ₦100,000/day in one tap —
+  a new connection, because a wallet budget is fixed per NWC
+  connection — and the refused ₦70,000 invoice then settling).
+  Title/section cards + burned-in Pidgin captions; narration scripts
+  alongside. **Silent** (no audio track — this VM has no voices;
+  Playwright captures no audio). Nothing in them is faked.
+- **Clean-clone test:** fresh copy minus node_modules/.local/data/.git,
+  `npm install` (14 s), `npm test` **80/80**, typecheck + build pass,
+  dev servers on alternate ports (api :3301 healthy, all 6 routes 200
+  on web :3200) — total under 1 minute. A true `git clone` of the
+  private repo was not possible on this VM (gh CLI is not authed; the
+  repo is private) — the copy simulates it. Two findings: (1) `/tmp`
+  is a 512 MB tmpfs and was 100% full — the clone test must run on the
+  main disk, not /tmp. (2) A fresh tree failed 2 test files before
+  `npm run build` because `@lighnib/shared` resolves to compiled
+  `dist/` — **fixed** with `pretest`/`predev` hooks that build shared
+  first; a stranger's `npm test` / `npm run dev` now works straight
+  after install.
+- **Seed + e2e re-run after the copy changes:** seed 10/10 receipts
+  verified, 2 blocked; **live e2e 13/13 pass**. Tests: `npm test` →
+  **80 pass, 0 fail** (was 74). Build + typecheck pass.
 
 ## Wednesday build (2026-11-18) — receipts polish + AI explainer + TTS + dispute decision
 
@@ -190,7 +255,7 @@ npm install
 npm run dev        # web :3000 + api :3001 (concurrently)
 npm run seed       # demo world: 1 merchant + 1 supplier + 1 mediator + 10 receipts + 2 blocked
 npm run e2e:live   # live end-to-end check of the web pay flow (needs seed + dev servers)
-npm test           # state-machine + INV-1–INV-9 + web-flow + seed + Wednesday unit tests (74)
+npm test           # state-machine + INV-1–INV-9 + web-flow + seed + Wednesday + Thursday unit tests (80)
 npm run build      # build all workspaces
 npm run typecheck  # tsc -b (root) + per-workspace typechecks
 ```
@@ -299,6 +364,19 @@ fixed Aug 2025). Dedicated LNbits wallet per merchant. Phoenix has NO NWC.
   are a next iteration.
 - **No dedicated Pidgin TTS.** Spoken receipts use the Web Speech API —
   an English voice reading Pidgin text, honestly labelled in the UI.
+  **No audio was heard on this VM** (zero installed voices) — real
+  audio must be checked on a real device.
+- **nwcprovider does not implement `get_budget`.** The app cannot read
+  remaining budget over NWC — it tracks spend itself from settled
+  receipts. The wallet tab shows the app-tracked remaining, not a
+  wallet-reported figure.
+- **Docker NOT verified on this VM** (compose plugin missing, daemon
+  cannot start — iptables/NET_ADMIN denied). `docker compose up` is
+  shipped but unverified here; verify it on a machine with working
+  Docker before relying on it for the demo.
+- **LLM explainer: real provider UNTESTED.** The LLM path was verified
+  only against a local stub; no key exists here. Until a key is set and
+  a live call is seen, the template fallback is the honest demo path.
 - **Test sats only.** MVP settles on Lightning; ₦/FCFA is display-only.
   Wave/MoMo settlement leg is a next iteration. Locale (currency,
   language, mediator) is config — Senegal skin is a config swap.

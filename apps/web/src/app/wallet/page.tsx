@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { LOCALE, remainingBudgetSats } from "@lighnib/shared";
+import { LOCALE, remainingBudgetSats, scopeStateLabel } from "@lighnib/shared";
 import { api } from "@/lib/api";
 import { getSession, logoutSession, setSession, subscribeSession } from "@/lib/session";
 
@@ -76,7 +77,7 @@ export default function WalletPage() {
             no fit pay again.
           </div>
         )}
-        {!revoked && <p>No wallet connected. <a href="/login">Log in</a> first.</p>}
+        {!revoked && <p>No wallet connected. <Link href="/login">Log in</Link> first.</p>}
         <div className="card">
           <h2>Wallets wey work</h2>
           <p className="small">{LOCALE.supportedWallets.join(" · ")}</p>
@@ -94,7 +95,7 @@ export default function WalletPage() {
       <div className="card">
         <h2>Connection</h2>
         <p className="small mono">wallet: {session.walletPubkey}</p>
-        <p className="small">State: {s.state}</p>
+        <p className="small">State: {scopeStateLabel(s.state)}</p>
         <p className="small">Expires: {new Date(s.expiresAt).toLocaleString()}</p>
         <p className="small">
           {refreshedAt
@@ -116,9 +117,9 @@ export default function WalletPage() {
         <p>Spent today: {s.spentTodaySats.toLocaleString()} sats</p>
         <p>Remaining: {remaining.toLocaleString()} sats</p>
         <p className="small">
-          Budget na wallet dey enforce (NWC quota). Server dey re-check am too.
-          (NWC get_budget no dey implemented by this wallet service, so the
-          app dey track spend itself.)
+          Wallet dey enforce the budget. Server dey re-check am too.
+          (Wallet no fit tell us how much remain, so the app dey track
+          spend itself.)
         </p>
       </div>
       <div className="card">

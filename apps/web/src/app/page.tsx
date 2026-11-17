@@ -1,7 +1,10 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
 import { LOCALE } from "@lighnib/shared";
 
 export default function Home() {
+  const router = useRouter();
   return (
     <>
       <div className="hero">
@@ -14,12 +17,12 @@ export default function Home() {
       </div>
 
       <p>
-        A Lagos market trader logs in to her supplier portal by connecting her
-        Lightning wallet — no password, no form. The login carries a{" "}
+        A Lagos market trader dey log in to her supplier portal with her
+        Lightning wallet — no password, no form. The login carry{" "}
         {LOCALE.currencySymbol}
         {LOCALE.demoDailyBudgetNgn.toLocaleString()}/day budget, payable only to
-        portal suppliers. Every payment gets an AI-explained receipt, spoken
-        aloud in Pidgin. Disputes go to the {LOCALE.mediator}.
+        portal suppliers. Every payment get AI-explained receipt, spoken
+        aloud in Pidgin. Dispute go to the {LOCALE.mediator} mediator.
       </p>
 
       <p className="small">{LOCALE.honestLine}</p>
@@ -32,9 +35,9 @@ export default function Home() {
           <strong>3. Receipt</strong> — bound receipt na proof.{" "}
           <strong>4. Dispute</strong> — mediator see the same receipt.
         </p>
-        <Link href="/login">
-          <button>Start — log in with your wallet</button>
-        </Link>
+        <button onClick={() => router.push("/login")}>
+          Start — log in with your wallet
+        </button>
       </div>
 
       <div className="card">

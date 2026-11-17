@@ -205,7 +205,7 @@ test("INV-9 unknown hash: refused before any wallet request, no scope change", a
   const speak = stubSpeak();
   await assert.rejects(
     runPayFlow(s.api, pay.fn, speak.fn, { ...INPUT, scope: s.scope() }),
-    /INV-9: this invoice hash no dey recorded/,
+    /This invoice no dey recorded for any supplier/,
   );
   assert.equal(pay.calls, 0);
   assert.deepEqual(s.calls, ["decode", "checkBinding"]);
@@ -223,7 +223,7 @@ test("INV-9 supplier mismatch: refused before any wallet request", async () => {
       scope: s.scope(),
       supplierId: "supplier-999",
     }),
-    /INV-9: payment refused — SUPPLIER_MISMATCH/,
+    /This invoice belong to another supplier/,
   );
   assert.equal(pay.calls, 0);
   assert.deepEqual(s.calls, ["decode", "checkBinding"]);
@@ -245,7 +245,7 @@ test("over-budget invoice: refused by the app scope check, wallet never asked", 
   const speak = stubSpeak();
   await assert.rejects(
     runPayFlow(s.api, pay.fn, speak.fn, { ...INPUT, scope: s.scope() }),
-    /Over budget: QUOTA_EXCEEDED/,
+    /This invoice pass your daily scope/,
   );
   assert.equal(pay.calls, 0);
   assert.ok(!s.calls.includes("beginPayment"));
@@ -277,7 +277,7 @@ test("amountless invoice: refused before any wallet request", async () => {
   const speak = stubSpeak();
   await assert.rejects(
     runPayFlow(s.api, pay.fn, speak.fn, { ...INPUT, scope: s.scope() }),
-    /Amountless invoices/,
+    /This invoice get no amount/,
   );
   assert.equal(pay.calls, 0);
 });
@@ -293,7 +293,7 @@ test("wallet QUOTA_EXCEEDED: scope cancelled back to LOGGED_IN, no receipt, erro
   const speak = stubSpeak();
   await assert.rejects(
     runPayFlow(s.api, pay, speak.fn, { ...INPUT, scope: s.scope() }),
-    /spending quota/,
+    /This invoice pass your daily scope/,
   );
   assert.ok(s.calls.includes("cancelPayment"));
   assert.ok(!s.calls.includes("settlePayment"));
@@ -309,7 +309,7 @@ test("revoked scope: beginPayment refuses, wallet never asked (INV-4)", async ()
   const pay = stubPay();
   await assert.rejects(
     runPayFlow(s.api, pay.fn, () => {}, { ...INPUT, scope: s.scope() }),
-    /SCOPE_REVOKED/,
+    /This login don revoke/,
   );
   assert.equal(pay.calls, 0);
   assert.ok(!s.calls.includes("settlePayment"));

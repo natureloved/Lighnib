@@ -83,6 +83,45 @@ export const LOCALE = {
       "This invoice no belong to any supplier for this portal. App refuse am before wallet even see am.",
     voiceLabel:
       "Spoken readout: English voice reading Pidgin text (Web Speech API). No dedicated Pidgin voice.",
+
+    /** Pay-flow refusal messages — the exact words the merchant sees. */
+    payInvalidInvoice:
+      "Invoice no valid — check the invoice code from your supplier.",
+    payAmountless:
+      "This invoice get no amount — ask your supplier for one with amount.",
+    payUnknownHash:
+      "This invoice no dey recorded for any supplier for this portal. App refuse am before wallet see am.",
+    paySupplierMismatch:
+      "This invoice belong to another supplier, not the one you pick. App refuse am.",
+    payScopeRevoked:
+      "This login don revoke. Connect your wallet again to pay.",
+    payScopeExpired:
+      "This login don expire. Connect your wallet again to pay.",
+    /** Over-budget refusal, with the live remaining shown. */
+    payOverBudget: (remainingSats: number) =>
+      `This invoice pass your daily scope. Wallet go refuse am. Remaining: ${remainingSats.toLocaleString()} sats. Raise scope or split the order.`,
+
+    /** Plain-words scope states — never show the raw state code. */
+    scopeStates: {
+      UNREGISTERED: "Not logged in",
+      LOGGED_IN: "Logged in",
+      PAYING: "Paying…",
+      RECEIPTED: "Receipt don land",
+      DISPUTED: "Dispute open",
+      RESOLVED: "Settled by mediator",
+      REFUNDED: "Refunded",
+      REVOKED: "Revoked",
+    } as const,
+
+    /** Third-party verify checklist, in plain words. */
+    verifyCheckLabels: {
+      settled: "Receipt na settled payment",
+      complete: "Vendor, purpose and amount dey complete",
+      hashFormat: "Payment hash na real hash",
+      preimageFormat: "Preimage na real preimage",
+      preimageMatchesHash: "Preimage hash to the payment hash (na real payment)",
+      nostrEventMatches: "Public receipt record match the card (nobody tamper am)",
+    } as const,
   },
 } as const;
 

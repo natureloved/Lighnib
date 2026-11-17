@@ -1,1 +1,32 @@
-{"description":"Lighnib — Small Lightning payments, locked. Wallet-as-key for local commerce (Dakar Bitcoin Hack 2026).","devDependencies":{"@types/node":"^26.6.6","concurrently":"^9.1.2","nostr-tools":"^2.26.1","tsx":"^4.20.6","typescript":"^5.9.3","ws":"^8.23.0"},"license":"MIT","name":"lighnib","private":true,"scripts":{"build":"npm run build --workspaces --if-present","dev":"concurrently \"npm run dev --workspace=@lighnib/api\" \"npm run dev --workspace=@lighnib/web\"","dev:api":"npm run dev --workspace=@lighnib/api","dev:web":"npm run dev --workspace=@lighnib/web","seed":"node scripts/seed.mjs","e2e:live":"npx tsx scripts/e2e-live.mts","relay":"node scripts/local-relay.mjs 7777","test":"tsx --test tests/*.test.ts","typecheck":"tsc -b"},"version":"0.1.0","workspaces":["apps/*","packages/*"]}
+{
+  "description": "Lighnib \u2014 Small Lightning payments, locked. Wallet-as-key for local commerce (Dakar Bitcoin Hack 2026).",
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "concurrently": "^9.1.2",
+    "nostr-tools": "^2.26.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "ws": "^8.23.0"
+  },
+  "license": "MIT",
+  "name": "lighnib",
+  "private": true,
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev": "concurrently \"npm run dev --workspace=@lighnib/api\" \"npm run dev --workspace=@lighnib/web\"",
+    "dev:api": "npm run dev --workspace=@lighnib/api",
+    "dev:web": "npm run dev --workspace=@lighnib/web",
+    "seed": "node scripts/seed.mjs",
+    "e2e:live": "npx tsx scripts/e2e-live.mts",
+    "relay": "node scripts/local-relay.mjs 7777",
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck": "tsc -b",
+    "predev": "npm run build --workspace=@lighnib/shared",
+    "pretest": "npm run build --workspace=@lighnib/shared"
+  },
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

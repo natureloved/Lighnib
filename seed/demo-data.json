@@ -1,10 +1,10 @@
 {
-  "seededAt": "2026-11-16T21:01:28.050Z",
+  "seededAt": "2026-11-16T21:47:17.811Z",
   "market": "Lagos, Nigeria",
   "merchant": {
-    "walletId": "c4baf2fa43834dc2b31f6002d8ea6297",
-    "walletPubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-    "scopeId": "scope_mwjr0suw_b6zu44",
+    "walletId": "99753be113a9424ab10ff1b9f3421692",
+    "walletPubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+    "scopeId": "scope_mwjsnqhd_3dfylj",
     "fundedTestSats": 100000,
     "spentTestSats": 1000
   },
@@ -16,209 +16,209 @@
     "name": "Lagos market association"
   },
   "scope": {
-    "id": "scope_mwjr0suw_b6zu44",
+    "id": "scope_mwjsnqhd_3dfylj",
     "dailyBudgetSats": 33333,
     "dailyBudgetFiat": 50000,
     "currency": "NGN",
-    "expiresAt": "2026-11-17T05:01:29.241Z",
+    "expiresAt": "2026-11-17T05:47:18.865Z",
     "state": "LOGGED_IN"
   },
   "receipts": [
     {
-      "id": "rcpt_seed_202611162101_01",
-      "orderId": "ORD-SEED-202611162101-01",
+      "id": "rcpt_seed_202611162147_01",
+      "orderId": "ORD-SEED-202611162147-01",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 1 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "5d169b35dac43e3e8d792881769f8bbbd1dc75c4452adf3e95c64aea404ef602",
-      "preimage": "e105c660cc6dcfc63b057f8a45fefa52da88daf4bf0deb4ea6f6065791eadf50",
-      "settledAt": "2026-11-16T21:01:31.967Z",
+      "paymentHash": "297c0cf44161e94c7d03c47bc4f009cffd628d8f4f8713efcac4fd5e845f1261",
+      "preimage": "bec85f194311cce05640a2238297e68dcfd29a265df11bbbcbec3036d9d73611",
+      "settledAt": "2026-11-16T21:47:21.402Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_01\",\"orderId\":\"ORD-SEED-202611162101-01\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 1 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"5d169b35dac43e3e8d792881769f8bbbd1dc75c4452adf3e95c64aea404ef602\",\"preimage\":\"e105c660cc6dcfc63b057f8a45fefa52da88daf4bf0deb4ea6f6065791eadf50\",\"settledAt\":\"2026-11-16T21:01:31.967Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_01\",\"orderId\":\"ORD-SEED-202611162147-01\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 1 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"297c0cf44161e94c7d03c47bc4f009cffd628d8f4f8713efcac4fd5e845f1261\",\"preimage\":\"bec85f194311cce05640a2238297e68dcfd29a265df11bbbcbec3036d9d73611\",\"settledAt\":\"2026-11-16T21:47:21.402Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611162101_02",
-      "orderId": "ORD-SEED-202611162101-02",
+      "id": "rcpt_seed_202611162147_02",
+      "orderId": "ORD-SEED-202611162147-02",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 2 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "6f18a7c9eb5110d8fdb3dd2afca6a9358abec73a3c6bbd15a12ec118ecb0d05b",
-      "preimage": "7fd21e9127fb1e1f323718d74c68c9c64ad535b15f87c918b40c06a7e8ee9523",
-      "settledAt": "2026-11-16T21:01:34.393Z",
+      "paymentHash": "17ba5b49f4f1278730ff563005d2231859b1f352c65f36ecba6d300a5a00bcb8",
+      "preimage": "d2e08d2bb47af8fbdad0e11897a583e732f6085b348c0140ed1de17ee88bb447",
+      "settledAt": "2026-11-16T21:47:23.834Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_02\",\"orderId\":\"ORD-SEED-202611162101-02\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 2 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"6f18a7c9eb5110d8fdb3dd2afca6a9358abec73a3c6bbd15a12ec118ecb0d05b\",\"preimage\":\"7fd21e9127fb1e1f323718d74c68c9c64ad535b15f87c918b40c06a7e8ee9523\",\"settledAt\":\"2026-11-16T21:01:34.393Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_02\",\"orderId\":\"ORD-SEED-202611162147-02\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 2 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"17ba5b49f4f1278730ff563005d2231859b1f352c65f36ecba6d300a5a00bcb8\",\"preimage\":\"d2e08d2bb47af8fbdad0e11897a583e732f6085b348c0140ed1de17ee88bb447\",\"settledAt\":\"2026-11-16T21:47:23.834Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611162101_03",
-      "orderId": "ORD-SEED-202611162101-03",
+      "id": "rcpt_seed_202611162147_03",
+      "orderId": "ORD-SEED-202611162147-03",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 3 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "464afc4a3a39d272b2fddfc246ee4779267e96de67a76cb67a2e48c471349bc3",
-      "preimage": "8515330c4a5a3027615a2ee0d500b12d0190c4a955348b4984db92953d169542",
-      "settledAt": "2026-11-16T21:01:36.860Z",
+      "paymentHash": "fdf43422d77e47b2c62b76aa4d18fa94201e81ce672a3310d09c12196e9a1f72",
+      "preimage": "7db9d1ad1cf44e5fb0cfb1e6f6d09c5b262048fea1546a2be6dfbcea9afa77d5",
+      "settledAt": "2026-11-16T21:47:26.249Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_03\",\"orderId\":\"ORD-SEED-202611162101-03\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 3 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"464afc4a3a39d272b2fddfc246ee4779267e96de67a76cb67a2e48c471349bc3\",\"preimage\":\"8515330c4a5a3027615a2ee0d500b12d0190c4a955348b4984db92953d169542\",\"settledAt\":\"2026-11-16T21:01:36.860Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_03\",\"orderId\":\"ORD-SEED-202611162147-03\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 3 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"fdf43422d77e47b2c62b76aa4d18fa94201e81ce672a3310d09c12196e9a1f72\",\"preimage\":\"7db9d1ad1cf44e5fb0cfb1e6f6d09c5b262048fea1546a2be6dfbcea9afa77d5\",\"settledAt\":\"2026-11-16T21:47:26.249Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611162101_04",
-      "orderId": "ORD-SEED-202611162101-04",
+      "id": "rcpt_seed_202611162147_04",
+      "orderId": "ORD-SEED-202611162147-04",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 4 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "4e1bd941153b9218f5d632d7c53f3f91e941755ed08c3f6d70ae2f71e4ed8672",
-      "preimage": "8dfaa48a537c4e29e1d281553fb0b4d0657463c84881d4c511521178f0143136",
-      "settledAt": "2026-11-16T21:01:39.296Z",
+      "paymentHash": "3cd26ba7da7870ae6dbb23a1508b604306397ff99a72e7945fafca676f33c599",
+      "preimage": "8122e3283318e37a1a1a3f457852617dcfb7fa72ea87a390a6443793e7f74975",
+      "settledAt": "2026-11-16T21:47:29.139Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_04\",\"orderId\":\"ORD-SEED-202611162101-04\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 4 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"4e1bd941153b9218f5d632d7c53f3f91e941755ed08c3f6d70ae2f71e4ed8672\",\"preimage\":\"8dfaa48a537c4e29e1d281553fb0b4d0657463c84881d4c511521178f0143136\",\"settledAt\":\"2026-11-16T21:01:39.296Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_04\",\"orderId\":\"ORD-SEED-202611162147-04\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 4 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"3cd26ba7da7870ae6dbb23a1508b604306397ff99a72e7945fafca676f33c599\",\"preimage\":\"8122e3283318e37a1a1a3f457852617dcfb7fa72ea87a390a6443793e7f74975\",\"settledAt\":\"2026-11-16T21:47:29.139Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611162101_05",
-      "orderId": "ORD-SEED-202611162101-05",
+      "id": "rcpt_seed_202611162147_05",
+      "orderId": "ORD-SEED-202611162147-05",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 5 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "c5561ee427be4e282d84e93f87285b53729e1f0d8e670c6565066ad56ddcd487",
-      "preimage": "73eb4d475e4e7f8f0317180f82a1c0f0b83c0f34c5daf4188990adf1c0d4acbb",
-      "settledAt": "2026-11-16T21:01:41.849Z",
+      "paymentHash": "4ba46c951bb25daab1b7de133a92f8056dbb8e6d86c5c0bc13a8779bb261eaa4",
+      "preimage": "6a4552db8dba3f35711e3b0b3ea7144549cf925eae5217f4d213ecb445a21b48",
+      "settledAt": "2026-11-16T21:47:31.620Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_05\",\"orderId\":\"ORD-SEED-202611162101-05\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 5 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"c5561ee427be4e282d84e93f87285b53729e1f0d8e670c6565066ad56ddcd487\",\"preimage\":\"73eb4d475e4e7f8f0317180f82a1c0f0b83c0f34c5daf4188990adf1c0d4acbb\",\"settledAt\":\"2026-11-16T21:01:41.849Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_05\",\"orderId\":\"ORD-SEED-202611162147-05\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 5 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"4ba46c951bb25daab1b7de133a92f8056dbb8e6d86c5c0bc13a8779bb261eaa4\",\"preimage\":\"6a4552db8dba3f35711e3b0b3ea7144549cf925eae5217f4d213ecb445a21b48\",\"settledAt\":\"2026-11-16T21:47:31.620Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611162101_06",
-      "orderId": "ORD-SEED-202611162101-06",
+      "id": "rcpt_seed_202611162147_06",
+      "orderId": "ORD-SEED-202611162147-06",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 6 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "14357636f9dce32380274121135fa6c005f89031e2bff2251f70f02c60507bb1",
-      "preimage": "3c869f7c16c4d90dd83b5090e69ad1299b60869662ef54c39fa1340ec89bf8e7",
-      "settledAt": "2026-11-16T21:01:44.336Z",
+      "paymentHash": "0c3162f2c8b78aea8a3cd5828bd714acdb576902420e17fb795651ca55706fcc",
+      "preimage": "c89d4941f4487272cde110d48b4b4e0606f27f2e6f124ddcf9b747f2b4d5d7c2",
+      "settledAt": "2026-11-16T21:47:34.151Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_06\",\"orderId\":\"ORD-SEED-202611162101-06\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 6 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"14357636f9dce32380274121135fa6c005f89031e2bff2251f70f02c60507bb1\",\"preimage\":\"3c869f7c16c4d90dd83b5090e69ad1299b60869662ef54c39fa1340ec89bf8e7\",\"settledAt\":\"2026-11-16T21:01:44.336Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_06\",\"orderId\":\"ORD-SEED-202611162147-06\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 6 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"0c3162f2c8b78aea8a3cd5828bd714acdb576902420e17fb795651ca55706fcc\",\"preimage\":\"c89d4941f4487272cde110d48b4b4e0606f27f2e6f124ddcf9b747f2b4d5d7c2\",\"settledAt\":\"2026-11-16T21:47:34.151Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611162101_07",
-      "orderId": "ORD-SEED-202611162101-07",
+      "id": "rcpt_seed_202611162147_07",
+      "orderId": "ORD-SEED-202611162147-07",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 7 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "9c7f9f986728739916d13ae6465462f82a97286ba369dbeefd95f42be440c3ac",
-      "preimage": "0af7979fb06a7d8a501eb6d16f2018ab703d1ffd151c88f4a2306652bd796d97",
-      "settledAt": "2026-11-16T21:01:46.787Z",
+      "paymentHash": "45556a92fad0f97164211902d3d71357b94d1fffc50c18af049334dd58cada20",
+      "preimage": "aecdc25311625d7c7c19505e365eebf31c0333f996f50d044359eed549d811bb",
+      "settledAt": "2026-11-16T21:47:36.688Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_07\",\"orderId\":\"ORD-SEED-202611162101-07\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 7 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"9c7f9f986728739916d13ae6465462f82a97286ba369dbeefd95f42be440c3ac\",\"preimage\":\"0af7979fb06a7d8a501eb6d16f2018ab703d1ffd151c88f4a2306652bd796d97\",\"settledAt\":\"2026-11-16T21:01:46.787Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_07\",\"orderId\":\"ORD-SEED-202611162147-07\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 7 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"45556a92fad0f97164211902d3d71357b94d1fffc50c18af049334dd58cada20\",\"preimage\":\"aecdc25311625d7c7c19505e365eebf31c0333f996f50d044359eed549d811bb\",\"settledAt\":\"2026-11-16T21:47:36.688Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611162101_08",
-      "orderId": "ORD-SEED-202611162101-08",
+      "id": "rcpt_seed_202611162147_08",
+      "orderId": "ORD-SEED-202611162147-08",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 8 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "66b0fa16f92a5c2f8f9daf401ebad75bb9223fcf1c7efcda484a29d1d618b74e",
-      "preimage": "5b65f01dd853ba8869307cf5805b4bca0c2ebeb1f413f38460c112921f97b72f",
-      "settledAt": "2026-11-16T21:01:49.231Z",
+      "paymentHash": "4f2d13bbc14e32d88c52cc480230355ffa2571aae91dd8945f9d08c3f9ae5b48",
+      "preimage": "d1053e2b4b3e6dea819b85547813c987c70638628a601a5d8a8b9cec4c95495e",
+      "settledAt": "2026-11-16T21:47:39.033Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_08\",\"orderId\":\"ORD-SEED-202611162101-08\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 8 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"66b0fa16f92a5c2f8f9daf401ebad75bb9223fcf1c7efcda484a29d1d618b74e\",\"preimage\":\"5b65f01dd853ba8869307cf5805b4bca0c2ebeb1f413f38460c112921f97b72f\",\"settledAt\":\"2026-11-16T21:01:49.231Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_08\",\"orderId\":\"ORD-SEED-202611162147-08\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 8 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"4f2d13bbc14e32d88c52cc480230355ffa2571aae91dd8945f9d08c3f9ae5b48\",\"preimage\":\"d1053e2b4b3e6dea819b85547813c987c70638628a601a5d8a8b9cec4c95495e\",\"settledAt\":\"2026-11-16T21:47:39.033Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611162101_09",
-      "orderId": "ORD-SEED-202611162101-09",
+      "id": "rcpt_seed_202611162147_09",
+      "orderId": "ORD-SEED-202611162147-09",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 9 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "2ebe8d2b43073059190b4fcb42660afa9ded5a1abed7b8507d80fffce8d56a48",
-      "preimage": "360a6582403bec80d3b4dcdf12a7c035bff1969005b287a74187c5a092463314",
-      "settledAt": "2026-11-16T21:01:51.660Z",
+      "paymentHash": "aa959a7a94619f4b1709f066e7468d52f1c7a000fe23ff12525df31e810f037d",
+      "preimage": "60eaae7b93a9484f32fea4de9b89a4e5bdfd363cf84fcd2116f2cb4fdc333373",
+      "settledAt": "2026-11-16T21:47:41.415Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_09\",\"orderId\":\"ORD-SEED-202611162101-09\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 9 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"2ebe8d2b43073059190b4fcb42660afa9ded5a1abed7b8507d80fffce8d56a48\",\"preimage\":\"360a6582403bec80d3b4dcdf12a7c035bff1969005b287a74187c5a092463314\",\"settledAt\":\"2026-11-16T21:01:51.660Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_09\",\"orderId\":\"ORD-SEED-202611162147-09\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 9 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"aa959a7a94619f4b1709f066e7468d52f1c7a000fe23ff12525df31e810f037d\",\"preimage\":\"60eaae7b93a9484f32fea4de9b89a4e5bdfd363cf84fcd2116f2cb4fdc333373\",\"settledAt\":\"2026-11-16T21:47:41.415Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611162101_10",
-      "orderId": "ORD-SEED-202611162101-10",
+      "id": "rcpt_seed_202611162147_10",
+      "orderId": "ORD-SEED-202611162147-10",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions — Mama Nkechi",
       "purpose": "Demo order 10 — provisions from Balogun market",
       "amountSats": 100,
       "amountFiat": 0,
       "currency": "NGN",
-      "paymentHash": "f510de56193412b1d38f2cce22d8d42df07fa9231d1578f8232b73a1a3830461",
-      "preimage": "a8089f1803b85f5c50b4ad43e0238d9a97bb941daa58dec238fa384c3008bbb4",
-      "settledAt": "2026-11-16T21:01:54.056Z",
+      "paymentHash": "e3c14287596e13b315be32d45b4f8f0ff660b00ba50f2b969f8138b0f413d124",
+      "preimage": "31fd545b967cb5ac629c8d4c76af84b45535998a30910cdf46c676d0701d5943",
+      "settledAt": "2026-11-16T21:47:43.795Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "b220deda505b20f05239fe01da5c10e07f57443a4343c7c894754536965c7c86",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162101_10\",\"orderId\":\"ORD-SEED-202611162101-10\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 10 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"f510de56193412b1d38f2cce22d8d42df07fa9231d1578f8232b73a1a3830461\",\"preimage\":\"a8089f1803b85f5c50b4ad43e0238d9a97bb941daa58dec238fa384c3008bbb4\",\"settledAt\":\"2026-11-16T21:01:54.056Z\"}"
+        "pubkey": "0f7b9ef65c71d60d17f28ab6cba008665e27b7fbcd4480774ca1a756f2ccf69d",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611162147_10\",\"orderId\":\"ORD-SEED-202611162147-10\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions — Mama Nkechi\",\"purpose\":\"Demo order 10 — provisions from Balogun market\",\"amountSats\":100,\"paymentHash\":\"e3c14287596e13b315be32d45b4f8f0ff660b00ba50f2b969f8138b0f413d124\",\"preimage\":\"31fd545b967cb5ac629c8d4c76af84b45535998a30910cdf46c676d0701d5943\",\"settledAt\":\"2026-11-16T21:47:43.795Z\"}"
       }
     }
   ],
   "blocked": [
     {
       "kind": "wallet-quota-exceeded",
-      "orderId": "ORD-SEED-202611162101-OVER",
+      "orderId": "ORD-SEED-202611162147-OVER",
       "amountSats": 46667,
       "amountNgn": 70000,
       "walletError": "QUOTA_EXCEEDED The wallet has exceeded its spending quota.",
@@ -226,7 +226,7 @@
     },
     {
       "kind": "app-inv9-unknown-hash",
-      "orderId": "ORD-SEED-202611162101-OVER-WRONG",
+      "orderId": "ORD-SEED-202611162147-OVER-WRONG",
       "amountSats": 50,
       "supplierId": "supplier-other-999",
       "appRefusal": "UNKNOWN_INVOICE_HASH",

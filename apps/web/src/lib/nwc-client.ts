@@ -62,7 +62,7 @@ export async function payInvoice(invoice: string): Promise<PayResult> {
  */
 export function connectWallet(nwcUri: string, ttlMs: number): string {
   const pubkey = parseWalletPubkey(nwcUri);
-  if (!pubkey) throw new Error("Invalid NWC connection URI");
+  if (!pubkey) throw new Error("That no be valid wallet connection code.");
   nwcSession.set(nwcUri.trim(), ttlMs);
   return pubkey;
 }

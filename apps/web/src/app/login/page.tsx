@@ -1,7 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LOCALE, ngnToSats } from "@lighnib/shared";
+import { LOCALE, ngnToSats, scopeStateLabel } from "@lighnib/shared";
 import { api } from "@/lib/api";
 import { connectWallet, isValidNwcUri } from "@/lib/nwc-client";
 import { getSession, setSession, subscribeSession } from "@/lib/session";
@@ -12,6 +13,7 @@ import { getSession, setSession, subscribeSession } from "@/lib/session";
  * never localStorage, never the server, never logs (INV-8).
  */
 export default function LoginPage() {
+  const router = useRouter();
   const [uri, setUri] = useState("");
   const [budgetNgn, setBudgetNgn] = useState<number>(LOCALE.demoDailyBudgetNgn);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +25,7 @@ export default function LoginPage() {
   async function connect() {
     setError(null);
     if (!isValidNwcUri(uri)) {
-      setError("That no be valid NWC connection URI. Check am from your wallet.");
+      setError("That no be valid wallet connection code. Check am from your wallet.");
       return;
     }
     setBusy(true);
@@ -70,13 +72,11 @@ export default function LoginPage() {
           </p>
           <p className="small">
             Scope expires: {new Date(s.expiresAt).toLocaleTimeString()} · State:{" "}
-            {s.state}
+            {scopeStateLabel(s.state)}
           </p>
           <p className="small">{LOCALE.honestLine}</p>
         </div>
-        <a href="/pay">
-          <button>Go pay supplier →</button>
-        </a>
+        <button onClick={() => router.push("/pay")}>Go pay supplier →</button>
       </>
     );
   }
@@ -87,7 +87,7 @@ export default function LoginPage() {
       <p>{LOCALE.copy.loginBody}</p>
 
       <div className="card">
-        <label htmlFor="nwc-uri">NWC connection URI (from your wallet)</label>
+        <label htmlFor="nwc-uri">Wallet connection code (from your wallet)</label>
         <input
           id="nwc-uri"
           type="password"
@@ -114,7 +114,7 @@ export default function LoginPage() {
         <p className="small">
           Demo scope: {LOCALE.currencySymbol}
           {LOCALE.demoDailyBudgetNgn.toLocaleString()}/day. Wallet go enforce
-          am — pass am and wallet go refuse (QUOTA_EXCEEDED).
+          am — pass am and wallet go refuse am.
         </p>
 
         <button onClick={connect} disabled={busy || !uri}>

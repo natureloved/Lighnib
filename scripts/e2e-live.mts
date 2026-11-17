@@ -209,7 +209,7 @@ try {
     overRefused = (e as Error).message;
     step(
       "web-over-budget-refused",
-      /Over budget: QUOTA_EXCEEDED/.test(overRefused) && walletPayCalls === payBeforeOver,
+      /This invoice pass your daily scope/.test(overRefused) && walletPayCalls === payBeforeOver,
       `${overRefused} (walletPayCalls delta=${walletPayCalls - payBeforeOver})`,
     );
   }
@@ -246,7 +246,7 @@ try {
   } catch (e) {
     step(
       "web-inv9-unknown-hash-refused",
-      /INV-9: this invoice hash no dey recorded/.test((e as Error).message) &&
+      /This invoice no dey recorded for any supplier/.test((e as Error).message) &&
         walletPayCalls === payBeforeWrong,
       `${(e as Error).message.slice(0, 120)} (walletPayCalls delta=${walletPayCalls - payBeforeWrong})`,
     );
@@ -268,7 +268,7 @@ try {
   } catch (e) {
     step(
       "revoked-scope-never-pays",
-      /SCOPE_REVOKED|Payment refused/.test((e as Error).message) && walletPayCalls === payBeforeRevoke,
+      /This login don revoke/.test((e as Error).message) && walletPayCalls === payBeforeRevoke,
       `${(e as Error).message.slice(0, 120)} (walletPayCalls delta=${walletPayCalls - payBeforeRevoke})`,
     );
   }

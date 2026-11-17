@@ -10,6 +10,15 @@
  */
 
 import type { BudgetCheck, Scope, ScopeState } from "./types";
+import { LOCALE } from "./locale";
+
+/**
+ * Plain-words label for a scope state — the UI never shows the raw state
+ * code (LOGGED_IN, RECEIPTED…) to a merchant.
+ */
+export function scopeStateLabel(state: ScopeState): string {
+  return LOCALE.copy.scopeStates[state] ?? state;
+}
 
 export const SCOPE_TRANSITIONS: Record<ScopeState, ScopeState[]> = {
   UNREGISTERED: ["LOGGED_IN"],

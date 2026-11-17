@@ -38,10 +38,12 @@
 //
 // Usage:
 //   LNBITS_URL=http://127.0.0.1:5000 API_URL=http://localhost:3001 \
-//   LNBITS_DATA_FOLDER=/tmp/lighnib-lnbits-data node scripts/seed.mjs
-// Defaults work on the spike machine. On a docker-compose machine set
-// LNBITS_DATA_FOLDER to the LNbits volume path (or fund the merchant
-// wallet another way and set SEED_SKIP_FUND=1 with a pre-funded wallet).
+//   node scripts/seed.mjs
+// Defaults work on the dev machine (persistent LNbits data under
+// .local/lnbits-data — see scripts/start-lnbits.sh). On a docker-compose
+// machine set LNBITS_DATA_FOLDER to the LNbits volume path (or fund the
+// merchant wallet another way and set SEED_SKIP_FUND=1 with a pre-funded
+// wallet).
 //
 // Exit 0 on success, 1 on any failure. Prints a demo-ready summary.
 
@@ -61,7 +63,7 @@ const LNBITS_URL = process.env.LNBITS_URL || "http://127.0.0.1:5000";
 const API_URL = process.env.API_URL || "http://localhost:3001";
 const RELAY_URL = process.env.RELAY_URL || "ws://127.0.0.1:7777";
 const LNBITS_DATA_FOLDER =
-  process.env.LNBITS_DATA_FOLDER || "/tmp/lighnib-lnbits-data";
+  process.env.LNBITS_DATA_FOLDER || join(ROOT, ".local", "lnbits-data");
 const ADMIN_USER = process.env.LNBITS_ADMIN_USER || "admin";
 const ADMIN_PASSWORD =
   process.env.LNBITS_ADMIN_PASSWORD || "lighnib-spike-2026";

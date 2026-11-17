@@ -1,19 +1,17 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LOCALE, verifyReceiptDetail, type ReceiptVerificationDetail } from "@lighnib/shared";
 import { api } from "@/lib/api";
 import { speak, stopSpeaking, VOICE_LABEL } from "@/lib/voice";
 import type { BoundReceipt } from "@lighnib/shared";
 
-const CHECK_LABELS: { key: keyof ReceiptVerificationDetail; label: string }[] = [
-  { key: "settled", label: "Receipt na settled payment" },
-  { key: "complete", label: "Vendor, purpose and amount dey complete" },
-  { key: "hashFormat", label: "Payment hash na valid 32-byte hash" },
-  { key: "preimageFormat", label: "Preimage na valid 32-byte preimage" },
-  { key: "preimageMatchesHash", label: "Preimage hash to the payment hash (na real payment)" },
-  { key: "nostrEventMatches", label: "Public Nostr receipt match the card (no tamper)" },
-];
+/** The six per-check keys — `valid` is the aggregate, not a checklist item. */
+type CheckKey = Exclude<keyof ReceiptVerificationDetail, "valid">;
+const CHECK_LABELS: { key: CheckKey; label: string }[] = (
+  Object.keys(LOCALE.copy.verifyCheckLabels) as CheckKey[]
+).map((key) => ({ key, label: LOCALE.copy.verifyCheckLabels[key] }));
 
 function CheckList({ checks }: { checks: ReceiptVerificationDetail }) {
   return (
@@ -29,6 +27,7 @@ function CheckList({ checks }: { checks: ReceiptVerificationDetail }) {
 
 /** /receipts — verifiable bound receipt cards (INV-5, INV-6) + third-party verify. */
 export default function ReceiptsPage() {
+  const router = useRouter();
   const [receipts, setReceipts] = useState<BoundReceipt[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [verified, setVerified] = useState<Record<string, boolean>>({});
@@ -199,9 +198,12 @@ export default function ReceiptsPage() {
               Explain this receipt
             </button>
           )}
-          <a href={`/dispute?receipt=${r.id}`}>
-            <button className="secondary">Open dispute</button>
-          </a>
+          <button
+            className="secondary"
+            onClick={() => router.push(`/dispute?receipt=${r.id}`)}
+          >
+            Open dispute
+          </button>
         </div>
       ))}
     </>

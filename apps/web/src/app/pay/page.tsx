@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LOCALE } from "@lighnib/shared";
 import { api } from "@/lib/api";
@@ -24,12 +26,13 @@ const SUPPLIERS: { id: string; label: string; vendorName: string }[] = [
   { id: "supplier-002", label: "supplier-002 — Balogun textiles", vendorName: "Balogun textiles" },
   {
     id: "supplier-999",
-    label: "supplier-999 — NOT on the allowlist (demo block)",
+    label: "supplier-999 — no dey for this portal (demo block)",
     vendorName: "Unknown supplier",
   },
 ];
 
 export default function PayPage() {
+  const router = useRouter();
   const [invoice, setInvoice] = useState("");
   const [supplierId, setSupplierId] = useState("supplier-balogun-001");
   const [status, setStatus] = useState<string | null>(null);
@@ -53,7 +56,7 @@ export default function PayPage() {
       return;
     }
     if (!invoice.trim()) {
-      setError("Paste the supplier invoice (BOLT11).");
+      setError("Paste the supplier invoice code.");
       return;
     }
     setBusy(true);
@@ -86,7 +89,7 @@ export default function PayPage() {
 
       {!scope && (
         <div className="error">
-          You never log in. <a href="/login">Connect your wallet first</a>.
+          You never log in. <Link href="/login">Connect your wallet first</Link>.
         </div>
       )}
       {scope && (
@@ -115,7 +118,7 @@ export default function PayPage() {
           ))}
         </select>
 
-        <label htmlFor="invoice">Supplier invoice (BOLT11)</label>
+        <label htmlFor="invoice">Supplier invoice code</label>
         <textarea
           id="invoice"
           rows={3}
@@ -124,8 +127,8 @@ export default function PayPage() {
           onChange={(e) => setInvoice(e.target.value)}
         />
         <p className="small">
-          App go decode am, check the hash against the supplier allowlist
-          (INV-9), check your scope (INV-2) — before wallet ever see am.
+          App go decode am, check say the invoice belong to this supplier,
+          check your scope — before wallet ever see am.
         </p>
         <button onClick={pay} disabled={busy || !scope}>
           {busy ? "Paying…" : "Pay invoice"}
@@ -156,9 +159,9 @@ export default function PayPage() {
               </button>
             </>
           )}
-          <a href="/receipts">
-            <button className="secondary">See all receipts</button>
-          </a>
+          <button className="secondary" onClick={() => router.push("/receipts")}>
+            See all receipts
+          </button>
         </div>
       )}
     </>
