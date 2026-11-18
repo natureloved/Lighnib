@@ -33,8 +33,11 @@ by the app + bound receipt. Mediator sees any mismatch.
 ## Judge 5-min guide (start here)
 
 You need: a phone or laptop, and any NWC wallet: [Alby Hub](https://albyhub.com) (≥ v1.19.0),
-[Zeus](https://zeusln.app), [LNbits NWC](https://lnbits.com), or [Coinos](https://v3.coinos.io).
+[Zeus](https://zeusln.app), [LNbits NWC](https://lnbits.com), [Coinos](https://v3.coinos.io),
+[Blitz](https://blitzwalletapp.com), or [Rizful](https://rizful.com) (browser, no install).
 **Phoenix has NO NWC, do not use it.**
+
+Note: Blitz keeps its NWC balance separate from its main balance, so fund the NWC side before paying. Rizful is custodial and browser-based, no app to install.
 
 ### If you do not have a wallet yet (3 min)
 
