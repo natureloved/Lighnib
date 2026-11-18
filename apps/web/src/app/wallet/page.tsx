@@ -4,7 +4,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LOCALE, remainingBudgetSats, scopeStateLabel } from "@lighnib/shared";
 import { api } from "@/lib/api";
+import LockSeal from "@/components/LockSeal";
 import { getSession, logoutSession, setSession, subscribeSession } from "@/lib/session";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { NumberTicker } from "@/components/ui/number-ticker";
+import { AnimatedCircularProgressBar } from "@/components/ui/animated-circular-progress-bar";
+import { BlurFade } from "@/components/ui/blur-fade";
 
 /**
  * /wallet — connection / budget / revoke view.
@@ -70,66 +76,118 @@ export default function WalletPage() {
   if (revoked || !session.connected || !session.scope) {
     return (
       <>
-        <h1>{LOCALE.copy.walletTitle}</h1>
-        {revoked && (
-          <div className="ok">
-            Revoked — logout done. Spending don die instantly; the connection
-            no fit pay again.
-          </div>
-        )}
-        {!revoked && <p>No wallet connected. <Link href="/login">Log in</Link> first.</p>}
-        <div className="card">
-          <h2>Wallets wey work</h2>
-          <p className="small">{LOCALE.supportedWallets.join(" · ")}</p>
-          <p className="small">Phoenix has NO NWC — e no dey supported.</p>
-        </div>
+        <BlurFade delay={0}>
+          <h1>{LOCALE.copy.walletTitle}</h1>
+          {revoked && (
+            <div className="ok">
+              Revoked — logout done. Spending don die instantly; the connection
+              no fit pay again.
+            </div>
+          )}
+          {!revoked && <p>No wallet connected. <Link href="/login">Log in</Link> first.</p>}
+          <Card>
+            <CardHeader>
+              <CardTitle>Wallets wey work</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="small">{LOCALE.supportedWallets.join(" · ")}</p>
+              <p className="small">Phoenix has NO NWC — e no dey supported.</p>
+            </CardContent>
+          </Card>
+        </BlurFade>
       </>
     );
   }
 
   const s = session.scope;
   const remaining = remainingBudgetSats(s);
+  const spentPct = Math.min(
+    100,
+    Math.round((s.spentTodaySats / s.dailyBudgetSats) * 100),
+  );
+  const remainingPct = 100 - spentPct;
   return (
     <>
-      <h1>{LOCALE.copy.walletTitle}</h1>
-      <div className="card">
-        <h2>Connection</h2>
-        <p className="small mono">wallet: {session.walletPubkey}</p>
-        <p className="small">State: {scopeStateLabel(s.state)}</p>
-        <p className="small">Expires: {new Date(s.expiresAt).toLocaleString()}</p>
-        <p className="small">
-          {refreshedAt
-            ? `Scope refreshed from server ${refreshedAt} — remaining na live tracked spend.`
-            : "Showing the scope from login time — refresh to see live tracked spend."}
-        </p>
-        <button className="secondary" onClick={refresh} disabled={refreshing}>
-          {refreshing ? "Refreshing…" : "Refresh scope"}
-        </button>
-      </div>
-      <div className="card">
-        <h2>{LOCALE.copy.scopeLabel}</h2>
-        <p>
-          <strong>
-            {LOCALE.currencySymbol}
-            {s.dailyBudgetFiat.toLocaleString()} / day
-          </strong>
-        </p>
-        <p>Spent today: {s.spentTodaySats.toLocaleString()} sats</p>
-        <p>Remaining: {remaining.toLocaleString()} sats</p>
-        <p className="small">
-          Wallet dey enforce the budget. Server dey re-check am too.
-          (Wallet no fit tell us how much remain, so the app dey track
-          spend itself.)
-        </p>
-      </div>
-      <div className="card">
-        <h2>{LOCALE.copy.revokeLabel}</h2>
-        <p className="small">{LOCALE.copy.revokeBody}</p>
-        <button className="danger" onClick={revoke}>
-          Revoke login (logout)
-        </button>
-        {error && <div className="error">{error}</div>}
-      </div>
+      <BlurFade delay={0}>
+        <h1>{LOCALE.copy.walletTitle}</h1>
+        <Card>
+          <CardHeader>
+            <CardTitle>Connection</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="small mono">wallet: {session.walletPubkey}</p>
+            <p className="small">State: {scopeStateLabel(s.state)}</p>
+            <p className="small">Expires: {new Date(s.expiresAt).toLocaleString()}</p>
+            <p className="small">
+              {refreshedAt
+                ? `Scope refreshed from server ${refreshedAt} — remaining na live tracked spend.`
+                : "Showing the scope from login time — refresh to see live tracked spend."}
+            </p>
+            <Button
+              variant="outline"
+              className="mt-2.5 h-12 w-full rounded-[14px] border-primary bg-card text-base font-semibold hover:bg-secondary"
+              onClick={refresh}
+              disabled={refreshing}
+            >
+              {refreshing ? "Refreshing…" : "Refresh scope"}
+            </Button>
+          </CardContent>
+        </Card>
+        <div className="till">
+          <div className="till-head">
+            <LockSeal small />
+            <div>
+              <h2>{LOCALE.copy.scopeLabel}</h2>
+              <p className="till-sub">
+                {LOCALE.currencySymbol}
+                {s.dailyBudgetFiat.toLocaleString()} / day
+              </p>
+            </div>
+            <div
+              className="ml-auto shrink-0"
+              aria-label={`${remainingPct}% of your daily scope remain`}
+            >
+              <AnimatedCircularProgressBar
+                max={100}
+                min={0}
+                value={remainingPct}
+                gaugePrimaryColor="#f2b705"
+                gaugeSecondaryColor="rgba(255,255,255,0.16)"
+                className="size-20 text-lg"
+              />
+            </div>
+          </div>
+          <p className="till-amount amount">
+            <small>{LOCALE.currencySymbol}</small>
+            <NumberTicker value={remaining} className="text-white" />{" "}
+            <small>sats remain today</small>
+          </p>
+          <div className="ledger" aria-hidden="true">
+            <span style={{ width: `${spentPct}%` }} />
+          </div>
+          <p className="till-meta">
+            Spent today: {s.spentTodaySats.toLocaleString()} sats · Wallet dey
+            enforce the budget. Server dey re-check am too. (Wallet no fit tell
+            us how much remain, so the app dey track spend itself.)
+          </p>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>{LOCALE.copy.revokeLabel}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="small">{LOCALE.copy.revokeBody}</p>
+            <Button
+              variant="destructive"
+              className="mt-2.5 h-12 w-full rounded-[14px] text-base font-semibold"
+              onClick={revoke}
+            >
+              Revoke login
+            </Button>
+            {error && <div className="error">{error}</div>}
+          </CardContent>
+        </Card>
+      </BlurFade>
     </>
   );
 }

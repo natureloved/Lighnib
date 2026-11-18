@@ -2,10 +2,23 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { TriangleAlert } from "lucide-react";
 import { LOCALE } from "@lighnib/shared";
 import { api } from "@/lib/api";
 import type { BoundReceipt, Dispute } from "@lighnib/shared";
 import { getSession } from "@/lib/session";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { BlurFade } from "@/components/ui/blur-fade";
 
 /**
  * /dispute — open a dispute against a bound receipt (INV-7).
@@ -60,68 +73,85 @@ function DisputeInner() {
 
   return (
     <>
-      <h1>{LOCALE.copy.disputeTitle}</h1>
-      <p>{LOCALE.copy.disputeBody}</p>
-      <div className="error">
-        <strong>Live mediator hold CUT for the MVP.</strong> Our wallet
-        service has no hold invoices, so this page records a dispute claim
-        against the bound receipt — <strong>it holds no funds</strong> and
-        no release here moves money. The receipt is the proof; the named
-        mediator ({LOCALE.mediator}) judges from it. The dispute state
-        machine below is the design for a hold-capable wallet service
-        (post-MVP: Alby Hub). Do not demo this as a live escrow.
-      </div>
-      <p className="small">
-        Mediator: <strong>{LOCALE.mediator}</strong> · Hold window (design):{" "}
-        {LOCALE.holdWindowMinutes} minutes — a live dispute must decide inside
-        am. Production dispute (hours/days) na next iteration.
-      </p>
+      <BlurFade delay={0}>
+        <h1>{LOCALE.copy.disputeTitle}</h1>
+        <p>{LOCALE.copy.disputeBody}</p>
+        <Alert variant="destructive">
+          <TriangleAlert className="h-4 w-4" />
+          <AlertTitle>Live mediator hold CUT for the MVP.</AlertTitle>
+          <AlertDescription>
+            Our wallet service has no hold invoices, so this page records a
+            dispute claim against the bound receipt —{" "}
+            <strong>it holds no funds</strong> and no release here moves money.
+            The receipt is the proof; the named mediator ({LOCALE.mediator})
+            judges from it. The dispute state machine below is the design for
+            a hold-capable wallet service (post-MVP: Alby Hub). Do not demo
+            this as a live escrow.
+          </AlertDescription>
+        </Alert>
+        <p className="small">
+          Mediator: <strong>{LOCALE.mediator}</strong> · Hold window (design):{" "}
+          {LOCALE.holdWindowMinutes} minutes — a live dispute must decide inside
+          am. Production dispute (hours/days) na next iteration.
+        </p>
 
-      <div className="card">
-        <label htmlFor="receipt">Bound receipt</label>
-        <select
-          id="receipt"
-          value={receiptId}
-          onChange={(e) => setReceiptId(e.target.value)}
-        >
-          <option value="">— pick a receipt —</option>
-          {receipts.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.id} — {r.vendorName} — {r.amountSats.toLocaleString()} sats
-            </option>
-          ))}
-        </select>
-        <button onClick={open} disabled={busy || !receiptId}>
-          {busy ? "Opening…" : "Open dispute"}
-        </button>
-        {error && <div className="error">{error}</div>}
-      </div>
+        <Card>
+          <CardContent className="pt-6">
+            <Label htmlFor="receipt">Bound receipt</Label>
+            <Select value={receiptId} onValueChange={setReceiptId}>
+              <SelectTrigger id="receipt" className="mt-2 h-12 rounded-xl text-base">
+                <SelectValue placeholder="— pick a receipt —" />
+              </SelectTrigger>
+              <SelectContent>
+                {receipts.map((r) => (
+                  <SelectItem key={r.id} value={r.id}>
+                    {r.id} — {r.vendorName} — {r.amountSats.toLocaleString()} sats
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              className="mt-4 h-12 w-full rounded-[14px] text-base font-semibold"
+              onClick={open}
+              disabled={busy || !receiptId}
+            >
+              {busy ? "Opening…" : "Open dispute"}
+            </Button>
+            {error && <div className="error">{error}</div>}
+          </CardContent>
+        </Card>
+      </BlurFade>
 
       {dispute && (
-        <div className="card">
-          <span className="tag">DISPUTE {dispute.state}</span>
-          <h2>Dispute {dispute.id}</h2>
-          <p className="small">Receipt: {dispute.receiptId}</p>
-          <p className="small">Mediator: {dispute.mediator}</p>
-          <p className="small">
-            Opened: {new Date(dispute.openedAt).toLocaleString()}
-          </p>
-          <p className="small">
-            Deadline (hold window): {new Date(dispute.deadlineAt).toLocaleString()}
-          </p>
-          {dispute.releasedTo && (
-            <p className="small">Released to: {dispute.releasedTo}</p>
-          )}
-          <p className="small">
-            Design preview only: the mediator release below records a
-            ruling against the receipt. No funds are held or moved — the
-            live hold is cut (see the notice at the top). If deadline pass,
-            the design auto-refunds to buyer.
-          </p>
-          <button className="secondary" onClick={timeoutCheck}>
-            Check timeout (auto-refund?)
-          </button>
-        </div>
+          <div className="slip relative">
+            <div className="perf" aria-hidden="true" />
+            <span className="stamp">DISPUTE {dispute.state}</span>
+            <h2>Dispute {dispute.id}</h2>
+            <p className="small">Receipt: {dispute.receiptId}</p>
+            <p className="small">Mediator: {dispute.mediator}</p>
+            <p className="small">
+              Opened: {new Date(dispute.openedAt).toLocaleString()}
+            </p>
+            <p className="small">
+              Deadline (hold window): {new Date(dispute.deadlineAt).toLocaleString()}
+            </p>
+            {dispute.releasedTo && (
+              <p className="small">Released to: {dispute.releasedTo}</p>
+            )}
+            <p className="small">
+              Design preview only: the mediator release below records a
+              ruling against the receipt. No funds are held or moved — the
+              live hold is cut (see the notice at the top). If deadline pass,
+              the design auto-refunds to buyer.
+            </p>
+            <Button
+              variant="outline"
+              className="mt-2.5 h-12 w-full rounded-[14px] border-primary bg-card text-base font-semibold hover:bg-secondary"
+              onClick={timeoutCheck}
+            >
+              Check timeout
+            </Button>
+          </div>
       )}
     </>
   );

@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import Link from "next/link";
+import { ThemeProvider } from "next-themes";
+import Nav from "@/components/Nav";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,16 +16,29 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/archivo-latin-800-normal.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/archivo-latin-900-normal.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body>
-        <main>{children}</main>
-        <nav>
-          <Link href="/login">Login</Link>
-          <Link href="/pay">Pay</Link>
-          <Link href="/wallet">Wallet</Link>
-          <Link href="/receipts">Receipts</Link>
-          <Link href="/dispute">Dispute</Link>
-        </nav>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <main>{children}</main>
+          <Nav />
+          <Toaster position="top-center" />
+        </ThemeProvider>
       </body>
     </html>
   );
