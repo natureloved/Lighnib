@@ -1,5 +1,5 @@
 {
-  "description": "Lighnib web — Next.js PWA. NWC calls happen client-side in the browser; the NWC secret lives in browser memory only, never localStorage/server/logs.",
+  "description": "Lighnib web, Next.js PWA. NWC calls happen client-side in the browser; the NWC secret lives in browser memory only, never localStorage/server/logs.",
   "license": "MIT",
   "name": "@lighnib/web",
   "private": true,

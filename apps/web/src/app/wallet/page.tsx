@@ -13,9 +13,9 @@ import { AnimatedCircularProgressBar } from "@/components/ui/animated-circular-p
 import { BlurFade } from "@/components/ui/blur-fade";
 
 /**
- * /wallet — connection / budget / revoke view.
+ * /wallet, connection / budget / revoke view.
  * The scope shown here is REFRESHED from the API on mount (and on demand),
- * so "remaining" is the live tracked spend — not the snapshot from login
+ * so "remaining" is the live tracked spend, not the snapshot from login
  * time. Revoke = logout (INV-4): wipes the NWC secret from browser memory
  * and revokes the scope server-side. A revoked scope never pays again.
  */
@@ -41,7 +41,7 @@ export default function WalletPage() {
         setRefreshedAt(new Date().toLocaleTimeString());
       })
       .catch(() => {
-        // API unreachable — keep the login-time snapshot, say so below.
+        // API unreachable, keep the login-time snapshot, say so below.
       });
     return () => {
       cancelled = true;
@@ -80,7 +80,7 @@ export default function WalletPage() {
           <h1>{LOCALE.copy.walletTitle}</h1>
           {revoked && (
             <div className="ok">
-              Revoked — logout done. Spending don die instantly; the connection
+              Revoked, logout done. Spending don die instantly; the connection
               no fit pay again.
             </div>
           )}
@@ -91,7 +91,7 @@ export default function WalletPage() {
             </CardHeader>
             <CardContent>
               <p className="small">{LOCALE.supportedWallets.join(" · ")}</p>
-              <p className="small">Phoenix has NO NWC — e no dey supported.</p>
+              <p className="small">Phoenix has NO NWC, e no dey supported.</p>
             </CardContent>
           </Card>
         </BlurFade>
@@ -120,8 +120,8 @@ export default function WalletPage() {
             <p className="small">Expires: {new Date(s.expiresAt).toLocaleString()}</p>
             <p className="small">
               {refreshedAt
-                ? `Scope refreshed from server ${refreshedAt} — remaining na live tracked spend.`
-                : "Showing the scope from login time — refresh to see live tracked spend."}
+                ? `Scope refreshed from server ${refreshedAt}, remaining na live tracked spend.`
+                : "Showing the scope from login time, refresh to see live tracked spend."}
             </p>
             <Button
               variant="outline"

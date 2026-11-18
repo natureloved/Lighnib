@@ -1,9 +1,9 @@
 /**
- * explainer.ts — AI receipt explainer with template fallback (no LLM key needed).
+ * explainer.ts, AI receipt explainer with template fallback (no LLM key needed).
  *
  * The LLM path is used only when LLM_API_URL + LLM_API_KEY are set.
  * Otherwise the template fallback explains the receipt in 2 sentences,
- * Pidgin + English — offline, deterministic, always available.
+ * Pidgin + English, offline, deterministic, always available.
  * The explainer never receives a secret, a private key, or wallet data:
  * only the public bound receipt.
  */
@@ -23,7 +23,7 @@ export function templateExplain(
   const summary = receiptSummary(receipt, currencySymbol);
   const text =
     `${summary} ` +
-    `Dis receipt na proof say the money reach ${receipt.vendorName} for ${receipt.purpose} — ` +
+    `Dis receipt na proof say the money reach ${receipt.vendorName} for ${receipt.purpose}, ` +
     `if wahala come, the market association mediator go see this same receipt and settle am.`;
   return { text, source: "template", language: "Pidgin/English" };
 }

@@ -1,15 +1,15 @@
 /**
- * voice.ts — Web Speech API wrapper config.
+ * voice.ts, Web Speech API wrapper config.
  *
  * Speech happens CLIENT-side in the browser (window.speechSynthesis).
  * The API only serves the text + voice plan. Honestly labelled: there is
- * NO dedicated Pidgin TTS — an English voice reads Pidgin text.
+ * NO dedicated Pidgin TTS, an English voice reads Pidgin text.
  * Mute/replay are client controls.
  */
 
 export const VOICE_CONFIG = {
   engine: "Web Speech API (browser speechSynthesis)",
-  /** Honest label — shown in the UI next to every spoken receipt. */
+  /** Honest label, shown in the UI next to every spoken receipt. */
   label:
     "Spoken readout: English voice reading Pidgin text (Web Speech API). No dedicated Pidgin voice.",
   lang: "en-NG",

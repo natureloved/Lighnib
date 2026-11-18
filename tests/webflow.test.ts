@@ -1,9 +1,9 @@
 /**
- * Web-flow tests — the /pay orchestration (lib/pay-flow.ts) and the
+ * Web-flow tests, the /pay orchestration (lib/pay-flow.ts) and the
  * /wallet data contract, tested without a browser.
  *
  * The stubs use the REAL shared modules (scope state machine, INV-9
- * registry, buildBoundReceipt) — only the wallet pay call and the HTTP
+ * registry, buildBoundReceipt), only the wallet pay call and the HTTP
  * transport are stubbed. So a test failure here means the flow order
  * itself is wrong, not a mock.
  */
@@ -32,7 +32,7 @@ const PREIMAGE = "11".repeat(32);
 const PAYMENT_HASH = sha256Hex(hexToBytes(PREIMAGE));
 
 const SUPPLIER_ID = "supplier-balogun-001";
-const SUPPLIER_NAME = "Balogun provisions — Mama Nkechi";
+const SUPPLIER_NAME = "Balogun provisions, Mama Nkechi";
 
 function liveScope(overrides: Partial<Scope> = {}): Scope {
   return {
@@ -191,7 +191,7 @@ test("happy path: decode → INV-9 → budget → begin → pay → settle → r
   assert.equal(result.explanationSource, "template");
   assert.equal(speak.spoken.length, 1);
   assert.match(speak.spoken[0], /100 sats/);
-  // Settled scope carries the spend — the /wallet tab reads this.
+  // Settled scope carries the spend, the /wallet tab reads this.
   assert.equal(result.scope.spentTodaySats, 100);
   assert.equal(result.scope.state, "RECEIPTED");
   assert.equal(remainingBudgetSats(result.scope), 33_333 - 100);
@@ -199,7 +199,7 @@ test("happy path: decode → INV-9 → budget → begin → pay → settle → r
 
 test("INV-9 unknown hash: refused before any wallet request, no scope change", async () => {
   const s = stubApi({
-    registry: new InvoiceBindingRegistry(), // empty — hash never recorded
+    registry: new InvoiceBindingRegistry(), // empty, hash never recorded
   });
   const pay = stubPay();
   const speak = stubSpeak();

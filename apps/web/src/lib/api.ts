@@ -1,5 +1,5 @@
 /**
- * api.ts — typed fetch helpers for the Lighnib API.
+ * api.ts, typed fetch helpers for the Lighnib API.
  * The API holds no funds and never sees the NWC secret; these calls
  * carry public data only (pubkeys, hashes, amounts).
  */

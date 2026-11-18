@@ -1,8 +1,8 @@
 /**
- * Wednesday tests — bound-receipt polish (verify-by-paste), AI explainer
+ * Wednesday tests, bound-receipt polish (verify-by-paste), AI explainer
  * LLM path (stub server) + fallback, TTS labelling, dispute cut.
  * LLM note: no real LLM key exists in this environment, so the LLM path
- * is verified against a local stub OpenAI-compatible server — that proves
+ * is verified against a local stub OpenAI-compatible server, that proves
  * our client code (request shape, response parse, failure fallback),
  * not a real provider. The real-provider path stays untested; record it.
  */
@@ -29,7 +29,7 @@ function receiptInput(overrides: Record<string, unknown> = {}) {
     id: "rcpt_wed_1",
     orderId: "ORD-WED-1",
     supplierId: "supplier-balogun-001",
-    vendorName: "Balogun provisions — Mama Nkechi",
+    vendorName: "Balogun provisions, Mama Nkechi",
     purpose: "2 bags of rice",
     amountSats: 100,
     amountFiat: 5000,
@@ -75,7 +75,7 @@ test("verifyReceiptDetail: wrong preimage fails the hash check", () => {
 
 test("verifyReceiptDetail: non-settled receipt fails the settled check", () => {
   const r = buildBoundReceipt(receiptInput());
-  // "PENDING" is not a legal BoundReceipt status — cast to test the check.
+  // "PENDING" is not a legal BoundReceipt status, cast to test the check.
   const notSettled = { ...r, status: "PENDING" } as unknown as typeof r;
   const d = verifyReceiptDetail(notSettled);
   assert.equal(d.valid, false);
@@ -130,7 +130,7 @@ function stubLlmServer(mode: "ok" | "error500"): Promise<{ url: string; close: (
               {
                 message: {
                   content:
-                    "You pay ₦5,000 to Balogun provisions for 2 bags of rice. Dis receipt na proof — mediator go see am if wahala come.",
+                    "You pay ₦5,000 to Balogun provisions for 2 bags of rice. Dis receipt na proof, mediator go see am if wahala come.",
                 },
               },
             ],
@@ -194,7 +194,7 @@ test("explainer: no LLM env → template fallback (the live demo path)", async (
   assert.equal(templateExplain(r, "₦").source, "template");
 });
 
-test("voice: honest label — no dedicated Pidgin voice, English voice reads Pidgin", () => {
+test("voice: honest label, no dedicated Pidgin voice, English voice reads Pidgin", () => {
   assert.match(VOICE_LABEL, /No dedicated Pidgin voice/);
   assert.match(VOICE_LABEL, /English voice reading Pidgin/);
   assert.equal(VOICE_CONFIG.label, VOICE_LABEL);

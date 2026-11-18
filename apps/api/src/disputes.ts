@@ -1,5 +1,5 @@
 /**
- * disputes.ts — dispute state machine (INV-7), inside the hold window.
+ * disputes.ts, dispute state machine (INV-7), inside the hold window.
  * The mediator is named in config/locale.ts (Lagos market association).
  * Only that mediator releases; only to a party named in the receipt.
  * Past the deadline the payment auto-refunds to the buyer.
@@ -23,7 +23,7 @@ export function openDisputeForReceipt(input: {
   buyerPubkey: string;
 }): Dispute {
   const receipt: BoundReceipt | undefined = getReceipt(input.receiptId);
-  if (!receipt) throw new Error(`INV-7: no bound receipt ${input.receiptId} — dispute refused`);
+  if (!receipt) throw new Error(`INV-7: no bound receipt ${input.receiptId}, dispute refused`);
   const id = `dispute_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
   const dispute = openDispute(receipt, {
     id,

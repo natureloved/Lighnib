@@ -5,7 +5,7 @@
  * DISPUTED → RESOLVED | REFUNDED → REVOKED
  *
  * Budget is enforced WALLET-side (NWC quota, QUOTA_EXCEEDED). The server
- * re-checks via get_budget where available — this module is that re-check.
+ * re-checks via get_budget where available, this module is that re-check.
  * Never claim the wallet enforces the supplier; that is INV-9 (inv9.ts).
  */
 
@@ -13,7 +13,7 @@ import type { BudgetCheck, Scope, ScopeState } from "./types";
 import { LOCALE } from "./locale";
 
 /**
- * Plain-words label for a scope state — the UI never shows the raw state
+ * Plain-words label for a scope state, the UI never shows the raw state
  * code (LOGGED_IN, RECEIPTED…) to a merchant.
  */
 export function scopeStateLabel(state: ScopeState): string {

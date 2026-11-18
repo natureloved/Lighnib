@@ -1,12 +1,12 @@
 /**
- * INV-9 — invoice↔supplier binding.
+ * INV-9, invoice↔supplier binding.
  *
  * Suppliers mint invoices through the portal wallet with memo
  * `Lighnib:order#<orderId>:<supplierId>`. The app records
  * payment_hash ↔ supplierId AT INVOICE CREATION, and checks it
  * BEFORE any wallet request. Unknown hash → refused. Supplier
  * mismatch → refused. BOLT11 has no payee field, so this app-side
- * check is the only supplier enforcement — the wallet enforces
+ * check is the only supplier enforcement, the wallet enforces
  * budget only (INV-2), never the supplier (INV-3).
  */
 

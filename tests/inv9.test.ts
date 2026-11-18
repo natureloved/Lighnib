@@ -1,5 +1,5 @@
 /**
- * INV-9 tests — invoice↔supplier binding + BOLT11 decoding.
+ * INV-9 tests, invoice↔supplier binding + BOLT11 decoding.
  * The unknown-hash refusal must happen BEFORE any wallet request:
  * the registry check is pure and synchronous, no wallet involved.
  */
@@ -63,7 +63,7 @@ function buildInvoice(opts: { amountHrp: string; hashHex: string; description: s
   };
   // BOLT11: 35-bit timestamp (7 groups) FIRST, then tagged fields, then
   // the 65-byte signature. (An earlier version of this builder omitted
-  // the timestamp — and the decoder omitted the skip — so the two wrong
+  // the timestamp, and the decoder omitted the skip, so the two wrong
   // halves round-tripped while real invoices failed. Regression: the
   // real-invoice test below.)
   const ts = Math.floor(Date.now() / 1000);
@@ -73,7 +73,7 @@ function buildInvoice(opts: { amountHrp: string; hashHex: string; description: s
     ...timestamp5,
     ...field(1, hashBytes),
     ...field(13, descBytes),
-    // signature placeholder (65 bytes of zeros) — decoder does not verify sig
+    // signature placeholder (65 bytes of zeros), decoder does not verify sig
     ...convertBits(new Array(65).fill(0), 8, 5, true),
   ];
   return bech32Encode(opts.amountHrp, data5);
@@ -106,7 +106,7 @@ test("INV-9: known hash + matching supplier + amount is allowed", () => {
 test("INV-9: unknown hash refused BEFORE any wallet request", () => {
   const reg = new InvoiceBindingRegistry();
   reg.record(binding());
-  // No wallet exists in this test at all — the refusal is pure registry logic.
+  // No wallet exists in this test at all, the refusal is pure registry logic.
   const check = reg.check("22".repeat(32), "supplier-001");
   assert.equal(check.allowed, false);
   assert.equal(check.reason, "UNKNOWN_INVOICE_HASH");
@@ -165,7 +165,7 @@ test("BOLT11 decode round-trip: hash + amount + memo from a built invoice", () =
 /**
  * REGRESSION (found by the Tue live e2e, 2026-11-16): the decoder did not
  * skip the 35-bit BOLT11 timestamp, so it parsed the timestamp as the
- * first tag and returned null for every REAL invoice — while the test
+ * first tag and returned null for every REAL invoice, while the test
  * builder (which also omitted the timestamp) round-tripped fine. This
  * fixture is a real invoice minted by the local LNbits 1.7.1 during the
  * e2e debug (150 sats, memo Lighnib:order#ORD-DEBUG-2). Decoding does not
@@ -191,7 +191,7 @@ test("BOLT11 decode: real LNbits invoice decodes (timestamp skipped)", () => {
 
 test("BOLT11 decode rejects bad checksum and garbage", () => {
   const invoice = buildInvoice({ amountHrp: "lnbc12500u", hashHex: HASH, description: MEMO });
-  // Corrupt one checksum character — guaranteed to differ from the original,
+  // Corrupt one checksum character, guaranteed to differ from the original,
   // so the string actually changes (the old version could no-op when the
   // replacement char equalled the char already there).
   const idx = invoice.length - 2;

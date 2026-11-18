@@ -1,5 +1,5 @@
 /**
- * Bound receipt tests — INV-5, INV-6.
+ * Bound receipt tests, INV-5, INV-6.
  * Every settled payment MUST be a bound receipt; a receipt exists only
  * AFTER settlement and carries amount + vendor + purpose + hash + preimage.
  */

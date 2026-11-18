@@ -1,10 +1,10 @@
-// scripts/seed.mjs — demo seed for Lighnib (Dakar Bitcoin Hack 2026).
+// scripts/seed.mjs, demo seed for Lighnib (Dakar Bitcoin Hack 2026).
 //
 // Creates the demo world a stranger needs for the <5-min happy path:
 //   1 merchant + 1 supplier + 1 named mediator + 10 bound receipts
 //   + 2 blocked payments (1 wallet QUOTA_EXCEEDED, 1 app INV-9 refusal).
 //
-// TEST SATS ONLY. Local LNbits FakeWallet only — never real funds.
+// TEST SATS ONLY. Local LNbits FakeWallet only, never real funds.
 // Requires the stack running: `npm run dev` (API :3001, web :3000),
 // LNbits 1.7.1 (:5000) and the local NWC relay (:7777, started
 // automatically if it is not already up).
@@ -13,7 +13,7 @@
 //   1. Admin-login to LNbits, create FRESH merchant + supplier wallets
 //      (timestamped names, so re-runs never collide with old demo data).
 //   2. Fund the merchant wallet with 100,000 test sats via a synthetic
-//      `success` ledger row in the LNbits DB — clearly labelled in the
+//      `success` ledger row in the LNbits DB, clearly labelled in the
 //      memo. LNbits has no top-up endpoint; this is the same documented
 //      test-only mechanism the Day-1 spike used. Only the initial
 //      balance is synthetic; every payment under test runs through the
@@ -25,22 +25,22 @@
 //   5. Pay 10 supplier invoices live (100 sats each) → 10 bound receipts
 //      created + verified through the real API.
 //   6. Blocked #1 (wallet): a ₦70,000-equivalent invoice is paid DIRECTLY
-//      via NWC, bypassing the app — the wallet refuses with verbatim
+//      via NWC, bypassing the app, the wallet refuses with verbatim
 //      QUOTA_EXCEEDED. This is the wallet-side backstop; in the web flow
 //      the app scope check refuses the same invoice first (INV-2), so
 //      the seed proves both layers.
 //   7. Blocked #2 (app): an invoice from a non-allowlisted supplier is
-//      checked via the API — INV-9 refuses with UNKNOWN_INVOICE_HASH
+//      checked via the API, INV-9 refuses with UNKNOWN_INVOICE_HASH
 //      before any wallet request; merchant balance is verified unchanged.
-//   8. Writes seed/demo-data.json (NO secrets — safe to commit) and
-//      seed/.demo-credentials.json (mode 600 — NWC URIs + admin keys,
+//   8. Writes seed/demo-data.json (NO secrets, safe to commit) and
+//      seed/.demo-credentials.json (mode 600, NWC URIs + admin keys,
 //      gitignored, never printed in full).
 //
 // Usage:
 //   LNBITS_URL=http://127.0.0.1:5000 API_URL=http://localhost:3001 \
 //   node scripts/seed.mjs
 // Defaults work on the dev machine (persistent LNbits data under
-// .local/lnbits-data — see scripts/start-lnbits.sh). On a docker-compose
+// .local/lnbits-data, see scripts/start-lnbits.sh). On a docker-compose
 // machine set LNBITS_DATA_FOLDER to the LNbits volume path (or fund the
 // merchant wallet another way and set SEED_SKIP_FUND=1 with a pre-funded
 // wallet).
@@ -70,7 +70,7 @@ const ADMIN_PASSWORD =
 const SKIP_FUND = process.env.SEED_SKIP_FUND === "1";
 
 const SUPPLIER_ID = "supplier-balogun-001";
-const SUPPLIER_NAME = "Balogun provisions — Mama Nkechi";
+const SUPPLIER_NAME = "Balogun provisions, Mama Nkechi";
 const MEDIATOR = "Lagos market association";
 const DAILY_BUDGET_NGN = 50_000;
 const OVER_BUDGET_NGN = 70_000;
@@ -151,7 +151,7 @@ async function ensureRelay() {
     log(`relay already up at ${RELAY_URL}`);
     return;
   }
-  log(`relay not reachable at ${RELAY_URL} — starting scripts/local-relay.mjs`);
+  log(`relay not reachable at ${RELAY_URL}, starting scripts/local-relay.mjs`);
   const port = new URL(RELAY_URL).port || "7777";
   const child = spawn(process.execPath, [join(ROOT, "scripts", "local-relay.mjs"), port], {
     detached: true,
@@ -195,7 +195,7 @@ function fundWallet(walletId, amountSats, memo) {
 const stamp = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 12);
 
 // --- 0. Preconditions -------------------------------------------------------
-const health = await j("GET", `${API_URL}/health`).catch((e) => fail(`API not reachable at ${API_URL} — run \`npm run dev\` first. (${e.message})`));
+const health = await j("GET", `${API_URL}/health`).catch((e) => fail(`API not reachable at ${API_URL}, run \`npm run dev\` first. (${e.message})`));
 log(`API ok: ${health.service} v${health.version} (holdsFunds=${health.holdsFunds})`);
 await j("GET", `${LNBITS_URL}/api/v1/health`).catch((e) =>
   fail(`LNbits not reachable at ${LNBITS_URL}. (${e.message})`),
@@ -229,7 +229,7 @@ if (!SKIP_FUND) {
     "seed-test-funding (synthetic ledger credit, FakeWallet test instance only)",
   );
 } else {
-  out.notes.push("SEED_SKIP_FUND=1 — merchant wallet was NOT funded by the seed; pre-funded externally.");
+  out.notes.push("SEED_SKIP_FUND=1, merchant wallet was NOT funded by the seed; pre-funded externally.");
 }
 const merchantWallet = await j("GET", `${LNBITS_URL}/api/v1/wallet`, { apiKey: merchant.adminkey });
 log(`merchant balance: ${(merchantWallet.balance / 1000).toLocaleString()} sats`);
@@ -246,7 +246,7 @@ async function registerNWC(wallet, description, permissions, budgets) {
   });
   const pairing = await j("GET", `${LNBITS_URL}/nwcprovider/api/v1/pairing/${secretHex}`);
   // The pairing URI carries the relay as a URL-encoded query param and
-  // may write it as localhost where we configured 127.0.0.1 — same host.
+  // may write it as localhost where we configured 127.0.0.1, same host.
   const relayParam = new URL(decodeURIComponent(pairing)).searchParams.get("relay") ?? "";
   const relayHost = new URL(relayParam || RELAY_URL).host.replace("localhost", "127.0.0.1");
   const wantHost = new URL(RELAY_URL).host.replace("localhost", "127.0.0.1");
@@ -290,7 +290,7 @@ out.scope = {
   expiresAt: scope.expiresAt,
   state: scope.state,
 };
-log(`scope created: ${scope.id} — ₦${DAILY_BUDGET_NGN.toLocaleString()}/day (${SCOPE_SATS.toLocaleString()} sats)`);
+log(`scope created: ${scope.id}, ₦${DAILY_BUDGET_NGN.toLocaleString()}/day (${SCOPE_SATS.toLocaleString()} sats)`);
 
 // --- 5. Ten bound receipts, paid live ---------------------------------------
 const client = new NWCClient({ nostrWalletConnectUrl: merchantNWC.uri });
@@ -330,7 +330,7 @@ for (let i = 1; i <= RECEIPT_COUNT; i++) {
       orderId,
       supplierId: SUPPLIER_ID,
       vendorName: SUPPLIER_NAME,
-      purpose: `Demo order ${i} — provisions from Balogun market`,
+      purpose: `Demo order ${i}, provisions from Balogun market`,
       amountSats: RECEIPT_SATS,
       amountFiat: 0,
       currency: "NGN",
@@ -345,14 +345,14 @@ for (let i = 1; i <= RECEIPT_COUNT; i++) {
     body: { amountSats: RECEIPT_SATS },
   });
   // Store the FULL bound receipt (incl. preimage + Nostr event) so a
-  // third party can verify it offline from this file alone — paste it
+  // third party can verify it offline from this file alone, paste it
   // into /receipts "Verify a receipt you receive". No secrets: the
   // preimage is public settlement proof, not a credential.
   out.receipts.push(receipt);
-  log(`receipt ${i}/${RECEIPT_COUNT}: ${receipt.id} — ${RECEIPT_SATS} sats, verified`);
+  log(`receipt ${i}/${RECEIPT_COUNT}: ${receipt.id}, ${RECEIPT_SATS} sats, verified`);
 }
 
-// --- 6. Blocked #1 — wallet refuses over-budget (QUOTA_EXCEEDED, verbatim) ---
+// --- 6. Blocked #1, wallet refuses over-budget (QUOTA_EXCEEDED, verbatim) ---
 const overOrderId = `ORD-SEED-${stamp}-OVER`;
 const invOver = await createInvoice(
   supplier.adminkey,
@@ -371,7 +371,7 @@ await j("POST", `${API_URL}/api/invoices`, {
 let quotaError = "";
 try {
   await client.payInvoice({ invoice: invOver.payment_request });
-  fail("blocked #1: over-budget payment SUCCEEDED — wallet budget NOT enforced!");
+  fail("blocked #1: over-budget payment SUCCEEDED, wallet budget NOT enforced!");
 } catch (e) {
   quotaError = `${e.code || e.name || ""} ${e.message || ""}`.trim();
   if (!/QUOTA_EXCEEDED/i.test(quotaError)) {
@@ -384,11 +384,11 @@ out.blocked.push({
   amountSats: OVER_BUDGET_SATS,
   amountNgn: OVER_BUDGET_NGN,
   walletError: quotaError,
-  note: "Direct NWC pay, bypassing the app — the wallet itself refuses. In the web flow the app scope check (INV-2) refuses the same invoice first.",
+  note: "Direct NWC pay, bypassing the app, the wallet itself refuses. In the web flow the app scope check (INV-2) refuses the same invoice first.",
 });
-log(`blocked #1: wallet refused ₦${OVER_BUDGET_NGN.toLocaleString()} invoice — ${quotaError.slice(0, 120)}`);
+log(`blocked #1: wallet refused ₦${OVER_BUDGET_NGN.toLocaleString()} invoice, ${quotaError.slice(0, 120)}`);
 
-// --- 7. Blocked #2 — app INV-9 refuses unknown hash, zero wallet requests ---
+// --- 7. Blocked #2, app INV-9 refuses unknown hash, zero wallet requests ---
 const balanceBefore = (await j("GET", `${LNBITS_URL}/api/v1/wallet`, { apiKey: merchant.adminkey })).balance;
 const invWrong = await createInvoice(
   supplier.adminkey,
@@ -407,7 +407,7 @@ if (check.allowed || check.reason !== "UNKNOWN_INVOICE_HASH") {
 }
 const balanceAfter = (await j("GET", `${LNBITS_URL}/api/v1/wallet`, { apiKey: merchant.adminkey })).balance;
 if (balanceAfter !== balanceBefore) {
-  fail(`blocked #2: merchant balance changed (${balanceBefore} → ${balanceAfter} msat) — a wallet request must have happened`);
+  fail(`blocked #2: merchant balance changed (${balanceBefore} → ${balanceAfter} msat), a wallet request must have happened`);
 }
 out.blocked.push({
   kind: "app-inv9-unknown-hash",
@@ -417,9 +417,9 @@ out.blocked.push({
   appRefusal: check.reason,
   walletRequestsMade: 0,
   merchantBalanceMsatUnchanged: balanceBefore === balanceAfter,
-  note: "INV-9 refused before any wallet request — balance verified unchanged.",
+  note: "INV-9 refused before any wallet request, balance verified unchanged.",
 });
-log(`blocked #2: INV-9 refused unknown hash (supplier-other-999) — merchant balance unchanged`);
+log(`blocked #2: INV-9 refused unknown hash (supplier-other-999), merchant balance unchanged`);
 
 // --- 8. Write outputs ---------------------------------------------------------
 mkdirSync(SEED_DIR, { recursive: true });
@@ -433,7 +433,7 @@ out.merchant = {
 const demoDataPath = join(SEED_DIR, "demo-data.json");
 writeFileSync(demoDataPath, JSON.stringify(out, null, 2));
 const creds = {
-  note: "DEMO CREDENTIALS — bearer secrets. Never commit, never share, never log. Mode 600.",
+  note: "DEMO CREDENTIALS, bearer secrets. Never commit, never share, never log. Mode 600.",
   merchantNwcUri: merchantNWC.uri,
   supplierNwcUri: supplierNWC.uri,
   merchantAdminKey: merchant.adminkey,
@@ -446,16 +446,16 @@ writeFileSync(credsPath, JSON.stringify(creds, null, 2));
 chmodSync(credsPath, 0o600);
 
 console.log(`
-========== LIGHNIB DEMO SEED — DONE ==========
+========== LIGHNIB DEMO SEED, DONE ==========
 Merchant wallet : ${merchant.id}
 Supplier        : ${SUPPLIER_ID} (${SUPPLIER_NAME})
-Mediator        : ${MEDIATOR} (named record — live hold is CUT, receipt-only MVP)
-Scope           : ${scope.id} — ₦${DAILY_BUDGET_NGN.toLocaleString()}/day (${SCOPE_SATS.toLocaleString()} sats)
+Mediator        : ${MEDIATOR} (named record, live hold is CUT, receipt-only MVP)
+Scope           : ${scope.id}, ₦${DAILY_BUDGET_NGN.toLocaleString()}/day (${SCOPE_SATS.toLocaleString()} sats)
 Receipts        : ${out.receipts.length} live payments, all verified (seed/demo-data.json)
 Blocked #1      : wallet QUOTA_EXCEEDED on ₦${OVER_BUDGET_NGN.toLocaleString()} invoice
 Blocked #2      : app INV-9 UNKNOWN_INVOICE_HASH, 0 wallet requests
 Demo login      : paste the merchant NWC URI into http://localhost:3000/login
-                  (URI is in seed/.demo-credentials.json, mode 600 — it is a
+                  (URI is in seed/.demo-credentials.json, mode 600, it is a
                   bearer secret, never share it)
 Happy path      : login → /pay → paste a supplier invoice → bound receipt
 ===============================================

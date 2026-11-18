@@ -1,5 +1,5 @@
 /**
- * Disputes (INV-7) — stretch feature, inside the NIP-47 hold window.
+ * Disputes (INV-7), stretch feature, inside the NIP-47 hold window.
  *
  * - A dispute opens ONLY against a bound receipt.
  * - Only the NAMED mediator can release.
@@ -8,7 +8,7 @@
  * - A release is a public event (recorded on the dispute).
  *
  * State machine: OPEN → MEDIATOR_REVIEW → RELEASED | REFUNDED.
- * (MEDIATOR_REVIEW is optional — OPEN may release directly.)
+ * (MEDIATOR_REVIEW is optional, OPEN may release directly.)
  */
 
 import type { BoundReceipt, Dispute } from "./types";
@@ -71,7 +71,7 @@ export function mediatorRelease(
   }
   const now = input.now ?? new Date();
   if (new Date(dispute.deadlineAt).getTime() <= now.getTime()) {
-    throw new Error("Dispute past hold-window deadline — auto-refund applies, no release");
+    throw new Error("Dispute past hold-window deadline, auto-refund applies, no release");
   }
   return {
     ...dispute,

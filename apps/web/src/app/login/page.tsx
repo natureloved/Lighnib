@@ -16,8 +16,8 @@ import { AnimatedCircularProgressBar } from "@/components/ui/animated-circular-p
 import { BlurFade } from "@/components/ui/blur-fade";
 
 /**
- * /login — connect-wallet (NWC) UI with scoped-budget display.
- * The NWC secret is pasted here and lives in browser memory ONLY —
+ * /login, connect-wallet (NWC) UI with scoped-budget display.
+ * The NWC secret is pasted here and lives in browser memory ONLY -
  * never localStorage, never the server, never logs (INV-8).
  */
 export default function LoginPage() {
@@ -76,7 +76,7 @@ export default function LoginPage() {
                 <p className="till-sub">
                   Wallet{" "}
                   <span className="mono">{session.walletPubkey?.slice(0, 16)}…</span>{" "}
-                  connected. No password, no form — the connection na the key.
+                  connected. No password, no form, the connection na the key.
                 </p>
               </div>
               <div
@@ -157,7 +157,7 @@ export default function LoginPage() {
           <p className="small">
             Demo scope: {LOCALE.currencySymbol}
             {LOCALE.demoDailyBudgetNgn.toLocaleString()}/day. Wallet go enforce
-            am — pass am and wallet go refuse am.
+            am, pass am and wallet go refuse am.
           </p>
 
           <Button
@@ -165,7 +165,7 @@ export default function LoginPage() {
             onClick={connect}
             disabled={busy || !uri}
           >
-            {busy ? "Connecting…" : "Connect wallet — log in"}
+            {busy ? "Connecting…" : "Connect wallet to log in"}
           </Button>
           {error && <div className="error">{error}</div>}
         </CardContent>
@@ -177,7 +177,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <p className="small">{LOCALE.supportedWallets.join(" · ")}</p>
-          <p className="small">Phoenix has NO NWC — e no dey supported.</p>
+          <p className="small">Phoenix has NO NWC, e no dey supported.</p>
         </CardContent>
       </Card>
     </BlurFade>

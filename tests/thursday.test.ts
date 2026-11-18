@@ -1,11 +1,11 @@
 /**
- * thursday.test.ts — Pidgin copy pass (§8 Thu 19).
+ * thursday.test.ts, Pidgin copy pass (§8 Thu 19).
  *
- * Rule: no user-facing string may contain internal jargon — invariant
+ * Rule: no user-facing string may contain internal jargon, invariant
  * codes (INV-), wallet error codes (QUOTA_EXCEEDED, SCOPE_*), protocol
  * names (NWC, BOLT11, get_budget, Nostr) or byte-level terms (32-byte).
  * Product names (LNbits NWC in the wallet list) are not prose and are
- * out of scope for this scan — it walks LOCALE.copy only.
+ * out of scope for this scan, it walks LOCALE.copy only.
  *
  * Field labels on the receipt card ("hash:", "preimage:") are data labels
  * for the proof itself, not prose; they are not in LOCALE.copy and are
@@ -113,7 +113,7 @@ test("copy: verify checklist has all six checks in plain words", () => {
 /**
  * Navigation regression (Bug E, found Thu by the 3G/browser pass):
  * the session (incl. the NWC secret) lives in module memory only
- * (INV-8) — a plain <a href> full-reloads the page and wipes it, so
+ * (INV-8), a plain <a href> full-reloads the page and wipes it, so
  * login → pay lost the session. In-app links must be Next <Link>
  * (client-side navigation, module state survives).
  */
@@ -134,14 +134,14 @@ test("nav: no plain <a> links to in-app routes (session would be lost)", async (
   assert.ok(files.length > 5, `expected web source files, got ${files.length}`);
   for (const f of files) {
     const src = await readFile(f, "utf8");
-    assert.ok(!/<a\s+href="\//.test(src), `${f} uses a plain <a href="/…"> — use next/link`);
-    assert.ok(!/<a\s+href=\{`/.test(src), `${f} uses a plain <a href={\`…\`}> — use next/link`);
+    assert.ok(!/<a\s+href="\//.test(src), `${f} uses a plain <a href="/…">, use next/link`);
+    assert.ok(!/<a\s+href=\{`/.test(src), `${f} uses a plain <a href={\`…\`}>, use next/link`);
     // A <button> nested in a <Link> full-reloads in this Next 16 build
-    // (verified live: window marker dies, navigation entry appears) —
+    // (verified live: window marker dies, navigation entry appears) -
     // the in-memory session is lost. Buttons navigate via router.push.
     assert.ok(
       !/<Link[^>]*>\s*<button/.test(src),
-      `${f} nests a <button> inside a <Link> — use router.push on the button instead`,
+      `${f} nests a <button> inside a <Link>, use router.push on the button instead`,
     );
   }
 });

@@ -1,5 +1,5 @@
 /**
- * receipts.ts — INV-9 invoice bindings + bound receipts (INV-5, INV-6).
+ * receipts.ts, INV-9 invoice bindings + bound receipts (INV-5, INV-6).
  * All data is public: payment hashes, supplier ids, amounts. The API
  * never sees a secret and never holds funds.
  */
@@ -69,7 +69,7 @@ export function verifyReceiptById(id: string): { exists: boolean; valid: boolean
 /**
  * Third-party verify: a verifier pastes a receipt JSON they received
  * (e.g. from a merchant's phone) and gets per-check results. No stored
- * state is consulted — the receipt proves itself via the preimage/hash
+ * state is consulted, the receipt proves itself via the preimage/hash
  * binding and the Nostr event cross-check. Malformed input is a
  * verification failure, not a crash.
  */

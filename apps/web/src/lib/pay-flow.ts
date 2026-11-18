@@ -1,8 +1,8 @@
 /**
- * pay-flow.ts — the /pay orchestration, extracted from the page so it can
+ * pay-flow.ts, the /pay orchestration, extracted from the page so it can
  * be tested without a browser and driven live by scripts/e2e-live.mts.
  *
- * Order of checks (before ANY wallet request) — this order is the product:
+ * Order of checks (before ANY wallet request), this order is the product:
  *   1. Decode BOLT11 → payment hash + amount + memo.
  *   2. INV-9: hash↔supplier binding must exist and match (app-side).
  *   3. INV-2: scope budget re-check (wallet is the primary enforcer).
@@ -14,7 +14,7 @@
  *
  * The caller passes the real api client + the real browser-side payInvoice
  * in production; tests pass stubs. Nothing in here touches the NWC secret
- * — payInvoiceFn is the only function that ever sees an invoice payment,
+ *, payInvoiceFn is the only function that ever sees an invoice payment,
  * and it runs client-side (INV-8).
  */
 
@@ -67,7 +67,7 @@ export interface PayFlowResult {
   receipt: BoundReceipt;
   explanation: string;
   explanationSource: "llm" | "template";
-  /** Scope after settlement (spent updated) — the page stores this. */
+  /** Scope after settlement (spent updated), the page stores this. */
   scope: Scope;
 }
 
@@ -90,7 +90,7 @@ export async function runPayFlow(
     throw new Error(LOCALE.copy.payAmountless);
   }
 
-  // 2. INV-9 — before ANY wallet request.
+  // 2. INV-9, before ANY wallet request.
   const binding = await api.checkBinding(decoded.paymentHash, supplierId, amountSats);
   if (!binding.allowed) {
     if (binding.reason === "UNKNOWN_INVOICE_HASH") {
@@ -114,7 +114,7 @@ export async function runPayFlow(
   } catch (e) {
     await api.cancelPayment(scope.id);
     // A wallet quota refusal is the same plain-words message as the
-    // app-side budget check — never surface the raw error code.
+    // app-side budget check, never surface the raw error code.
     const msg = (e as Error).message ?? "";
     const code = (e as { code?: string }).code ?? "";
     if (/QUOTA_EXCEEDED/i.test(code) || /spending quota/i.test(msg)) {

@@ -1,5 +1,5 @@
 /**
- * Lighnib API — Fastify.
+ * Lighnib API, Fastify.
  *
  * Holds NO funds. Never sees the NWC secret (all NWC calls happen
  * client-side in the browser). Validates scope / INV-9 bindings /
@@ -232,7 +232,7 @@ app.post("/api/voice/speak-plan", async (request) => {
   return speakPlan(text);
 });
 
-/* --- Conversion (rate passed in — the API knows no live price) --- */
+/* --- Conversion (rate passed in, the API knows no live price) --- */
 app.get("/api/convert", async (request) => {
   const q = request.query as Record<string, string>;
   const btcPrice = Number(q.btcPrice ?? LOCALE.demoBtcPriceNgn);
@@ -272,7 +272,7 @@ app.ready().then(
     try {
       await app.listen({ port, host });
       app.log.info(
-        `lighnib-api listening on ${host}:${port} — holds NO funds, never sees the NWC secret`,
+        `lighnib-api listening on ${host}:${port}, holds NO funds, never sees the NWC secret`,
       );
     } catch (err) {
       app.log.error(err);

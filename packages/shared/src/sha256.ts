@@ -22,7 +22,7 @@ function rotr(x: number, n: number): number {
   return (x >>> n) | (x << (32 - n));
 }
 
-/** Decode a hex string to bytes (pure TS — no Buffer, so it works in the browser). */
+/** Decode a hex string to bytes (pure TS, no Buffer, so it works in the browser). */
 export function hexToBytes(hex: string): Uint8Array {
   if (!/^[0-9a-f]*$/i.test(hex) || hex.length % 2 !== 0) {
     throw new Error("Invalid hex string");

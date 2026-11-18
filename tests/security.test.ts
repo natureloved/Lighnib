@@ -1,5 +1,5 @@
 /**
- * Security tests — INV-8 (bearer token).
+ * Security tests, INV-8 (bearer token).
  * The NWC secret must be browser-memory only: never localStorage,
  * never the server, never logs. Least privilege: pay_invoice only.
  */
@@ -16,7 +16,7 @@ import {
 
 const SECRET = "nostr+walletconnect://deadbeef".concat("00".repeat(29), "?secret=supersecretvalue&relay=wss://relay.test");
 
-test("INV-8: least privilege — pay_invoice is the ONLY allowed NWC method", () => {
+test("INV-8: least privilege, pay_invoice is the ONLY allowed NWC method", () => {
   assert.deepEqual([...NWC_ALLOWED_METHODS], ["pay_invoice"]);
 });
 
@@ -73,7 +73,7 @@ test("INV-8: secret never appears in scrubbed logs", () => {
 
 test("INV-8: no localStorage usage in the shared package", async () => {
   // The shared package must not USE browser storage at all.
-  // (Checked by source scan for actual API usage — the words may appear
+  // (Checked by source scan for actual API usage, the words may appear
   // in comments explaining the ban. The web app is audited separately.)
   const fs = await import("node:fs");
   const path = await import("node:path");

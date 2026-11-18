@@ -1,5 +1,5 @@
 /**
- * Scope state machine tests — INV-1, INV-2, INV-4.
+ * Scope state machine tests, INV-1, INV-2, INV-4.
  * Covers ALL transitions of:
  * UNREGISTERED → LOGGED_IN → PAYING → RECEIPTED → DISPUTED →
  * RESOLVED | REFUNDED → REVOKED
@@ -68,7 +68,7 @@ test("REFUNDED branch: DISPUTED → REFUNDED → REVOKED", () => {
   assert.equal(s, "REVOKED");
 });
 
-test("REVOKED is terminal — no transitions out", () => {
+test("REVOKED is terminal, no transitions out", () => {
   assert.deepEqual(SCOPE_TRANSITIONS.REVOKED, []);
 });
 

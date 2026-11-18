@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BlurFade } from "@/components/ui/blur-fade";
 
-/** The six per-check keys — `valid` is the aggregate, not a checklist item. */
+/** The six per-check keys, `valid` is the aggregate, not a checklist item. */
 type CheckKey = Exclude<keyof ReceiptVerificationDetail, "valid">;
 const CHECK_LABELS: { key: CheckKey; label: string }[] = (
   Object.keys(LOCALE.copy.verifyCheckLabels) as CheckKey[]
@@ -38,7 +38,7 @@ function CheckList({ checks }: { checks: ReceiptVerificationDetail }) {
   );
 }
 
-/** /receipts — verifiable bound receipt cards (INV-5, INV-6) + third-party verify. */
+/** /receipts, verifiable bound receipt cards (INV-5, INV-6) + third-party verify. */
 export default function ReceiptsPage() {
   const router = useRouter();
   const [receipts, setReceipts] = useState<BoundReceipt[]>([]);
@@ -76,7 +76,7 @@ export default function ReceiptsPage() {
       setCopied(r.id);
       toast.success("Receipt JSON copied");
     } catch {
-      setError("Clipboard blocked — copy the receipt from the page instead.");
+      setError("Clipboard blocked, copy the receipt from the page instead.");
     }
   }
 
@@ -95,7 +95,7 @@ export default function ReceiptsPage() {
     try {
       setPasteChecks(verifyReceiptDetail(parsed as BoundReceipt));
     } catch {
-      setPasteError("That JSON no be a bound receipt — e no get the fields we need.");
+      setPasteError("That JSON no be a bound receipt, e no get the fields we need.");
       return;
     }
     // Server cross-check: same checks, no stored state.
@@ -122,8 +122,8 @@ export default function ReceiptsPage() {
             <h2>Verify a receipt you receive</h2>
             <p className="small">
               Paste the receipt JSON (copy am from the card below, or from the
-              merchant phone). The check runs inside your own browser — you no
-              need trust our server — and we cross-check am against the API too.
+              merchant phone). The check runs inside your own browser, you no
+              need trust our server, and we cross-check am against the API too.
               Na the preimage be the proof: e must hash to the payment hash.
             </p>
             <Label htmlFor="pasted-receipt">Receipt JSON</Label>
@@ -147,8 +147,8 @@ export default function ReceiptsPage() {
                 <p>
                   <strong>
                     {pasteChecks.valid
-                      ? "Receipt valid — na real, settled payment."
-                      : "Receipt INVALID — no trust am."}
+                      ? "Receipt valid, na real, settled payment."
+                      : "Receipt INVALID, no trust am."}
                   </strong>
                 </p>
                 <CheckList checks={pasteChecks} />
@@ -159,7 +159,7 @@ export default function ReceiptsPage() {
                   <p className="small">Server cross-check disagree: invalid.</p>
                 )}
                 {pasteServer === null && (
-                  <p className="small">Server cross-check unavailable — browser check stand alone.</p>
+                  <p className="small">Server cross-check unavailable, browser check stand alone.</p>
                 )}
               </div>
             )}
@@ -169,16 +169,17 @@ export default function ReceiptsPage() {
 
       {receipts.length === 0 && (
         <p className="small">
-          No receipts yet. Pay a supplier invoice first — or run the demo
+          No receipts yet. Pay a supplier invoice first, or run the demo
           seed: <span className="mono">npm run seed</span>, then refresh.
         </p>
       )}
+      <div className="receipts-grid">
       {receipts.map((r) => (
           <div className="slip relative" key={r.id}>
             <div className="perf" aria-hidden="true" />
             <span className="stamp">BOUND RECEIPT</span>
             <h2>
-              {r.vendorName} — {r.amountSats.toLocaleString()} sats
+              {r.vendorName}, {r.amountSats.toLocaleString()} sats
             </h2>
             <p>
               {LOCALE.currencySymbol}
@@ -192,7 +193,7 @@ export default function ReceiptsPage() {
               <div className="ok">Verified: preimage match payment hash. Na real payment.</div>
             )}
             {verified[r.id] === false && (
-              <div className="error">Verification fail — no trust this receipt.</div>
+              <div className="error">Verification fail, no trust this receipt.</div>
             )}
             <Button variant="outline" className={OUTLINE_BTN} onClick={() => verify(r.id)}>
               Verify receipt
@@ -207,7 +208,7 @@ export default function ReceiptsPage() {
                   Explainer:{" "}
                   {explanations[r.id].source === "llm"
                     ? "AI (LLM)"
-                    : "Template fallback — no LLM key set"}
+                    : "Template fallback, no LLM key set"}
                 </p>
                 <p className="small">{VOICE_LABEL}</p>
                 <Button
@@ -235,6 +236,7 @@ export default function ReceiptsPage() {
             </Button>
           </div>
       ))}
+      </div>
     </>
   );
 }

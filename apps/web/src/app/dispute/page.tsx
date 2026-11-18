@@ -21,11 +21,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { BlurFade } from "@/components/ui/blur-fade";
 
 /**
- * /dispute — open a dispute against a bound receipt (INV-7).
+ * /dispute, open a dispute against a bound receipt (INV-7).
  *
  * LIVE MEDIATOR HOLD: CUT (Wed 18 Nov decision, see README).
  * The wallet service has no hold invoices, so opening a dispute here
- * records the dispute claim against the bound receipt — it does NOT
+ * records the dispute claim against the bound receipt, it does NOT
  * hold any funds, and no mediator release moves money. The receipt
  * is the proof; the named mediator judges from it. Post-MVP path:
  * Alby Hub (hold invoices merged, getAlby/hub#1298 + #2065).
@@ -51,7 +51,7 @@ function DisputeInner() {
     }
     const session = getSession();
     if (!session.walletPubkey) {
-      setError("Log in first — dispute need your wallet identity.");
+      setError("Log in first, dispute need your wallet identity.");
       return;
     }
     setBusy(true);
@@ -81,7 +81,7 @@ function DisputeInner() {
           <AlertTitle>Live mediator hold CUT for the MVP.</AlertTitle>
           <AlertDescription>
             Our wallet service has no hold invoices, so this page records a
-            dispute claim against the bound receipt —{" "}
+            dispute claim against the bound receipt -{" "}
             <strong>it holds no funds</strong> and no release here moves money.
             The receipt is the proof; the named mediator ({LOCALE.mediator})
             judges from it. The dispute state machine below is the design for
@@ -91,7 +91,7 @@ function DisputeInner() {
         </Alert>
         <p className="small">
           Mediator: <strong>{LOCALE.mediator}</strong> · Hold window (design):{" "}
-          {LOCALE.holdWindowMinutes} minutes — a live dispute must decide inside
+          {LOCALE.holdWindowMinutes} minutes, a live dispute must decide inside
           am. Production dispute (hours/days) na next iteration.
         </p>
 
@@ -100,12 +100,12 @@ function DisputeInner() {
             <Label htmlFor="receipt">Bound receipt</Label>
             <Select value={receiptId} onValueChange={setReceiptId}>
               <SelectTrigger id="receipt" className="mt-2 h-12 rounded-xl text-base">
-                <SelectValue placeholder="— pick a receipt —" />
+                <SelectValue placeholder="- pick a receipt -" />
               </SelectTrigger>
               <SelectContent>
                 {receipts.map((r) => (
                   <SelectItem key={r.id} value={r.id}>
-                    {r.id} — {r.vendorName} — {r.amountSats.toLocaleString()} sats
+                    {r.id}, {r.vendorName}, {r.amountSats.toLocaleString()} sats
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -140,7 +140,7 @@ function DisputeInner() {
             )}
             <p className="small">
               Design preview only: the mediator release below records a
-              ruling against the receipt. No funds are held or moved — the
+              ruling against the receipt. No funds are held or moved, the
               live hold is cut (see the notice at the top). If deadline pass,
               the design auto-refunds to buyer.
             </p>

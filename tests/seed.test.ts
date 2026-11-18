@@ -1,5 +1,5 @@
 /**
- * Seed tests — the demo seed's output contract (scripts/seed.mjs).
+ * Seed tests, the demo seed's output contract (scripts/seed.mjs).
  *
  * The seed itself needs live LNbits, so it is verified by running it
  * (see scripts/e2e-live.mts and TUESDAY-REPORT). These tests pin the
@@ -7,7 +7,7 @@
  *   - the demo NGN→sats numbers the seed, the login page and the scope
  *     all agree on (via the shared conversion, not a copy);
  *   - the shape of seed/demo-data.json, so the demo UI and the e2e
- *     driver can rely on it — including that it carries NO secrets.
+ *     driver can rely on it, including that it carries NO secrets.
  */
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -30,7 +30,7 @@ test("seed numbers agree with the shared conversion (login page, scope, seed)", 
 test("demo-data.json contract: 1+1+1+10+2, no secrets, all receipts verified", () => {
   const path = join(import.meta.dirname, "..", "seed", "demo-data.json");
   if (!existsSync(path)) {
-    test.skip("seed has not been run yet — run `npm run seed` first");
+    test.skip("seed has not been run yet, run `npm run seed` first");
     return;
   }
   const data = JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;

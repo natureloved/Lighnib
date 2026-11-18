@@ -3,7 +3,7 @@
  *
  * INV-5: every settled payment MUST become a bound receipt.
  * INV-6: a receipt exists only AFTER settlement and carries
- * amount + vendor + purpose + payment hash + preimage — never a
+ * amount + vendor + purpose + payment hash + preimage, never a
  * bare payment notification (e.g. Nostr 9735) alone.
  *
  * Verification: sha256(preimage) must equal paymentHash.
@@ -39,7 +39,7 @@ export function buildBoundReceipt(input: ReceiptInput): BoundReceipt {
     throw new Error("INV-6: receipt requires a valid 32-byte payment hash");
   }
   if (sha256Hex(hexToBytes(input.preimage)) !== input.paymentHash.toLowerCase()) {
-    throw new Error("INV-6: preimage does not match payment hash — not a settled payment");
+    throw new Error("INV-6: preimage does not match payment hash, not a settled payment");
   }
   if (!input.vendorName || !input.purpose) {
     throw new Error("INV-6: receipt requires vendor and purpose");
@@ -82,8 +82,8 @@ export function buildBoundReceipt(input: ReceiptInput): BoundReceipt {
 
 /** Per-check verification detail, for the third-party verify flow:
  *  a verifier pastes a receipt JSON and sees exactly which check
- *  failed, instead of a bare true/false. Runs anywhere — browser,
- *  server, or a third party's machine — with no trust in our API. */
+ *  failed, instead of a bare true/false. Runs anywhere, browser,
+ *  server, or a third party's machine, with no trust in our API. */
 export interface ReceiptVerificationDetail {
   valid: boolean;
   settled: boolean;
@@ -150,7 +150,7 @@ export function receiptSummary(receipt: BoundReceipt, currencySymbol: string): s
   return (
     `You pay ${currencySymbol}${receipt.amountFiat.toLocaleString()} ` +
     `(${receipt.amountSats.toLocaleString()} sats) to ${receipt.vendorName} ` +
-    `for ${receipt.purpose}. Receipt ${receipt.id} — payment hash ` +
+    `for ${receipt.purpose}. Receipt ${receipt.id}, payment hash ` +
     `${receipt.paymentHash.slice(0, 12)}… confirmed.`
   );
 }

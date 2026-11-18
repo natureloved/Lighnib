@@ -4,9 +4,9 @@ dist/
 *.tsbuildinfo
 .env*
 !.env.example
-# Demo credentials (NWC URIs + LNbits admin keys) — bearer secrets, never commit.
+# Demo credentials (NWC URIs + LNbits admin keys), bearer secrets, never commit.
 seed/.demo-credentials.json
-# Files root `tsc -b` (typecheck) emits next to sources — never commit.
+# Files root `tsc -b` (typecheck) emits next to sources, never commit.
 apps/web/src/**/*.js
 apps/web/src/**/*.d.ts
 apps/web/src/**/*.map
@@ -20,5 +20,5 @@ scripts/*.map
 # Local-only LNbits install + data (test instance, never commit)
 .local/
 
-# Stray LNbits runtime data (auth keys — NEVER commit)
+# Stray LNbits runtime data (auth keys, NEVER commit)
 data/

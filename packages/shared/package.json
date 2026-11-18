@@ -1,5 +1,5 @@
 {
-  "description": "Shared types, INV-1–INV-9 helpers and NGN/XOF↔sats conversion for Lighnib. Pure TypeScript, no dependencies — safe to import in browser and server.",
+  "description": "Shared types, INV-1–INV-9 helpers and NGN/XOF↔sats conversion for Lighnib. Pure TypeScript, no dependencies, safe to import in browser and server.",
   "exports": {
     ".": "./dist/packages/shared/src/index.js",
     "./package.json": "./package.json"

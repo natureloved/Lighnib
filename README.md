@@ -1,21 +1,21 @@
-# Lighnib — Small Lightning payments, locked.
+# Lighnib, Small Lightning payments, locked.
 
 > **Your wallet is the key. Lighnib it.**
 
 Lighnib is wallet-as-key for local commerce (Dakar Bitcoin Hack 2026). A
-merchant logs in to a supplier portal by connecting their Lightning wallet —
+merchant logs in to a supplier portal by connecting their Lightning wallet -
 the NWC connection is the credential, and its budget is the permission
 scope. Every payment is bound to the purchase as a verifiable receipt,
 explained by AI and spoken aloud in Pidgin. Disputes go to one named
-mediator (state machine built and unit-tested; live hold cut — see spike
+mediator (state machine built and unit-tested; live hold cut, see spike
 verdict below). No password, no screenshot, no bank, no NIN.
 
 **Demo videos (silent screen recordings of the real app on test sats,
-with burned-in Pidgin captions — narration scripts alongside):**
+with burned-in Pidgin captions, narration scripts alongside):**
 `~/workspace/demo-videos/lighnib/lighnib-90s.mp4` (84 s) and
 `lighnib-3min.mp4` (112 s). They are **not committed to this repo**
 (kept out by design); upload them with the submission. The videos have
-no audio track — this VM has no voices — so captions + the narration
+no audio track, this VM has no voices, so captions + the narration
 scripts carry the words.
 
 **Honest security line:** Budget enforced by the wallet. Supplier enforced
@@ -24,41 +24,41 @@ by the app + bound receipt. Mediator sees any mismatch.
 ## Judge 5-min guide (start here)
 
 You need: a phone or laptop, and any NWC wallet (Alby Hub ≥ v1.19.0,
-Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC — do not use it.**
+Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC, do not use it.**
 
-1. **Run it** (2 min): `docker compose up` — or `npm install && npm run dev`
+1. **Run it** (2 min): `docker compose up`, or `npm install && npm run dev`
    (web on http://localhost:3000, api on http://localhost:3001).
    Then seed the demo world: `npm run seed` (1 merchant + 1 supplier +
    1 named mediator + 10 bound receipts + 2 blocked payments, all on
    local test sats). The seed prints the merchant NWC URI to paste at
-   login. Requires local LNbits 1.7.1 + the local NWC relay — see Setup.
+   login. Requires local LNbits 1.7.1 + the local NWC relay, see Setup.
 2. **Log in** (30 s): open `/login`, paste the merchant NWC connection URI
    from the seed output. Scope shows ₦50,000/day. No password, no form.
 3. **Pay** (1 min): open `/pay`, pick supplier-balogun-001 (the seeded
    demo supplier), paste a supplier invoice. A bound receipt appears on
-   settlement — AI-explained, spoken in Pidgin.
+   settlement, AI-explained, spoken in Pidgin.
 3b. **Verify a receipt like a third party** (1 min): open `/receipts`.
    Every settled payment is a bound receipt card (amount + vendor +
    purpose + hash + preimage). Copy any receipt JSON and paste it into
-   "Verify a receipt you receive" — the check runs in your own browser
+   "Verify a receipt you receive", the check runs in your own browser
    (no trust in our server) with a server cross-check: preimage hashes
    to the payment hash, the public Nostr receipt matches the card. Hit
    "Explain this receipt" for the AI explainer (template fallback when
    no LLM key is set) and "Replay readout" to hear it spoken.
-   Open the app as `http://localhost:3000` (not `127.0.0.1` — Next 16
+   Open the app as `http://localhost:3000` (not `127.0.0.1`, Next 16
    blocks the dev HMR websocket for the 127.0.0.1 origin and the page
    never hydrates; `allowedDevOrigins` now covers it, but localhost is
    the tested path).
 4. **Watch the two enforcers** (1 min):
    - A ₦70,000 invoice → **the app refuses it first** (over the ₦50,000
-     scope — the user sees "This invoice pass your daily scope. Wallet
+     scope, the user sees "This invoice pass your daily scope. Wallet
      go refuse am.") before the wallet is ever asked. The wallet is the
      backstop: the seed log shows the same invoice refused directly by
      the wallet with verbatim `QUOTA_EXCEEDED`.
    - An invoice from a supplier not on the allowlist → **the app refuses
      before the wallet is ever asked** ("This invoice no dey recorded
-     for any supplier for this portal." — INV-9 hash mismatch).
-5. **Dispute** (code only — not live): the `/dispute` route and the
+     for any supplier for this portal.", INV-9 hash mismatch).
+5. **Dispute** (code only, not live): the `/dispute` route and the
    dispute state machine exist and are unit-tested, but the live mediator
    hold is CUT for the MVP (see Wednesday decision below). The page says
    so in plain language. Do not demo a live dispute on the current
@@ -68,10 +68,10 @@ Demo data is seeded by `npm run seed` (1 merchant + 1 supplier + 1 named
 mediator + 10 bound receipts + 2 blocked payments). No real funds, no
 token, no account to create.
 
-## Thursday build (2026-11-19) — Pidgin copy, Slow 3G, videos, clean clone
+## Thursday build (2026-11-19), Pidgin copy, Slow 3G, videos, clean clone
 
 - **Pidgin copy pass:** every user-facing string on the happy path is
-  now Pidgin/English — login ("Wallet connection code"), pay ("Supplier
+  now Pidgin/English, login ("Wallet connection code"), pay ("Supplier
   invoice code"), wallet, receipts, dispute, and all refusal messages
   ("This invoice pass your daily scope. Wallet go refuse am.",
   "This invoice no dey recorded for any supplier for this portal.").
@@ -82,7 +82,7 @@ token, no account to create.
   voice reading Pidgin text, dispute cut, template explainer.
 - **Bug E found live by the browser pass (critical, fixed + verified):**
   the in-memory session (INV-8: NWC secret browser-memory only) was
-  lost on navigation — login → pay showed "You never log in". Root
+  lost on navigation, login → pay showed "You never log in". Root
   cause: plain `<a href>` links full-reload, and `<Link><button>`
   nesting also full-reloads in this Next 16 build (proven with a
   `window.__marker` probe). Fix: all in-app navigation now uses Next
@@ -94,91 +94,91 @@ token, no account to create.
   requests):** unthrottled load 155–639 ms, FCP 56–504 ms; **Slow 3G
   (500 kbps, 400 ms RTT): load ~4.05 s, FCP ~850–900 ms, React mounted
   + login interactive in all 8 runs** (desktop + Tecno-like 720×1600
-  viewport). LCP is not emitted in this headless build — FCP + load
+  viewport). LCP is not emitted in this headless build, FCP + load
   event are the reported paint metrics. No fix was needed; the happy
   path works on a slow connection.
 - **Demo videos:** 90-sec (`lighnib-90s.mp4`, 84 s) and 3-min
   (`lighnib-3min.mp4`, 112 s), assembled with ffmpeg from real
   Playwright recordings of the production build on test sats (login →
   pay → bound receipt → receipts → wallet → both enforcers → dispute
-  cut, plus a second clip: scope raised to ₦100,000/day in one tap —
+  cut, plus a second clip: scope raised to ₦100,000/day in one tap -
   a new connection, because a wallet budget is fixed per NWC
-  connection — and the refused ₦70,000 invoice then settling).
+  connection, and the refused ₦70,000 invoice then settling).
   Title/section cards + burned-in Pidgin captions; narration scripts
-  alongside. **Silent** (no audio track — this VM has no voices;
+  alongside. **Silent** (no audio track, this VM has no voices;
   Playwright captures no audio). Nothing in them is faked.
 - **Clean-clone test:** fresh copy minus node_modules/.local/data/.git,
   `npm install` (14 s), `npm test` **80/80**, typecheck + build pass,
   dev servers on alternate ports (api :3301 healthy, all 6 routes 200
-  on web :3200) — total under 1 minute. A true `git clone` of the
+  on web :3200), total under 1 minute. A true `git clone` of the
   private repo was not possible on this VM (gh CLI is not authed; the
-  repo is private) — the copy simulates it. Two findings: (1) `/tmp`
-  is a 512 MB tmpfs and was 100% full — the clone test must run on the
+  repo is private), the copy simulates it. Two findings: (1) `/tmp`
+  is a 512 MB tmpfs and was 100% full, the clone test must run on the
   main disk, not /tmp. (2) A fresh tree failed 2 test files before
   `npm run build` because `@lighnib/shared` resolves to compiled
-  `dist/` — **fixed** with `pretest`/`predev` hooks that build shared
+  `dist/`, **fixed** with `pretest`/`predev` hooks that build shared
   first; a stranger's `npm test` / `npm run dev` now works straight
   after install.
 - **Seed + e2e re-run after the copy changes:** seed 10/10 receipts
   verified, 2 blocked; **live e2e 13/13 pass**. Tests: `npm test` →
   **80 pass, 0 fail** (was 74). Build + typecheck pass.
 
-## Wednesday build (2026-11-18) — receipts polish + AI explainer + TTS + dispute decision
+## Wednesday build (2026-11-18), receipts polish + AI explainer + TTS + dispute decision
 
 - **Bound receipts, polished:** `/receipts` now shows the seeded receipts
   as verifiable cards (amount + vendor + purpose + hash + preimage), each
   with Verify, Copy receipt JSON, Explain (AI explainer + source label)
   and Replay/Mute readout. **Third-party verify:** paste any receipt JSON
-  into "Verify a receipt you receive" — the check runs in the verifier's
+  into "Verify a receipt you receive", the check runs in the verifier's
   own browser via the shared `verifyReceiptDetail` (per-check results:
   settled, complete, hash/preimage format, preimage→hash, Nostr event
   match) with a server cross-check at `POST /api/receipts/verify-pasted`
   that consults no stored state. Verified live in headless Chrome:
   a real seeded receipt verifies (7/7 checks), a tampered vendor fails
   only the Nostr cross-check. `seed/demo-data.json` now stores the FULL
-  bound receipts (preimage included — public settlement proof, not a
+  bound receipts (preimage included, public settlement proof, not a
   secret), so anyone can verify them offline from the file alone.
 - **AI explainer:** the LLM path (`LLM_API_URL` + `LLM_API_KEY` +
   `LLM_MODEL`) was verified live against a local OpenAI-compatible stub:
   `source=llm`, correct request shape (model + 2 messages), and a 500
-  from the provider falls back to the template — never throws. The
+  from the provider falls back to the template, never throws. The
   template fallback is the live demo path (no LLM key in this
   environment) and was verified live on the API and in the e2e. **The
-  real-provider LLM path is UNTESTED** (no key exists here) — do not
+  real-provider LLM path is UNTESTED** (no key exists here), do not
   claim a real LLM explained a receipt until a key is set and the call
   is seen live.
-- **TTS (Web Speech API):** verified in headless Chrome — `speechSynthesis`
+- **TTS (Web Speech API):** verified in headless Chrome, `speechSynthesis`
   exists, `speak()` is called without throwing, Replay/Mute are wired,
-  and the honest label ("No dedicated Pidgin voice — English voice
+  and the honest label ("No dedicated Pidgin voice, English voice
   reading Pidgin text") shows on every spoken receipt. **But:** the
   headless VM has zero installed voices, so `speak()` is a silent no-op
-  here — no audio was heard on this machine. Real audio must be checked
+  here, no audio was heard on this machine. Real audio must be checked
   on a real device (Thursday Tecno test).
-- **Dispute decision — CUT CLEANLY (Wed 18 Nov).** Timeboxed
-  investigation: a hold-capable NWC service DOES exist — Alby Hub merged
+- **Dispute decision, CUT CLEANLY (Wed 18 Nov).** Timeboxed
+  investigation: a hold-capable NWC service DOES exist, Alby Hub merged
   hold-invoice support (getAlby/hub#1298, spec #2065 closed, v1.24.7
   current) and the NIP-47 hold methods are real. It is NOT within this
   build's reach here: Docker is unusable on this VM (Alby Hub's
   documented install path), an LDK node needs on-chain funding + channel
   liquidity + P2P peers, and this VM blocks the network paths a node
   needs (all public Nostr relays fail the wss handshake with a TLS
-  interception error — verified live). Standing it up would eat
+  interception error, verified live). Standing it up would eat
   Thursday's must-dos for a stretch goal, so the mediator stays cut:
   the `/dispute` page now carries the cut in plain language ("records a
-  dispute claim — it holds no funds"), the state machine/routes/tests
+  dispute claim, it holds no funds"), the state machine/routes/tests
   stay as the design, and the post-MVP path is named: **Alby Hub
   (hold invoices merged) as the wallet service**. Nothing in the app or
   docs claims a live dispute runs.
 - **Dev-server quirk found live:** opening the app as
   `http://127.0.0.1:3000` makes Next 16 block the dev HMR websocket and
-  the page never hydrates (buttons dead, receipts never load — no
+  the page never hydrates (buttons dead, receipts never load, no
   console error). Use `http://localhost:3000`. Fixed for both origins
   with `allowedDevOrigins: ["127.0.0.1"]` in `next.config.mjs`.
 - **Stack restore (Wed):** a service restart wiped `/tmp` (LNbits venv +
   data, relay, demo wallets). Rebuilt persistently under `.local/`
   (gitignored): `scripts/start-lnbits.sh` + `lnbits==1.7.1` venv,
   nwcprovider 1.2.1 installed manually from the release zip (the API
-  install path fails — the extensions manifest fetch is mangled by the
+  install path fails, the extensions manifest fetch is mangled by the
   sandbox proxy), extension activated + enabled for the admin account,
   provider relay re-pointed at the local relay
   (`ext_nwcprovider.sqlite3 config.relay = ws://localhost:7777`), admin
@@ -188,7 +188,7 @@ token, no account to create.
   and `npm run typecheck` pass. Live e2e re-run after the restore:
   **13/13 pass**.
 
-## Tuesday build (2026-11-17) — web pay flow verified live
+## Tuesday build (2026-11-17), web pay flow verified live
 
 - **Live e2e (13/13 steps pass, `npm run e2e:live`):** the exact web code
   (`/login` → `/pay` → receipt → `/wallet`) was driven against a real
@@ -201,13 +201,13 @@ token, no account to create.
   by INV-9 with zero wallet requests, revoke (scope REVOKED, further
   payments refused) and logout wiping the secret from memory.
 - **Seed (`npm run seed`, `seed/demo-data.json`):** fresh demo wallets
-  each run, 100,000 test sats (synthetic labelled ledger credit —
+  each run, 100,000 test sats (synthetic labelled ledger credit -
   test-only, same mechanism as the spike), 10 live 100-sat receipts all
   verified, both blocked payments recorded. Credentials (NWC URIs +
   admin keys) go to `seed/.demo-credentials.json` (mode 600, gitignored).
 - **Two bugs found live by the e2e and fixed:** (1) the shared BOLT11
   decoder did not skip the 35-bit timestamp, so it returned null for
-  every real invoice — the test builder shared the same wrong
+  every real invoice, the test builder shared the same wrong
   assumption, so the round-trip passed while real invoices failed.
   Fixed + a real-LNbits-invoice regression test. (2) The web api client
   sent `Content-Type: application/json` with an empty body on body-less
@@ -215,27 +215,27 @@ token, no account to create.
   with 400. The client now sends `{}`. Both have regression tests.
 - **Tests:** `npm test` → **62 pass, 0 fail** (was 49). `npm run build`
   and `npm run typecheck` pass (the root typecheck was broken in the
-  skeleton — the web project is `noEmit` and cannot be a `tsc -b`
+  skeleton, the web project is `noEmit` and cannot be a `tsc -b`
   reference; fixed by typechecking it in the root program instead).
 - **Docker: NOT verified on this VM.** `docker compose` plugin is
   missing and the daemon cannot start (`iptables … Permission denied
-  (you must be root)` — the secure VM denies NET_ADMIN). `docker compose
+  (you must be root)`, the secure VM denies NET_ADMIN). `docker compose
   up` is shipped but unverified here; verify it on a machine with
   working Docker before relying on it for the demo.
 
 ## Day-1 spike verdict (2026-11-16, LNbits 1.7.1 + nwcprovider 1.2.1, local)
 
-- **Check 1 — PASS (live):** wallet enforces the daily budget. Over-budget
+- **Check 1, PASS (live):** wallet enforces the daily budget. Over-budget
   pay returned verbatim `QUOTA_EXCEEDED: "The wallet has exceeded its
   spending quota."` App-side INV-9 refused an unknown hash and a
   non-allowlisted supplier with **zero** wallet requests. (One caveat:
   nwcprovider does not implement the `get_budget` read method, so the app
-  cannot read remaining budget over NWC — it tracks spend itself.)
-- **Check 2 — PASS (live):** bound receipt is third-party verifiable —
+  cannot read remaining budget over NWC, it tracks spend itself.)
+- **Check 2, PASS (live):** bound receipt is third-party verifiable -
   sha256(preimage) == payment hash, LNbits lookup shows paid with the
   exact amount, BOLT11 decodes to the same hash + amount + the
   `Lighnib:<orderId>:<supplierId>` memo.
-- **Check 3 — FAIL (live, two layers):** hold invoices are unsupported by
+- **Check 3, FAIL (live, two layers):** hold invoices are unsupported by
   this wallet service. NWC `get_info` advertises only
   `make_invoice, lookup_invoice, get_balance, get_info` (no
   `make_hold_invoice`), and creating a hold invoice via the LNbits core
@@ -245,7 +245,7 @@ token, no account to create.
   dispute state machine, routes and unit tests stay in the code as the
   design for a hold-capable wallet service; nothing in the demo claims a
   live dispute runs today. Wednesday's timeboxed investigation confirmed
-  the cut and named the post-MVP path (Alby Hub, hold invoices merged —
+  the cut and named the post-MVP path (Alby Hub, hold invoices merged -
   see Wednesday build above).
 
 ## Setup
@@ -260,7 +260,7 @@ npm run build      # build all workspaces
 npm run typecheck  # tsc -b (root) + per-workspace typechecks
 ```
 
-Local wallet service (test sats only — LNbits 1.7.1 + nwcprovider 1.2.1
+Local wallet service (test sats only, LNbits 1.7.1 + nwcprovider 1.2.1
 + local NWC relay; the seed starts the relay itself if it is down):
 
 ```bash
@@ -273,7 +273,7 @@ set the admin password once via
 `PUT /api/v1/auth/first_install` (`first_install_token` is
 `lighnib-first-install-2026` unless `LNBITS_FIRST_INSTALL_TOKEN` is
 changed), install + activate + enable the nwcprovider extension, and
-point its relay at the local relay (`ws://localhost:7777`) — see
+point its relay at the local relay (`ws://localhost:7777`), see
 WEDNESDAY-REPORT.md for the exact commands. The seed then works
 unchanged.
 
@@ -293,7 +293,7 @@ explains every receipt offline.
 lighnib/
   apps/web/    Next.js PWA: /login, /pay, /wallet, /receipts, /dispute
   apps/api/    Fastify: nwc.ts, scope.ts, receipts.ts, disputes.ts, voice.ts, explainer.ts
-               — holds NO funds, never sees the NWC secret
+              , holds NO funds, never sees the NWC secret
   packages/shared/  types, INV-1–INV-9, NGN/XOF↔sats
   config/locale.ts  THE SKIN: currency, TTS voice, mediator, copy
   tests/ · README.md · docker-compose.yml (web+api+LNbits ≥1.7.1)
@@ -314,35 +314,35 @@ flowchart LR
 **Flow:** Login (NWC connection = session + scoped budget) → Pay (app
 decodes BOLT11, INV-9 checks hash↔supplier, scope re-check, wallet pays)
 → Bound receipt (amount + vendor + purpose + hash + preimage, AI-explained,
-spoken) → Dispute (state machine only; live hold cut — see spike verdict).
+spoken) → Dispute (state machine only; live hold cut, see spike verdict).
 
 **State machine:** `UNREGISTERED → LOGGED_IN → PAYING → RECEIPTED →
 DISPUTED → RESOLVED | REFUNDED → REVOKED`
 
-## Threat model — bearer token
+## Threat model, bearer token
 
 The NWC secret is a **bearer token**: leak = impersonate + spend.
 Mitigations, built in:
 
-- **Browser-memory only** — never localStorage, never sessionStorage,
+- **Browser-memory only**, never localStorage, never sessionStorage,
   never a cookie, never the server, never logs. The API rejects any
   request carrying a secret key (HTTP 400, INV-8 guard).
-- **Short expiry** — a working day (8 h). Expired sessions refuse use.
-- **Revoke = logout** — one connection, one revocation. Revoke the login
+- **Short expiry**, a working day (8 h). Expired sessions refuse use.
+- **Revoke = logout**, one connection, one revocation. Revoke the login
   and spending dies instantly. (This is also the answer to "why not
   NIP-98 + NWC separately?": one connection, one revocation, scope
   travels with identity.)
-- **Least privilege** — `pay_invoice` only. No balance reads, no history.
-- **Small budgets** — ₦50,000/day blast radius, stated out loud.
+- **Least privilege**, `pay_invoice` only. No balance reads, no history.
+- **Small budgets**, ₦50,000/day blast radius, stated out loud.
 
 **Trust assumptions (never claim "trustless"):** the NWC wallet + LNbits
 are trusted to enforce the budget; the merchant is trusted to keep their
 wallet secret; the mediator is trusted to rule honestly (the bound receipt
-limits dishonesty — a release only goes to a party named in the receipt,
+limits dishonesty, a release only goes to a party named in the receipt,
 and the release is public).
 
 **Versions that matter:** LNbits **≥ 1.7.1** (critical vuln 2026-11-08,
-1.7.0 2026-11-10, 1.7.1 2026-11-11 rotates auth keys — update alone is
+1.7.0 2026-11-10, 1.7.1 2026-11-11 rotates auth keys, update alone is
 insufficient, rotate wallet keys + funding credentials + rebuild
 connections). Alby Hub **≥ v1.19.0** (v1.7–v1.18 internet-takeover flaw,
 fixed Aug 2025). Dedicated LNbits wallet per merchant. Phoenix has NO NWC.
@@ -353,25 +353,25 @@ fixed Aug 2025). Dedicated LNbits wallet per merchant. Phoenix has NO NWC.
   NIP-47. Supplier enforcement is app-side via INV-9 (hash↔supplierId
   recorded pre-payment, checked pre-request); the bound receipt makes any
   bypass visible.
-- **Disputes decide within minutes (NIP-47 hold window) — when a
+- **Disputes decide within minutes (NIP-47 hold window), when a
   hold-capable wallet service is used.** The Day-1 spike (2026-11-16)
   proved the LNbits/FakeWallet service has no hold invoices, so the live
   mediator hold is CUT for the MVP (Wednesday decision: a hold-capable
-  service exists — Alby Hub, hold invoices merged — but is not runnable
+  service exists, Alby Hub, hold invoices merged, but is not runnable
   on this VM; post-MVP path). The dispute state machine stays as code +
   tests and the `/dispute` page says plainly that it records a claim
   and holds no funds. Production disputes (hours/days, longer escrow)
   are a next iteration.
-- **No dedicated Pidgin TTS.** Spoken receipts use the Web Speech API —
+- **No dedicated Pidgin TTS.** Spoken receipts use the Web Speech API -
   an English voice reading Pidgin text, honestly labelled in the UI.
-  **No audio was heard on this VM** (zero installed voices) — real
+  **No audio was heard on this VM** (zero installed voices), real
   audio must be checked on a real device.
 - **nwcprovider does not implement `get_budget`.** The app cannot read
-  remaining budget over NWC — it tracks spend itself from settled
+  remaining budget over NWC, it tracks spend itself from settled
   receipts. The wallet tab shows the app-tracked remaining, not a
   wallet-reported figure.
 - **Docker NOT verified on this VM** (compose plugin missing, daemon
-  cannot start — iptables/NET_ADMIN denied). `docker compose up` is
+  cannot start, iptables/NET_ADMIN denied). `docker compose up` is
   shipped but unverified here; verify it on a machine with working
   Docker before relying on it for the demo.
 - **LLM explainer: real provider UNTESTED.** The LLM path was verified
@@ -379,7 +379,7 @@ fixed Aug 2025). Dedicated LNbits wallet per merchant. Phoenix has NO NWC.
   a live call is seen, the template fallback is the honest demo path.
 - **Test sats only.** MVP settles on Lightning; ₦/FCFA is display-only.
   Wave/MoMo settlement leg is a next iteration. Locale (currency,
-  language, mediator) is config — Senegal skin is a config swap.
+  language, mediator) is config, Senegal skin is a config swap.
 - **No token. No mediator network** (one named mediator). No group
   buying, no delivery escrow, no global directory.
 
@@ -389,12 +389,12 @@ fixed Aug 2025). Dedicated LNbits wallet per merchant. Phoenix has NO NWC.
 2. Bound receipts / day
 3. Overspend blocks (wallet QUOTA_EXCEEDED)
 4. Wrong-supplier blocks (app INV-9 refusal)
-5. Dispute resolution time (minutes, inside the hold window — post-MVP
+5. Dispute resolution time (minutes, inside the hold window, post-MVP
    metric; the live hold is cut, so this is 0 / not measured in the MVP)
 
 ## Next iteration
 
-- Live mediator hold via a hold-capable wallet service (Alby Hub —
+- Live mediator hold via a hold-capable wallet service (Alby Hub -
   hold invoices merged in getAlby/hub#1298, spec #2065, v1.24.7) once
   it can run with real channels; longer-escrow production disputes
   (beyond the NIP-47 hold window)
@@ -404,4 +404,4 @@ fixed Aug 2025). Dedicated LNbits wallet per merchant. Phoenix has NO NWC.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).

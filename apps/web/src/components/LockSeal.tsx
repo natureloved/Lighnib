@@ -1,4 +1,4 @@
-/** LockSeal — the one memorable mark of the product: a padlock in a gold ring.
+/** LockSeal, the one memorable mark of the product: a padlock in a gold ring.
  * Used on the home hero and on the locked-till (scope) cards. */
 export default function LockSeal({ small = false }: { small?: boolean }) {
   return (

@@ -1,5 +1,5 @@
 /**
- * config/locale.ts — THE SKIN.
+ * config/locale.ts, THE SKIN.
  *
  * Everything user-facing (currency, language, mediator, demo numbers, copy)
  * lives here and nowhere else. Swap this one file to re-skin Lighnib for
@@ -8,7 +8,7 @@
  * a mediator, or a demo amount.
  *
  * Demo numbers are DEMO numbers. The BTC price below is a placeholder
- * rate for the demo only — never present it as a live market price.
+ * rate for the demo only, never present it as a live market price.
  */
 
 export const LOCALE = {
@@ -27,7 +27,7 @@ export const LOCALE = {
   tagline: "Small Lightning payments, locked.",
   oneLiner: "Your wallet is the key. Lighnib it.",
   nameMeaning:
-    "Lighnib — Pidgin 'hold am' (hold it). Hold budget (login) + hold funds (mediator).",
+    "Lighnib, Pidgin 'hold am' (hold it). Hold budget (login) + hold funds (mediator).",
 
   /** Demo scope: the budget a login carries. */
   demoDailyBudgetNgn: 50_000,
@@ -48,7 +48,7 @@ export const LOCALE = {
   /** Working-day session: NWC connections expire at end of day. */
   sessionExpiryHours: 8,
 
-  /** Wallets that support NWC. Phoenix has NO NWC — never list it. */
+  /** Wallets that support NWC. Phoenix has NO NWC, never list it. */
   supportedWallets: [
     "Alby Hub (≥ v1.19.0)",
     "Zeus",
@@ -57,14 +57,14 @@ export const LOCALE = {
     "Coinos",
   ] as const,
 
-  /** Honest security line — verbatim in pitch + README. */
+  /** Honest security line, verbatim in pitch + README. */
   honestLine:
     "Budget enforced by the wallet. Supplier enforced by the app + bound receipt. Mediator sees any mismatch.",
 
   copy: {
     loginTitle: "Log in with your wallet",
     loginBody:
-      "No password, no form. Connect your Lightning wallet — the connection na the key, and e carry your spending scope.",
+      "No password, no form. Connect your Lightning wallet, the connection na the key, and e carry your spending scope.",
     scopeLabel: "Your daily scope",
     payTitle: "Pay supplier",
     payBody: "Pay invoice from your scoped connection. Every payment get bound receipt.",
@@ -72,11 +72,11 @@ export const LOCALE = {
     receiptBody: "This receipt na proof of wetin you pay, who you pay, and why.",
     disputeTitle: "Open dispute",
     disputeBody:
-      "Something wrong with this payment? Open dispute — the market association mediator go see the same receipt.",
+      "Something wrong with this payment? Open dispute, the market association mediator go see the same receipt.",
     walletTitle: "Your wallet",
     revokeLabel: "Revoke login (logout)",
     revokeBody:
-      "Revoke na logout. Once you revoke, spending die instantly — the connection no fit pay again.",
+      "Revoke na logout. Once you revoke, spending die instantly, the connection no fit pay again.",
     overBudget:
       "This invoice pass your daily scope. Wallet go refuse am. Raise scope or split the order.",
     wrongSupplier:
@@ -84,11 +84,11 @@ export const LOCALE = {
     voiceLabel:
       "Spoken readout: English voice reading Pidgin text (Web Speech API). No dedicated Pidgin voice.",
 
-    /** Pay-flow refusal messages — the exact words the merchant sees. */
+    /** Pay-flow refusal messages, the exact words the merchant sees. */
     payInvalidInvoice:
-      "Invoice no valid — check the invoice code from your supplier.",
+      "Invoice no valid, check the invoice code from your supplier.",
     payAmountless:
-      "This invoice get no amount — ask your supplier for one with amount.",
+      "This invoice get no amount, ask your supplier for one with amount.",
     payUnknownHash:
       "This invoice no dey recorded for any supplier for this portal. App refuse am before wallet see am.",
     paySupplierMismatch:
@@ -101,7 +101,7 @@ export const LOCALE = {
     payOverBudget: (remainingSats: number) =>
       `This invoice pass your daily scope. Wallet go refuse am. Remaining: ${remainingSats.toLocaleString()} sats. Raise scope or split the order.`,
 
-    /** Plain-words scope states — never show the raw state code. */
+    /** Plain-words scope states, never show the raw state code. */
     scopeStates: {
       UNREGISTERED: "Not logged in",
       LOGGED_IN: "Logged in",
@@ -127,7 +127,7 @@ export const LOCALE = {
 
 export type Locale = typeof LOCALE;
 
-/** Senegal skin (config swap only — not built, not demoed). */
+/** Senegal skin (config swap only, not built, not demoed). */
 export const LOCALE_SENEGAL = {
   market: "Dakar, Senegal",
   currency: "XOF" as const,

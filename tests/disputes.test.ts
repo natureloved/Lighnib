@@ -1,5 +1,5 @@
 /**
- * Dispute tests — INV-7.
+ * Dispute tests, INV-7.
  * Open only against a bound receipt; only the named mediator releases;
  * only to a party named in the receipt; timeout auto-refunds.
  */

@@ -26,7 +26,7 @@ import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { BlurFade } from "@/components/ui/blur-fade";
 
 /**
- * /pay — supplier invoice pay flow with scope remaining.
+ * /pay, supplier invoice pay flow with scope remaining.
  * The orchestration lives in lib/pay-flow.ts (decode → INV-9 → INV-2 →
  * wallet pay → bound receipt → explainer → speak). This page is UI only.
  */
@@ -34,14 +34,14 @@ import { BlurFade } from "@/components/ui/blur-fade";
 const SUPPLIERS: { id: string; label: string; vendorName: string }[] = [
   {
     id: "supplier-balogun-001",
-    label: "Balogun provisions — Mama Nkechi",
-    vendorName: "Balogun provisions — Mama Nkechi",
+    label: "Balogun provisions, Mama Nkechi",
+    vendorName: "Balogun provisions, Mama Nkechi",
   },
-  { id: "supplier-001", label: "supplier-001 — Mama Nkechi provisions", vendorName: "Mama Nkechi provisions" },
-  { id: "supplier-002", label: "supplier-002 — Balogun textiles", vendorName: "Balogun textiles" },
+  { id: "supplier-001", label: "supplier-001, Mama Nkechi provisions", vendorName: "Mama Nkechi provisions" },
+  { id: "supplier-002", label: "supplier-002, Balogun textiles", vendorName: "Balogun textiles" },
   {
     id: "supplier-999",
-    label: "supplier-999 — no dey for this portal (demo block)",
+    label: "supplier-999, no dey for this portal (demo block)",
     vendorName: "Unknown supplier",
   },
 ];
@@ -71,7 +71,7 @@ export default function PayPage() {
     setReceipt(null);
     setExplanation(null);
     if (!scope) {
-      setError("Log in first — connect your wallet on the Login page.");
+      setError("Log in first, connect your wallet on the Login page.");
       return;
     }
     if (!invoice.trim()) {
@@ -93,7 +93,7 @@ export default function PayPage() {
       setSession({ scope: result.scope });
       setReceipt(result.receipt);
       setExplanation(result.explanation);
-      setStatus("Payment settled — receipt don land.");
+      setStatus("Payment settled, receipt don land.");
       void confettiRef.current?.fire({
         particleCount: 120,
         spread: 80,
@@ -128,6 +128,7 @@ export default function PayPage() {
             You never log in. <Link href="/login">Connect your wallet first</Link>.
           </div>
         )}
+        <div className="pay-grid">
         {scope && (
           <Card>
             <CardContent className="pt-6">
@@ -173,7 +174,7 @@ export default function PayPage() {
             />
             <p className="small">
               App go decode am, check say the invoice belong to this supplier,
-              check your scope — before wallet ever see am.
+              check your scope, before wallet ever see am.
             </p>
             <Button
               className="mt-4 h-12 w-full rounded-[14px] text-base font-semibold active:scale-[0.985]"
@@ -186,6 +187,7 @@ export default function PayPage() {
             {error && <div className="error">{error}</div>}
           </CardContent>
         </Card>
+        </div>
       </BlurFade>
 
       {receipt && (
@@ -193,7 +195,7 @@ export default function PayPage() {
           <div className="perf" aria-hidden="true" />
             <span className="stamp stamp-in">BOUND RECEIPT</span>
             <h2>
-              {receipt.vendorName} — {receipt.amountSats.toLocaleString()} sats
+              {receipt.vendorName}, {receipt.amountSats.toLocaleString()} sats
             </h2>
             <p className="small">Purpose: {receipt.purpose}</p>
             <p className="small mono">hash: {receipt.paymentHash}</p>

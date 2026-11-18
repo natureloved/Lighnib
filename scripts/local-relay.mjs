@@ -3,7 +3,7 @@
 // Test/demo-only: runs on localhost, in-memory store, no signature
 // verification, no persistence, no rate limits. Sufficient for NWC
 // (NIP-47) traffic: kinds 23194/23195, filters
-// kinds/authors/#p/#e/since/until/limit. NOT part of the product — the
+// kinds/authors/#p/#e/since/until/limit. NOT part of the product, the
 // shipped app works with any NWC relay the user's wallet uses.
 // Usage: node scripts/local-relay.mjs [port]   (default 7777)
 import { WebSocketServer } from "ws";

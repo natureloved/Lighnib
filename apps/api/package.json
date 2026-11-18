@@ -1,5 +1,5 @@
 {
-  "description": "Lighnib API — holds NO funds, never sees the NWC secret. Validates scope, INV-9 bindings, bound receipts and disputes from public data only.",
+  "description": "Lighnib API, holds NO funds, never sees the NWC secret. Validates scope, INV-9 bindings, bound receipts and disputes from public data only.",
   "license": "MIT",
   "main": "./dist/index.js",
   "name": "@lighnib/api",

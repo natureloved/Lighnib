@@ -1,8 +1,8 @@
-// scripts/e2e-live.mts — LIVE end-to-end verification of the web pay flow.
+// scripts/e2e-live.mts, LIVE end-to-end verification of the web pay flow.
 //
-// Drives the EXACT code the PWA uses — the web's own `api` client,
+// Drives the EXACT code the PWA uses, the web's own `api` client,
 // `runPayFlow` orchestration and browser-side `payInvoice` (NWCClient)
-// — against the real API + a real NWC wallet on test sats. Not mocks:
+//, against the real API + a real NWC wallet on test sats. Not mocks:
 // the only stubs are the spoken-readout recorder (no audio in Node) and
 // the LNbits invoice creation (supplier side, same as the real world).
 //
@@ -14,7 +14,7 @@
 // Steps (mirrors /pay exactly, then the /wallet contract + revoke):
 //   1. Login via the web's connectWallet + api.login (scope ₦50,000/day).
 //   2. Fresh 150-sat supplier order → runPayFlow → bound receipt,
-//      verified via the API, explained (template — no LLM key set).
+//      verified via the API, explained (template, no LLM key set).
 //   3. /wallet data: GET scope → remaining = budget − tracked spend.
 //   4. Over-budget ₦70,000 invoice → app scope check refuses (INV-2),
 //      wallet never asked; then a DIRECT NWC pay of the same invoice →
@@ -54,7 +54,7 @@ const result: {
 
 function step(name: string, ok: boolean, detail: string) {
   result.steps.push({ name, ok, detail });
-  console.log(`${ok ? "PASS" : "FAIL"}  ${name} — ${detail}`);
+  console.log(`${ok ? "PASS" : "FAIL"}  ${name}, ${detail}`);
 }
 function finish(pass: boolean) {
   result.pass = pass;
@@ -67,7 +67,7 @@ function finish(pass: boolean) {
 }
 function fail(msg: string): never {
   result.error = msg;
-  result.verdict = `FAIL — ${msg}`;
+  result.verdict = `FAIL, ${msg}`;
   finish(false);
   process.exit(1);
 }
@@ -77,7 +77,7 @@ let creds: { merchantNwcUri: string; supplierAdminKey: string };
 try {
   creds = JSON.parse(readFileSync(credsPath, "utf8"));
 } catch {
-  fail(`seed credentials not found at ${credsPath} — run \`npm run seed\` first`);
+  fail(`seed credentials not found at ${credsPath}, run \`npm run seed\` first`);
 }
 if (!creds!.merchantNwcUri || !creds!.supplierAdminKey) {
   fail("seed credentials file is missing merchantNwcUri / supplierAdminKey");
@@ -111,7 +111,7 @@ try {
   const lnbitsHealth = await lnbits("/api/v1/health");
   step("lnbits-health", typeof lnbitsHealth.server_time === "number", `LNbits up ${lnbitsHealth.up_time}`);
 
-  // 1. Login — the web's own connectWallet (browser-memory session) + api.login.
+  // 1. Login, the web's own connectWallet (browser-memory session) + api.login.
   const pubkey = connectWallet(creds!.merchantNwcUri, 8 * 3600_000);
   const scope = await api.login({
     walletPubkey: pubkey,
@@ -151,7 +151,7 @@ try {
     scope: getSession().scope!,
     walletPubkey: pubkey,
     supplierId: SUPPLIER_ID,
-    supplierName: "Balogun provisions — Mama Nkechi",
+    supplierName: "Balogun provisions, Mama Nkechi",
     invoice,
   });
   setSession({ scope: flow.scope });
@@ -201,10 +201,10 @@ try {
       scope: getSession().scope!,
       walletPubkey: pubkey,
       supplierId: SUPPLIER_ID,
-      supplierName: "Balogun provisions — Mama Nkechi",
+      supplierName: "Balogun provisions, Mama Nkechi",
       invoice: String(invOver.payment_request),
     });
-    step("web-over-budget-refused", false, "over-budget payment SUCCEEDED — not refused!");
+    step("web-over-budget-refused", false, "over-budget payment SUCCEEDED, not refused!");
   } catch (e) {
     overRefused = (e as Error).message;
     step(
@@ -242,7 +242,7 @@ try {
       supplierName: "Unknown supplier",
       invoice: String(invWrong.payment_request),
     });
-    step("web-inv9-unknown-hash-refused", false, "unknown-hash payment SUCCEEDED — INV-9 failed!");
+    step("web-inv9-unknown-hash-refused", false, "unknown-hash payment SUCCEEDED, INV-9 failed!");
   } catch (e) {
     step(
       "web-inv9-unknown-hash-refused",
@@ -261,7 +261,7 @@ try {
       scope: revoked,
       walletPubkey: pubkey,
       supplierId: SUPPLIER_ID,
-      supplierName: "Balogun provisions — Mama Nkechi",
+      supplierName: "Balogun provisions, Mama Nkechi",
       invoice,
     });
     step("revoked-scope-never-pays", false, "payment went through on a REVOKED scope!");
@@ -282,8 +282,8 @@ try {
   const failed = result.steps.filter((s) => !s.ok);
   result.verdict =
     failed.length === 0
-      ? "PASS — web pay flow verified live end-to-end: login → INV-9 → budget → wallet pay → bound receipt → explainer → wallet tab → over-budget + INV-9 blocks → revoke. All against a real NWC wallet on test sats."
-      : `FAIL — ${failed.length} step(s) failed: ${failed.map((s) => s.name).join(", ")}`;
+      ? "PASS, web pay flow verified live end-to-end: login → INV-9 → budget → wallet pay → bound receipt → explainer → wallet tab → over-budget + INV-9 blocks → revoke. All against a real NWC wallet on test sats."
+      : `FAIL, ${failed.length} step(s) failed: ${failed.map((s) => s.name).join(", ")}`;
   finish(failed.length === 0);
   process.exit(failed.length === 0 ? 0 : 1);
 } catch (e) {

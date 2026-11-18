@@ -1,7 +1,7 @@
 /**
  * NGN/XOF ↔ sats conversion + mempool.space fee context.
  *
- * Conversion always takes the BTC price as an explicit input — the
+ * Conversion always takes the BTC price as an explicit input, the
  * shared package never pretends to know a live price. Callers pass a
  * rate from config (demo placeholder) or a live source.
  */
@@ -39,7 +39,7 @@ export function satsToXof(amountSats: number, btcPriceXof: number): number {
   return Math.round((amountSats / 100_000_000) * btcPriceXof);
 }
 
-/** Fee context for display only — Lighnib payments are Lightning, not on-chain. */
+/** Fee context for display only, Lighnib payments are Lightning, not on-chain. */
 export function feeContext(fastestFeeSatPerVbyte: number): FeeContext {
   return {
     fastestFeeSatPerVbyte,

@@ -1,7 +1,7 @@
 /**
- * scope.ts — scope store + state machine (INV-1, INV-2, INV-4).
+ * scope.ts, scope store + state machine (INV-1, INV-2, INV-4).
  * In-memory store for the demo skeleton; the API holds NO funds and
- * never sees the NWC secret — scopes carry only the wallet pubkey
+ * never sees the NWC secret, scopes carry only the wallet pubkey
  * (identity) and the budget (public scope data).
  */
 

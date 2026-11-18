@@ -1,4 +1,4 @@
-/* Lighnib — premium market-ledger design, now on shadcn/ui + Magic UI.
+/* Lighnib, premium market-ledger design, now on shadcn/ui + Magic UI.
    One memorable element: the lock seal. Everything else stays quiet.
    Tokens: ink / paper / till-green / lock-gold. Display face: Bricolage Grotesque (self-hosted).
    shadcn's theme variables are mapped to the Lighnib palette below, so the
@@ -39,7 +39,7 @@
   --ok-wash: #e9f4eb;
   --bad: #8b1e1e;
   --bad-wash: #fbedea;
-  /* shadcn theme — Lighnib palette */
+  /* shadcn theme, Lighnib palette */
   --background: #f6f1e5;
   --foreground: #101613;
   --card: #fffdf6;
@@ -395,4 +395,32 @@ nav a.active::after {
 @media (prefers-reduced-motion: reduce) {
   .ledger > span { animation: none; }
   .stamp-in { animation: none; }
+}
+
+/* --- Responsive: tablet + desktop --- */
+@media (min-width: 640px) {
+  main { max-width: 640px; padding: 28px 24px 140px; }
+}
+@media (min-width: 1024px) {
+  main { max-width: 960px; padding: 36px 32px 150px; }
+  h1 { font-size: 36px; }
+  .hero { padding: 36px 32px 32px; }
+  .hero h1 { font-size: 60px; }
+  .till .till-amount { font-size: 52px; }
+  /* Center the floating nav pill on desktop instead of stretching it edge to edge */
+  nav {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(560px, calc(100% - 24px));
+  }
+  /* Home: the four steps sit two by two */
+  .flow { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
+  .flow li:nth-child(2) { border-top: none; padding-top: 4px; }
+  /* Pay: scope card and form side by side */
+  .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  .pay-grid .card { margin: 0; }
+  /* Receipts: slips two by two */
+  .receipts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; align-items: start; }
+  .receipts-grid .slip { margin: 0 0 16px; }
 }

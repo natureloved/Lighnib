@@ -2,7 +2,7 @@
 
 export type Currency = "NGN" | "XOF";
 
-/** Scope state machine — §4 of the BUILD-PROMPT. */
+/** Scope state machine, §4 of the BUILD-PROMPT. */
 export type ScopeState =
   | "UNREGISTERED"
   | "LOGGED_IN"
@@ -92,11 +92,11 @@ export interface BindingCheck {
   binding?: InvoiceBinding;
 }
 
-/** NWC methods Lighnib is allowed to request — least privilege (INV-8). */
+/** NWC methods Lighnib is allowed to request, least privilege (INV-8). */
 export const NWC_ALLOWED_METHODS = ["pay_invoice"] as const;
 export type NwcMethod = (typeof NWC_ALLOWED_METHODS)[number];
 
-/** Wallets that support NWC. Phoenix has NO NWC — never list it. */
+/** Wallets that support NWC. Phoenix has NO NWC, never list it. */
 export const SUPPORTED_WALLETS = [
   "Alby Hub (≥ v1.19.0)",
   "Zeus",

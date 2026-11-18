@@ -1,5 +1,5 @@
 /**
- * NWC secret hygiene (INV-8) — the bearer-token rules, in code.
+ * NWC secret hygiene (INV-8), the bearer-token rules, in code.
  *
  * The NWC secret is a bearer token: leak = impersonate + spend.
  * - Browser-memory only. Never localStorage, never the server, never logs.
@@ -57,7 +57,7 @@ export function scrubSecrets(text: string, secrets: string[]): string {
  * the session; it can never be serialised, stored, or logged:
  * - toJSON returns undefined (JSON.stringify drops it),
  * - there is no getter that returns the raw secret to callers that do
- *   not need it — only `use()` hands it to the NWC client callback.
+ *   not need it, only `use()` hands it to the NWC client callback.
  */
 export class NwcSessionMemory {
   private secret: string | null = null;

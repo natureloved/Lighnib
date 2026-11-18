@@ -1,5 +1,5 @@
 /**
- * @lighnib/shared — shared types + INV-1–INV-9 helpers + conversion.
+ * @lighnib/shared, shared types + INV-1–INV-9 helpers + conversion.
  * Pure TypeScript, no dependencies. Importable in browser and server.
  */
 

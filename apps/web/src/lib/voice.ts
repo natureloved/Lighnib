@@ -1,5 +1,5 @@
 /**
- * voice.ts — Web Speech API wrapper (client-side only).
+ * voice.ts, Web Speech API wrapper (client-side only).
  *
  * Honestly labelled: there is NO dedicated Pidgin TTS. An English voice
  * (en-NG where available) reads Pidgin text aloud. Mute/replay controls

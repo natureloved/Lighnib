@@ -1,9 +1,9 @@
 /**
- * Minimal BOLT11 decoder (bech32) — enough to extract what INV-9 needs:
+ * Minimal BOLT11 decoder (bech32), enough to extract what INV-9 needs:
  * payment hash (tag `p`), amount (from the HRP), description (tag `d`,
  * which carries the Lighnib memo `Lighnib:order#ID:supplierId`).
  *
- * BOLT11 has NO payee field — that is why INV-9 exists: the app records
+ * BOLT11 has NO payee field, that is why INV-9 exists: the app records
  * hash↔supplierId at invoice creation and checks it before any wallet
  * request. Never claim the wallet knows the supplier.
  */
@@ -109,7 +109,7 @@ export function decodeBolt11(invoice: string): DecodedInvoice | null {
   const d = dec.data;
   // BOLT11 layout after the HRP: timestamp (7 groups of 5 bits = 35 bits),
   // then tagged fields, then the 65-byte signature (104 groups).
-  // The timestamp is NOT a tagged field — parsing must start after it,
+  // The timestamp is NOT a tagged field, parsing must start after it,
   // and stop before the signature, or the first tag reads garbage.
   if (d.length < 7 + 104) return null;
   const tagEnd = d.length - 104;
@@ -127,13 +127,13 @@ export function decodeBolt11(invoice: string): DecodedInvoice | null {
     i += 3 + len;
     const bytes = convertBits(field, 5, 8, false);
     if (type === 1 && bytes && bytes.length === 32) {
-      // tag `p` — payment hash
+      // tag `p`, payment hash
       paymentHash = bytes.map((b) => b.toString(16).padStart(2, "0")).join("");
     } else if (type === 13 && bytes) {
-      // tag `d` — description
+      // tag `d`, description
       description = new TextDecoder().decode(new Uint8Array(bytes));
     } else if (type === 6 && field.length > 0) {
-      // tag `x` — expiry seconds, a big-endian integer over 5-bit
+      // tag `x`, expiry seconds, a big-endian integer over 5-bit
       // groups. (convertBits would reject it: 15 bits is 1 byte + 7
       // leftover bits, and pad=false refuses ≥5 leftover bits.)
       expirySeconds = field.reduce((acc, g) => acc * 32 + g, 0);

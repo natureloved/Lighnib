@@ -1,14 +1,14 @@
 /**
- * video-raise.mjs — register a SECOND merchant NWC connection with a
+ * video-raise.mjs, register a SECOND merchant NWC connection with a
  * raised ₦100,000/day budget (66,667 sats), for the "scope raised in one
  * tap" beat of the 90-second demo (§9 step 4).
  *
  * A wallet budget is fixed per NWC connection, so raising the scope
- * means a new connection — that is the honest product behaviour, and
+ * means a new connection, that is the honest product behaviour, and
  * the demo shows it: revoke the old login, connect the raised one, the
  * refused ₦70,000 invoice now goes through.
  *
- * Writes video-raise.json (mode 600 — NWC URI is a bearer secret).
+ * Writes video-raise.json (mode 600, NWC URI is a bearer secret).
  */
 import { readFileSync, writeFileSync, chmodSync } from "node:fs";
 import { join, dirname } from "node:path";

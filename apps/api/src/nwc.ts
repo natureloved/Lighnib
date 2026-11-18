@@ -1,5 +1,5 @@
 /**
- * nwc.ts — NWC capability info for the API.
+ * nwc.ts, NWC capability info for the API.
  *
  * The API NEVER sees the NWC secret: all NWC calls happen client-side
  * in the browser (see apps/web/src/lib/nwc-client.ts). This module only
@@ -13,9 +13,9 @@ import { NWC_ALLOWED_METHODS, SUPPORTED_WALLETS } from "@lighnib/shared";
 export const NWC_INFO = {
   /** Least privilege: the connection may ONLY pay invoices (INV-8). */
   allowedMethods: [...NWC_ALLOWED_METHODS],
-  /** Wallets that support NWC. Phoenix has NO NWC — never list it. */
+  /** Wallets that support NWC. Phoenix has NO NWC, never list it. */
   supportedWallets: [...SUPPORTED_WALLETS],
-  /** NIP-47 hold invoices live in the extensions repo (Aug 2026) — check via get_info. */
+  /** NIP-47 hold invoices live in the extensions repo (Aug 2026), check via get_info. */
   holdInvoiceNote:
     "Hold invoices are an NWC extension: check wallet support via get_info. " +
     "Demo disputes settle/cancel within minutes (hold window).",
@@ -41,7 +41,7 @@ export interface ScopeRequest {
   sessionHours: number;
 }
 
-/** Validate a scope-creation request (public data only — no secret field exists). */
+/** Validate a scope-creation request (public data only, no secret field exists). */
 export function validateScopeRequest(body: unknown): ScopeRequest {
   if (body === null || typeof body !== "object") {
     throw new Error("Scope request must be an object");

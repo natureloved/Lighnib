@@ -1,5 +1,5 @@
 /**
- * session.ts — browser-memory-only session store (INV-8).
+ * session.ts, browser-memory-only session store (INV-8).
  *
  * The NWC secret lives in a module-level NwcSessionMemory instance:
  * - never localStorage, never sessionStorage, never a cookie,

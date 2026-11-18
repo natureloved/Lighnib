@@ -1,5 +1,5 @@
 /**
- * Conversion tests — NGN/XOF ↔ sats + mempool.space fee context.
+ * Conversion tests, NGN/XOF ↔ sats + mempool.space fee context.
  * Conversion always takes the BTC price as an explicit input;
  * the package never pretends to know a live price.
  */

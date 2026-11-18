@@ -1,12 +1,12 @@
 /**
- * nwc-client.ts — client-side NWC calls (browser only).
+ * nwc-client.ts, client-side NWC calls (browser only).
  *
  * All NWC calls happen HERE, in the browser. The secret is handed to
  * @getalby/sdk's NWCClient from browser memory only (NwcSessionMemory.use)
  * and is never stored, logged, or sent to the API.
  *
  * Least privilege (INV-8): the only method this module exposes is
- * payInvoice. No balance reads, no transaction history, no get_info —
+ * payInvoice. No balance reads, no transaction history, no get_info -
  * the wallet pubkey (identity) is parsed from the connection URI itself.
  */
 
@@ -32,7 +32,7 @@ export interface PayResult {
 
 /**
  * Pay a BOLT11 invoice with the connected wallet.
- * Throws on wallet refusal (e.g. QUOTA_EXCEEDED — over budget).
+ * Throws on wallet refusal (e.g. QUOTA_EXCEEDED, over budget).
  */
 export async function payInvoice(invoice: string): Promise<PayResult> {
   return nwcSession.use(async (secret) => {
@@ -46,7 +46,7 @@ export async function payInvoice(invoice: string): Promise<PayResult> {
         fees_paid?: number;
       };
       if (!res.preimage) {
-        throw new Error("Wallet did not return a preimage — payment not settled");
+        throw new Error("Wallet did not return a preimage, payment not settled");
       }
       return { preimage: res.preimage, feesPaidSats: res.fees_paid ?? 0 };
     } finally {
@@ -57,7 +57,7 @@ export async function payInvoice(invoice: string): Promise<PayResult> {
 
 /**
  * Store a pasted NWC connection URI in browser memory only.
- * The full URI (including the secret) is the bearer token — it is kept
+ * The full URI (including the secret) is the bearer token, it is kept
  * in the NwcSessionMemory holder and nowhere else.
  */
 export function connectWallet(nwcUri: string, ttlMs: number): string {
