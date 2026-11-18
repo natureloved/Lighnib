@@ -20,14 +20,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link
           rel="preload"
-          href="/fonts/archivo-latin-800-normal.woff2"
+          href="/fonts/bricolagegrotesque-latin-800-normal.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
         />
         <link
           rel="preload"
-          href="/fonts/archivo-latin-900-normal.woff2"
+          href="/fonts/bricolagegrotesque-latin-700-normal.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"
