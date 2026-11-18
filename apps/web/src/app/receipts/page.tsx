@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BlurFade } from "@/components/ui/blur-fade";
+import LockSeal from "@/components/LockSeal";
 
 /** The six per-check keys, `valid` is the aggregate, not a checklist item. */
 type CheckKey = Exclude<keyof ReceiptVerificationDetail, "valid">;
@@ -200,6 +201,7 @@ export default function ReceiptsPage() {
       {receipts.map((r) => (
           <div className="slip relative" key={r.id}>
             <div className="perf" aria-hidden="true" />
+            <LockSeal small />
             <span className="stamp">BOUND RECEIPT</span>
             <h2>
               {r.vendorName}, {r.amountSats.toLocaleString()} sats

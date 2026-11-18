@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lighnib logo</title>
+<style>
+  @font-face { font-family: "Bricolage Grotesque"; src: url("apps/web/public/fonts/bricolagegrotesque-latin-800-normal.woff2") format("woff2"); font-weight: 800; font-display: swap; }
+  @font-face { font-family: "Bricolage Grotesque"; src: url("apps/web/public/fonts/bricolagegrotesque-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+  :root {
+    --ink: #101613; --paper: #F6F1E5; --card: #FFFDF6; --deep: #0B1F14;
+    --green-soft: #14301F; --gold: #F2B705; --gold-deep: #B8890A;
+    --hairline: #E2DCC6; --hairline-2: #C9C2A4; --muted: #5C665C; --ok: #1E7A34;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--paper); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .display { font-family: "Bricolage Grotesque", system-ui, sans-serif; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 48px 24px 80px; }
+  .kicker { font-size: 12px; letter-spacing: 3px; font-weight: 700; color: var(--gold-deep); text-transform: uppercase; }
+  h1 { font-size: 52px; line-height: 1.05; letter-spacing: -1px; margin: 12px 0 8px; }
+  .lede { font-size: 19px; line-height: 1.55; color: var(--muted); max-width: 620px; }
+  .lede b { color: var(--ink); }
+  section { margin-top: 56px; }
+  h2 { font-size: 15px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 16px; }
+  .panel { background: var(--card); border: 1px solid var(--hairline); border-radius: 20px; padding: 40px 32px; display: flex; align-items: center; justify-content: center; }
+  .panel.dark { background: var(--deep); border-color: var(--green-soft); }
+  .panel.gold { background: var(--gold); border-color: var(--gold-deep); }
+  .panel img { max-width: 100%; height: auto; display: block; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .cell { border: 1px solid var(--hairline); border-radius: 16px; padding: 28px 20px; background: var(--card); display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .cell.dark { background: var(--deep); border-color: var(--green-soft); }
+  .cell.gold { background: var(--gold); border-color: var(--gold-deep); }
+  .cell span { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .cell.dark span { color: var(--hairline-2); }
+  .cell.gold span { color: #5c4500; }
+  .note { font-size: 14px; line-height: 1.6; color: var(--muted); margin-top: 12px; }
+  .note b { color: var(--ink); }
+  .idea { display: grid; grid-template-columns: 200px 1fr; gap: 28px; align-items: center; background: var(--card); border: 1px solid var(--hairline); border-radius: 20px; padding: 32px; }
+  .idea img { width: 200px; height: 200px; }
+  .idea p { font-size: 17px; line-height: 1.65; }
+  .idea p + p { margin-top: 10px; color: var(--muted); font-size: 15px; }
+  .bolt-callout { display: inline-block; background: var(--gold); color: var(--deep); font-weight: 800; padding: 2px 8px; border-radius: 6px; }
+  /* in-context mocks */
+  .context { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .phone { background: var(--deep); border-radius: 28px; padding: 14px; }
+  .phone-screen { background: var(--paper); border-radius: 18px; overflow: hidden; }
+  .phone-head { display: flex; align-items: center; gap: 10px; padding: 16px 18px; border-bottom: 1px solid var(--hairline); }
+  .phone-head img { height: 30px; }
+  .phone-head .t { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 19px; }
+  .phone-body { padding: 18px; }
+  .till { background: var(--deep); border-radius: 14px; padding: 18px; color: var(--paper); }
+  .till .lbl { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); font-weight: 700; }
+  .till .amt { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 34px; margin-top: 6px; }
+  .till .sub { font-size: 13px; color: var(--hairline-2); margin-top: 4px; }
+  .phone-btn { margin-top: 14px; background: var(--gold); color: var(--deep); font-weight: 800; text-align: center; padding: 13px; border-radius: 12px; font-size: 15px; }
+  .receipt { background: var(--card); border: 1px dashed var(--hairline-2); border-radius: 6px; padding: 24px 20px; position: relative; }
+  .receipt img { height: 44px; margin-bottom: 12px; }
+  .receipt .row { display: flex; justify-content: space-between; font-size: 14px; padding: 7px 0; border-bottom: 1px dashed var(--hairline); }
+  .receipt .row:last-child { border-bottom: none; }
+  .receipt .stamp { position: absolute; right: 14px; top: 14px; border: 2px solid var(--gold-deep); color: var(--gold-deep); font-weight: 800; font-size: 11px; letter-spacing: 2px; padding: 4px 8px; border-radius: 6px; transform: rotate(8deg); }
+  .icons { display: flex; gap: 18px; align-items: flex-end; justify-content: center; padding: 32px 0 8px; }
+  .icons figure { text-align: center; }
+  .icons figcaption { font-size: 12px; color: var(--muted); margin-top: 8px; font-weight: 700; }
+  .swatches { display: flex; gap: 12px; flex-wrap: wrap; }
+  .sw { flex: 1; min-width: 120px; border-radius: 14px; padding: 16px; font-size: 13px; line-height: 1.5; }
+  .sw b { display: block; font-size: 14px; }
+  .sw .hex { opacity: .75; }
+  footer { margin-top: 64px; border-top: 1px solid var(--hairline); padding-top: 20px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+  @media (max-width: 640px) {
+    h1 { font-size: 38px; }
+    .grid2, .grid3, .context { grid-template-columns: 1fr; }
+    .idea { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .wrap { padding: 32px 18px 64px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">Lighnib &middot; Brand mark</div>
+  <h1 class="display">The lock is the logo.</h1>
+  <p class="lede">Lighnib means <b>&ldquo;hold am&rdquo;</b>, hold it. The mark is the product in one shape: a padlock for the hold, and the keyhole is a <b>lightning bolt</b> for the Lightning payment inside it. Your wallet is the key. Lighnib it.</p>
+
+  <section>
+    <h2>The idea</h2>
+    <div class="idea">
+      <img src="apps/web/public/logo/lighnib-mark.svg" alt="Lighnib mark, a padlock with a lightning bolt keyhole">
+      <div>
+        <p>One mark, two readings. At a glance it is a <b>padlock in a gold seal ring</b>, the hold. Look closer and the keyhole is a <span class="bolt-callout">&#9889; bolt</span>, the Lightning payment the lock protects.</p>
+        <p>Built on the product&rsquo;s own seal, the lock from the till and receipt cards, redrawn on a 120-unit grid with a 5-unit gold ring, a 7-unit shackle and a 9-unit corner on the body. Deep green, gold, paper. Nothing else.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Primary lockup</h2>
+    <div class="panel"><img src="apps/web/public/logo/lighnib-logo.svg" alt="Lighnib horizontal logo" style="max-width:560px"></div>
+    <p class="note">Mark + wordmark, set in <b>Bricolage Grotesque 800</b>, the product&rsquo;s display face. Use on paper and light surfaces.</p>
+  </section>
+
+  <section>
+    <h2>Lockups</h2>
+    <div class="grid2">
+      <div class="cell"><img src="apps/web/public/logo/lighnib-logo-stacked.svg" alt="Lighnib stacked logo" style="max-width:220px"><span>Stacked &middot; light</span></div>
+      <div class="cell dark"><img src="apps/web/public/logo/lighnib-logo-stacked-dark.svg" alt="Lighnib stacked logo on dark" style="max-width:220px"><span>Stacked &middot; dark</span></div>
+      <div class="cell dark"><img src="apps/web/public/logo/lighnib-logo-dark.svg" alt="Lighnib horizontal logo on dark" style="max-width:260px"><span>Horizontal &middot; dark</span></div>
+      <div class="cell"><img src="apps/web/public/logo/lighnib-mark.svg" alt="Lighnib mark alone" style="max-width:150px"><span>Mark alone</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Colour</h2>
+    <div class="swatches">
+      <div class="sw" style="background:#0B1F14;color:#F6F1E5"><b>Deep green</b><span class="hex">#0B1F14 &middot; the till</span></div>
+      <div class="sw" style="background:#F2B705;color:#0B1F14"><b>Gold</b><span class="hex">#F2B705 &middot; the seal</span></div>
+      <div class="sw" style="background:#F6F1E5;color:#101613;border:1px solid #E2DCC6"><b>Paper</b><span class="hex">#F6F1E5 &middot; the slip</span></div>
+      <div class="sw" style="background:#101613;color:#F6F1E5"><b>Ink</b><span class="hex">#101613 &middot; the word</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>App icon</h2>
+    <div class="panel dark">
+      <div class="icons">
+        <figure><img src="apps/web/public/logo/lighnib-appicon.svg" alt="Lighnib app icon 1024" style="width:120px;height:120px"><figcaption>1024</figcaption></figure>
+        <figure><img src="apps/web/public/logo/lighnib-appicon.svg" alt="Lighnib app icon 512" style="width:72px;height:72px"><figcaption>512</figcaption></figure>
+        <figure><img src="apps/web/public/logo/lighnib-appicon.svg" alt="Lighnib app icon 192" style="width:48px;height:48px"><figcaption>192</figcaption></figure>
+        <figure><img src="apps/web/public/logo/lighnib-appicon.svg" alt="Lighnib app icon 48" style="width:32px;height:32px"><figcaption>32</figcaption></figure>
+      </div>
+    </div>
+    <p class="note">The seal on deep green, rounded square. Readable down to 32px: the bolt stays legible because it is the keyhole, not decoration.</p>
+  </section>
+
+  <section>
+    <h2>In the product</h2>
+    <div class="context">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-head">
+            <img src="apps/web/public/logo/lighnib-mark.svg" alt="Lighnib mark">
+            <span class="t">Lighnib</span>
+          </div>
+          <div class="phone-body">
+            <div class="till">
+              <div class="lbl">Your till &middot; today</div>
+              <div class="amt">&#8358;50,000</div>
+              <div class="sub">33,333 sats &middot; pay_invoice only &middot; 24h</div>
+            </div>
+            <div class="phone-btn">Pay with your wallet</div>
+          </div>
+        </div>
+      </div>
+      <div class="receipt">
+        <div class="stamp">BOUND</div>
+        <img src="apps/web/public/logo/lighnib-logo.svg" alt="Lighnib logo on receipt">
+        <div class="row"><span>Order</span><b>ORD-PHONE-MWKTU0TB</b></div>
+        <div class="row"><span>Amount</span><b>100 sats</b></div>
+        <div class="row"><span>Supplier</span><b>Balogun provisions</b></div>
+        <div class="row"><span>Receipt</span><b>Bound to this purchase</b></div>
+      </div>
+    </div>
+    <p class="note">The mark replaces the text header in the app, and the horizontal lockup heads the receipt slip. Same seal, same gold, same promise.</p>
+  </section>
+
+  <footer>
+    Lighnib logo, v1. Files live in <b>apps/web/public/logo/</b> in the repo: mark, horizontal and stacked lockups in light and dark, and the app icon. Wordmark set in Bricolage Grotesque 800. No em dashes, no extra colours, no extra typefaces.
+  </footer>
+</div>
+</body>
+</html>

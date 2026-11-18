@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lighnib OG banner</title>
+<style>
+  @font-face { font-family: "Bricolage Grotesque"; src: url("apps/web/public/fonts/bricolagegrotesque-latin-800-normal.woff2") format("woff2"); font-weight: 800; font-display: swap; }
+  @font-face { font-family: "Bricolage Grotesque"; src: url("apps/web/public/fonts/bricolagegrotesque-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { width: 1200px; height: 630px; background: #0B1F14; color: #F6F1E5; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; overflow: hidden; position: relative; }
+  .ring { position: absolute; border: 2px solid rgba(242, 183, 5, 0.18); border-radius: 50%; }
+  .ring.r1 { width: 520px; height: 520px; right: -140px; top: -160px; }
+  .ring.r2 { width: 340px; height: 340px; right: -50px; top: -70px; border-color: rgba(242, 183, 5, 0.12); }
+  .ring.r3 { width: 700px; height: 700px; left: -260px; bottom: -320px; border-color: rgba(242, 183, 5, 0.10); }
+  .inner { position: relative; display: flex; align-items: center; gap: 56px; height: 100%; padding: 0 72px; }
+  .mark { width: 300px; height: 300px; flex: none; }
+  .mark img { width: 300px; height: 300px; display: block; }
+  .word { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; font-size: 118px; letter-spacing: -2px; line-height: 1; color: #F6F1E5; }
+  .tag { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 700; font-size: 34px; color: #F2B705; margin-top: 18px; letter-spacing: 0.5px; }
+  .line { font-size: 26px; color: #C9C2A4; margin-top: 14px; }
+  .rule { width: 64px; height: 6px; background: #F2B705; border-radius: 3px; margin-top: 28px; }
+</style>
+</head>
+<body>
+  <div class="ring r1"></div>
+  <div class="ring r2"></div>
+  <div class="ring r3"></div>
+  <div class="inner">
+    <div class="mark"><img src="apps/web/public/logo/lighnib-mark.svg" alt="Lighnib mark"></div>
+    <div>
+      <div class="word">Lighnib</div>
+      <div class="tag">Small Lightning payments, locked.</div>
+      <div class="line">Your wallet is the key. Lighnib it.</div>
+      <div class="rule"></div>
+    </div>
+  </div>
+</body>
+</html>
