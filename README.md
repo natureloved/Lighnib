@@ -32,13 +32,14 @@ by the app + bound receipt. Mediator sees any mismatch.
 
 ## Judge 5-min guide (start here)
 
-You need: a phone or laptop, and any NWC wallet (Alby Hub ≥ v1.19.0,
-Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC, do not use it.**
+You need: a phone or laptop, and any NWC wallet: [Alby Hub](https://albyhub.com) (≥ v1.19.0),
+[Zeus](https://zeusln.app), [LNbits NWC](https://lnbits.com), or [Coinos](https://v3.coinos.io).
+**Phoenix has NO NWC, do not use it.**
 
 ### If you do not have a wallet yet (3 min)
 
-1. **Install Alby Hub** (≥ v1.19.0) from getalby.com, or install Zeus.
-   Alby Hub is the tested path.
+1. **Install Alby Hub** (≥ v1.19.0) from [albyhub.com](https://albyhub.com), or install
+   [Zeus](https://zeusln.app). Alby Hub is the tested path.
 2. **Fund it with Mutinynet test sats** from a Mutinynet faucet.
    You need enough for the ₦50,000/day demo budget (about 33,333 sats).
 3. **Create an NWC connection** in Alby Hub: methods **pay_invoice
