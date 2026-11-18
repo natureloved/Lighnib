@@ -57,7 +57,30 @@ export default function ReceiptsPage() {
   const [pasteServer, setPasteServer] = useState<boolean | null>(null);
 
   useEffect(() => {
-    api.listReceipts().then(setReceipts).catch((e) => setError((e as Error).message));
+    let cancelled = false;
+    api
+      .listReceipts()
+      .then((list) => {
+        if (cancelled) return;
+        setReceipts(list);
+        // Auto-explain every receipt so the explainer text, source label,
+        // and Replay/Mute voice controls show without the user having to
+        // ask first. If auto-explain fails for a receipt, the manual
+        // "Explain this receipt" button stays as the fallback.
+        list.forEach((r) => {
+          api
+            .explainReceipt(r.id)
+            .then((res) => {
+              if (cancelled) return;
+              setExplanations((e) => ({ ...e, [r.id]: res }));
+            })
+            .catch(() => undefined);
+        });
+      })
+      .catch((e) => setError((e as Error).message));
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function verify(id: string) {

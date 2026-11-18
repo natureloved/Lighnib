@@ -2,6 +2,12 @@
 
 > **Your wallet is the key. Lighnib it.**
 
+> **The login IS the spending permission.** There is no password and no
+> separate payment step. Connect your Lightning wallet and the connection
+> itself is the credential; its budget is the permission scope. Revoke
+> the login and the spending dies instantly. Separate systems cannot do
+> that.
+
 Lighnib is wallet-as-key for local commerce (Dakar Bitcoin Hack 2026). A
 merchant logs in to a supplier portal by connecting their Lightning wallet -
 the NWC connection is the credential, and its budget is the permission
@@ -9,6 +15,9 @@ scope. Every payment is bound to the purchase as a verifiable receipt,
 explained by AI and spoken aloud in Pidgin. Disputes go to one named
 mediator (state machine built and unit-tested; live hold cut, see spike
 verdict below). No password, no screenshot, no bank, no NIN.
+
+**Live demo:** https://lighnib.vercel.app
+**Repo:** https://github.com/natureloved/Lighnib (public, MIT)
 
 **Demo videos (silent screen recordings of the real app on test sats,
 with burned-in Pidgin captions, narration scripts alongside):**
@@ -25,6 +34,27 @@ by the app + bound receipt. Mediator sees any mismatch.
 
 You need: a phone or laptop, and any NWC wallet (Alby Hub ≥ v1.19.0,
 Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC, do not use it.**
+
+### If you do not have a wallet yet (3 min)
+
+1. **Install Alby Hub** (≥ v1.19.0) from getalby.com, or install Zeus.
+   Alby Hub is the tested path.
+2. **Fund it with Mutinynet test sats** from a Mutinynet faucet.
+   You need enough for the ₦50,000/day demo budget (about 33,333 sats).
+3. **Create an NWC connection** in Alby Hub: methods **pay_invoice
+   only**, budget **₦50,000/day** (33,333 sats), expiry **24 hours**.
+   Copy the connection string (`nostr+walletconnect://...`).
+4. Paste it into Lighnib `/login` and connect. Skip to step 2 below.
+
+### Fastest path: pre-funded demo merchant (30 s, no setup)
+
+A seeded demo merchant is already funded with test sats. Its NWC
+connection string is in the repo at `seed/demo-data.json` (merchant
+section) and in the Devpost submission notes. Paste that string into
+`/login`. Test sats only, clearly labelled, revoke any time. Use this
+if you skip the wallet setup above.
+
+### Happy path (2 min)
 
 1. **Run it** (2 min): `docker compose up`, or `npm install && npm run dev`
    (web on http://localhost:3000, api on http://localhost:3001).
@@ -67,6 +97,89 @@ Zeus, LNbits NWC, Mutiny, Coinos). **Phoenix has NO NWC, do not use it.**
 Demo data is seeded by `npm run seed` (1 merchant + 1 supplier + 1 named
 mediator + 10 bound receipts + 2 blocked payments). No real funds, no
 token, no account to create.
+
+## Setup
+
+One command: `docker compose up --build` (web + api + LNbits ≥ 1.7.1).
+Or local dev: `npm install && npm run dev` (web :3000, api :3001) plus
+`bash scripts/start-lnbits.sh` (LNbits :5000) and
+`node scripts/local-relay.mjs 7777` (Nostr relay). Then `npm run seed`.
+See `docker-compose.yml` and `scripts/`. Node 20+, npm 10+.
+
+## Architecture
+
+```
+Browser (Next.js) ──HTTPS──> API (Fastify, no funds, no NWC secret)
+     │  wss (NWC)                │
+     │                           │ (seed only)
+     └──────> Nostr relay ──> LNbits + nwcprovider (FakeWallet, test sats)
+```
+
+The browser talks to the API (HTTP) and to the relay (wss, NWC client).
+The API never talks to LNbits at runtime; only the seed script does
+(setup step). LNbits holds the demo wallets; the nwcprovider extension
+connects to the relay. Every payment is bound to its purchase (INV-9)
+and lands as a verifiable bound receipt (INV-5/INV-6).
+
+## Threat model
+
+- **NWC secret is a bearer token.** It lives in browser memory only,
+  never in localStorage, never on the server, never in logs. Short
+  expiry (24h demo). Least privilege: `pay_invoice` only. Revoke =
+  logout: the secret is wiped from memory and the scope is revoked
+  server-side, so a revoked scope never pays again.
+- **Blast radius:** one scope, ₦50,000/day. A stolen secret can spend
+  at most that day's budget, only to allowlisted suppliers (the app
+  refuses anything else before the wallet is asked), and every spend
+  leaves a bound receipt that names the supplier.
+- **Budget enforced by the wallet.** The wallet returns
+  `QUOTA_EXCEEDED` on overspend. The app re-checks the scope before
+  every payment as a backstop.
+- **Supplier enforced by the app + bound receipt.** INV-9: the app
+  decodes the BOLT11 invoice, looks up the payment hash in the binding
+  registry (recorded at invoice creation), and refuses an unknown hash
+  or a supplier mismatch before any wallet request. The bound receipt
+  makes any bypass auditable.
+- **Mediator sees any mismatch.** The receipt is the proof; the
+  mediator judges from it. No funds are held by the app or the API.
+
+## Constraints
+
+- **Dispute hold window:** the live mediator hold is CUT for the MVP.
+  LNbits FakeWallet has no hold invoices and the NWC service advertises
+  no hold methods, so a live dispute must decide within minutes (the
+  demo window). Production dispute over hours/days is the next
+  iteration (longer escrow via Alby Hub hold invoices).
+- **TTS:** no dedicated Pidgin voice exists. The spoken receipt uses
+  the Web Speech API with an English voice reading Pidgin text,
+  labelled honestly in the UI. Mute and replay are on every receipt.
+- **AI explainer:** the LLM path needs `LLM_API_URL` + `LLM_API_KEY`.
+  Without a key the template fallback explains the receipt and is
+  labelled "Template fallback, no LLM key set". Never claim a real LLM
+  explained a receipt until a key is set and the call is seen live.
+- **Reload wipes the session by design (INV-8).** A full page reload
+  clears the in-memory NWC secret and logs the user out. Client-side
+  navigation preserves it.
+
+## Metrics
+
+Live counts from the API (`GET /api/metrics`), also shown on the
+homepage:
+
+- Merchants/week: **10** (pilot target, 1 Lagos market)
+- Receipts/day: **10** (seeded; live count from the API)
+- Overspend blocks: **1** (seeded wallet `QUOTA_EXCEEDED`; live count)
+- Wrong-supplier blocks: **1** (seeded INV-9 refusal; live count)
+- Dispute resolution: **<5 min** (demo, inside the hold window)
+
+Pilot targets are labelled as targets, not live numbers.
+
+## Next iteration
+
+Mainnet (real sats, real suppliers), a MoMo/Wave payout leg so receipts
+settle in FCFA/₦, longer escrow for production disputes, and a Senegal
+skin (FCFA, French/Wolof, Soynade Oolel-Voices for Wolof/French TTS).
+The mediator becomes a hold-capable service (Alby Hub hold invoices).
 
 ## Thursday build (2026-11-19), Pidgin copy, Slow 3G, videos, clean clone
 

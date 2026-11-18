@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import { ThemeProvider } from "next-themes";
 import Nav from "@/components/Nav";
 import { Toaster } from "@/components/ui/sonner";
@@ -37,6 +38,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <main>{children}</main>
           <Nav />
+          <footer className="site-footer">
+            <Link
+              href="https://github.com/natureloved/Lighnib"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </Link>
+          </footer>
           <Toaster position="top-center" />
         </ThemeProvider>
       </body>

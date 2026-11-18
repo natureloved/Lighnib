@@ -35,8 +35,11 @@ import {
   checkBinding,
   createReceipt,
   decodeInvoice,
+  getMetrics,
   getReceipt,
+  listBlocked,
   listReceipts,
+  recordBlocked,
   recordBinding,
   verifyPastedReceipt,
   verifyReceiptById,
@@ -173,6 +176,17 @@ app.get("/api/receipts/:id/verify", async (request) => {
 app.post("/api/receipts/verify-pasted", async (request) => {
   return verifyPastedReceipt(request.body);
 });
+
+/* --- Blocked attempts + metrics (Wed fix, Tasks 2 + 6) --- */
+app.post("/api/blocked", async (request, reply) => {
+  try {
+    return recordBlocked(request.body as Parameters<typeof recordBlocked>[0]);
+  } catch (err) {
+    reply.code(400).send({ error: (err as Error).message });
+  }
+});
+app.get("/api/blocked", async () => listBlocked());
+app.get("/api/metrics", async () => getMetrics());
 
 /* --- Disputes (INV-7, hold window) --- */
 app.post("/api/disputes", async (request, reply) => {

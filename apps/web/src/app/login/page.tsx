@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LOCALE, ngnToSats, scopeStateLabel } from "@lighnib/shared";
@@ -180,6 +181,16 @@ export default function LoginPage() {
           <p className="small">Phoenix has NO NWC, e no dey supported.</p>
         </CardContent>
       </Card>
+
+      <p className="small">
+        <Link
+          href="https://github.com/natureloved/Lighnib#judge-5-min-guide"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          New here? 5-min judge guide
+        </Link>
+      </p>
     </BlurFade>
   );
 }

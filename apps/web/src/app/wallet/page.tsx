@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LOCALE, remainingBudgetSats, scopeStateLabel } from "@lighnib/shared";
+import type { BoundReceipt } from "@lighnib/shared";
 import { api } from "@/lib/api";
 import LockSeal from "@/components/LockSeal";
 import { getSession, logoutSession, setSession, subscribeSession } from "@/lib/session";
@@ -11,6 +12,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NumberTicker } from "@/components/ui/number-ticker";
 import { AnimatedCircularProgressBar } from "@/components/ui/animated-circular-progress-bar";
 import { BlurFade } from "@/components/ui/blur-fade";
+
+type BlockedAttempt = {
+  id: string;
+  kind: "overspend" | "wrong-supplier";
+  reason: string;
+  amountSats?: number;
+  amountFiat?: number;
+  supplierId?: string;
+  orderId?: string;
+  at: string;
+};
 
 /**
  * /wallet, connection / budget / revoke view.
@@ -25,6 +37,9 @@ export default function WalletPage() {
   const [revoked, setRevoked] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
+  const [historyReceipts, setHistoryReceipts] = useState<BoundReceipt[]>([]);
+  const [historyBlocked, setHistoryBlocked] = useState<BlockedAttempt[]>([]);
+  const [historyError, setHistoryError] = useState(false);
 
   useEffect(() => subscribeSession(() => setSessionState(getSession())), []);
 
@@ -47,6 +62,27 @@ export default function WalletPage() {
       cancelled = true;
     };
   }, []);
+
+  // History: receipts + blocked attempts, from the API. The connection is
+  // pay_invoice only, so there is no NWC balance/transactions call here;
+  // the API's tracked receipts and blocks are the history.
+  useEffect(() => {
+    if (!session.connected || !session.scope) return;
+    let cancelled = false;
+    Promise.all([api.listReceipts(), api.listBlocked()])
+      .then(([receipts, blocked]) => {
+        if (cancelled) return;
+        setHistoryReceipts(receipts);
+        setHistoryBlocked(blocked);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setHistoryError(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [session.connected, session.scope]);
 
   async function refresh() {
     if (!session.scope) return;
@@ -171,6 +207,46 @@ export default function WalletPage() {
             us how much remain, so the app dey track spend itself.)
           </p>
         </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>History</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {historyError ? (
+              <p className="small">History unavailable.</p>
+            ) : historyReceipts.length === 0 && historyBlocked.length === 0 ? (
+              <p className="small">No payments or blocked attempts yet.</p>
+            ) : (
+              <ul className="flow">
+                {historyReceipts.map((r) => (
+                  <li key={r.id}>
+                    <span>
+                      <strong>
+                        {r.amountSats.toLocaleString()} sats · {LOCALE.currencySymbol}
+                        {r.amountFiat.toLocaleString()}
+                      </strong>{" "}
+                      to {r.vendorName} · {r.purpose} · Settled{" "}
+                      {new Date(r.settledAt).toLocaleString()}
+                    </span>
+                  </li>
+                ))}
+                {historyBlocked.map((b) => (
+                  <li key={b.id}>
+                    <span>
+                      <strong>BLOCKED, {b.kind === "overspend" ? "Overspend" : "Wrong supplier"}</strong>{" "}
+                      · {b.reason}
+                      {b.amountSats !== undefined &&
+                        ` · ${b.amountSats.toLocaleString()} sats`}
+                      {b.amountFiat !== undefined &&
+                        ` · ${LOCALE.currencySymbol}${b.amountFiat.toLocaleString()}`}{" "}
+                      · {new Date(b.at).toLocaleString()}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle>{LOCALE.copy.revokeLabel}</CardTitle>

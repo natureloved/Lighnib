@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Fragment, Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { TriangleAlert } from "lucide-react";
 import { LOCALE } from "@lighnib/shared";
@@ -94,6 +94,61 @@ function DisputeInner() {
           {LOCALE.holdWindowMinutes} minutes, a live dispute must decide inside
           am. Production dispute (hours/days) na next iteration.
         </p>
+
+        <Card>
+          <CardContent className="pt-6">
+            <h2>How a dispute moves</h2>
+            <div className="state-flow">
+              {[
+                "UNREGISTERED",
+                "LOGGED_IN",
+                "PAYING",
+                "RECEIPTED",
+                "DISPUTED",
+                "RESOLVED / REFUNDED",
+                "REVOKED",
+              ].map((state, i, arr) => (
+                <Fragment key={state}>
+                  <span
+                    className={
+                      state === "RESOLVED / REFUNDED" || state === "REVOKED"
+                        ? "state end"
+                        : "state"
+                    }
+                  >
+                    {state}
+                  </span>
+                  {i < arr.length - 1 && (
+                    <span className="arrow" aria-hidden="true">
+                      →
+                    </span>
+                  )}
+                </Fragment>
+              ))}
+            </div>
+            <p className="small">
+              Design: {LOCALE.holdWindowMinutes}-min hold. Live dispute must
+              decide inside the window. Production (hours/days) is the next
+              iteration.
+            </p>
+            <p className="small">
+              The receipt is the proof; the hold is next iteration. A dispute
+              opened here records the claim against the bound receipt, it
+              holds no funds.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <h2>Mediator</h2>
+            <p>
+              <strong>{LOCALE.mediator}</strong> judges from the bound receipt,
+              can only release to the party named in the receipt, release is
+              public.
+            </p>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardContent className="pt-6">

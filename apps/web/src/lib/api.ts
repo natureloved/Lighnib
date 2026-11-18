@@ -85,6 +85,26 @@ export const api = {
   createReceipt: (input: Record<string, unknown>) =>
     req<BoundReceipt>("/api/receipts", { method: "POST", body: JSON.stringify(input) }),
   listReceipts: () => req<BoundReceipt[]>("/api/receipts"),
+  listBlocked: () =>
+    req<
+      {
+        id: string;
+        kind: "overspend" | "wrong-supplier";
+        reason: string;
+        amountSats?: number;
+        amountFiat?: number;
+        supplierId?: string;
+        orderId?: string;
+        at: string;
+      }[]
+    >("/api/blocked"),
+  getMetrics: () =>
+    req<{
+      receipts: number;
+      overspendBlocks: number;
+      wrongSupplierBlocks: number;
+      disputes: number;
+    }>("/api/metrics"),
   verifyReceipt: (id: string) =>
     req<{ exists: boolean; valid: boolean }>(`/api/receipts/${id}/verify`),
   verifyPasted: (receipt: unknown) =>
