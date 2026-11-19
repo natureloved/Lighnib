@@ -82,6 +82,17 @@ export const api = {
       { method: "POST", body: JSON.stringify(input) },
     ),
 
+  mintInvoice: (input: { supplierId: string; orderId: string; amountSats: number }) =>
+    req<{
+      paymentRequest: string;
+      paymentHash: string;
+      supplierId: string;
+      supplierName: string;
+      orderId: string;
+      amountSats: number;
+      memo: string;
+    }>(`/api/invoices/mint`, { method: "POST", body: JSON.stringify(input) }),
+
   createReceipt: (input: Record<string, unknown>) =>
     req<BoundReceipt>("/api/receipts", { method: "POST", body: JSON.stringify(input) }),
   listReceipts: () => req<BoundReceipt[]>("/api/receipts"),

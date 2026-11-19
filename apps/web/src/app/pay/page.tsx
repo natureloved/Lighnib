@@ -58,12 +58,41 @@ export default function PayPage() {
   const [receipt, setReceipt] = useState<Awaited<ReturnType<typeof api.createReceipt>> | null>(null);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [minting, setMinting] = useState(false);
   const [session, setSessionState] = useState(getSession());
   const confettiRef = useRef<ConfettiRef>(null);
 
   useEffect(() => subscribeSession(() => setSessionState(getSession())), []);
 
   const scope = session.scope;
+
+  async function mintDemoInvoice() {
+    setError(null);
+    setStatus(null);
+    if (!scope) {
+      setError("Log in first, connect your wallet on the Login page.");
+      return;
+    }
+    if (supplierId === "supplier-999") {
+      setError("This supplier cannot mint invoices on the demo.");
+      return;
+    }
+    setMinting(true);
+    try {
+      const supplier = SUPPLIERS.find((s) => s.id === supplierId) ?? SUPPLIERS[0];
+      const result = await api.mintInvoice({
+        supplierId,
+        orderId: `ORD-DEMO-${Date.now().toString(36).toUpperCase()}`,
+        amountSats: 100,
+      });
+      setInvoice(result.paymentRequest);
+      setStatus(`Fresh invoice ready, 100 sats for ${supplier.vendorName}.`);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setMinting(false);
+    }
+  }
 
   async function pay() {
     setError(null);
@@ -176,6 +205,14 @@ export default function PayPage() {
               App go decode am, check say the invoice belong to this supplier,
               check your scope, before wallet ever see am.
             </p>
+            <Button
+              variant="outline"
+              className={OUTLINE_BTN}
+              onClick={mintDemoInvoice}
+              disabled={minting || busy || !scope || supplierId === "supplier-999"}
+            >
+              {minting ? "Minting…" : "Get a demo invoice"}
+            </Button>
             <Button
               className="mt-4 h-12 w-full rounded-[14px] text-base font-semibold active:scale-[0.985]"
               onClick={pay}

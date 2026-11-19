@@ -53,10 +53,11 @@ Note: Blitz keeps its NWC balance separate from its main balance, so fund the NW
 ### Fastest path: pre-funded demo merchant (30 s, no setup)
 
 A seeded demo merchant is already funded with test sats. Its NWC
-connection string is in the repo at `seed/demo-data.json` (merchant
-section) and in the Devpost submission notes. Paste that string into
-`/login`. Test sats only, clearly labelled, revoke any time. Use this
-if you skip the wallet setup above.
+connection string is in the Devpost submission's Additional info
+upload (judges only). Paste that string into `/login`. Test sats
+only, clearly labelled, revoke any time. Use this if you skip the
+wallet setup above. After login, open `/pay` and tap "Get a demo
+invoice" for a fresh 100-sat invoice, no invoice needed beforehand.
 
 ### Happy path (2 min)
 
@@ -69,8 +70,9 @@ if you skip the wallet setup above.
 2. **Log in** (30 s): open `/login`, paste the merchant NWC connection URI
    from the seed output. Scope shows ₦50,000/day. No password, no form.
 3. **Pay** (1 min): open `/pay`, pick supplier-balogun-001 (the seeded
-   demo supplier), paste a supplier invoice. A bound receipt appears on
-   settlement, AI-explained, spoken in Pidgin.
+   demo supplier), tap "Get a demo invoice" for a fresh 100-sat
+   invoice, then pay it. A bound receipt appears on settlement,
+   AI-explained, spoken in Pidgin.
 3b. **Verify a receipt like a third party** (1 min): open `/receipts`.
    Every settled payment is a bound receipt card (amount + vendor +
    purpose + hash + preimage). Copy any receipt JSON and paste it into
@@ -115,15 +117,17 @@ See `docker-compose.yml` and `scripts/`. Node 20+, npm 10+.
 ```
 Browser (Next.js) ──HTTPS──> API (Fastify, no funds, no NWC secret)
      │  wss (NWC)                │
-     │                           │ (seed only)
+     │                           │ (mint only)
      └──────> Nostr relay ──> LNbits + nwcprovider (FakeWallet, test sats)
 ```
 
 The browser talks to the API (HTTP) and to the relay (wss, NWC client).
-The API never talks to LNbits at runtime; only the seed script does
-(setup step). LNbits holds the demo wallets; the nwcprovider extension
-connects to the relay. Every payment is bound to its purchase (INV-9)
-and lands as a verifiable bound receipt (INV-5/INV-6).
+The API talks to LNbits at runtime for one thing only: minting supplier
+invoices (POST /api/invoices/mint, supplier invoice key, mints + reads,
+cannot pay). Everything else is seed-time setup. LNbits holds the demo
+wallets; the nwcprovider extension connects to the relay. Every payment
+is bound to its purchase (INV-9) and lands as a verifiable bound receipt
+(INV-5/INV-6).
 
 ## Threat model
 

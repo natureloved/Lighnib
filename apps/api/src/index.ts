@@ -54,6 +54,11 @@ import {
 } from "./disputes";
 import { explainReceipt, templateExplain } from "./explainer";
 import { VOICE_CONFIG, speakPlan } from "./voice";
+import {
+  createLnbitsMintFn,
+  mintInvoice,
+  type MintRequest,
+} from "./invoices";
 
 const app = Fastify({ logger: true });
 app.register(cors, { origin: true });
@@ -139,6 +144,36 @@ app.post("/api/scope/:id/revoke", async (request, reply) => {
 app.post("/api/invoices", async (request, reply) => {
   try {
     return recordBinding(request.body as Parameters<typeof recordBinding>[0]);
+  } catch (err) {
+    reply.code(400).send({ error: (err as Error).message });
+  }
+});
+/*
+ * POST /api/invoices/mint — supplier invoice minting (Phase 1 friction fix).
+ * Mints the invoice in the supplier's LNbits wallet AND records the INV-9
+ * binding in one call, so the merchant can pay it straight away. The API
+ * reaches LNbits only here, with the supplier invoice key from env
+ * (LNBITS_SUPPLIER_INVOICE_KEY); without both env vars the endpoint answers
+ * 503 and the manual two-step flow (mint in wallet, then POST /api/invoices)
+ * still works. The invoice key mints invoices but cannot pay, so it cannot
+ * drain the supplier wallet; it is never read from the request body, never
+ * logged, rotate quarterly. The admin key is never used here.
+ */
+const LNBITS_URL = process.env.LNBITS_URL;
+const LNBITS_SUPPLIER_INVOICE_KEY = process.env.LNBITS_SUPPLIER_INVOICE_KEY;
+const lnbitsMintFn =
+  LNBITS_URL && LNBITS_SUPPLIER_INVOICE_KEY
+    ? createLnbitsMintFn(LNBITS_URL, LNBITS_SUPPLIER_INVOICE_KEY)
+    : null;
+app.post("/api/invoices/mint", async (request, reply) => {
+  if (!lnbitsMintFn) {
+    return reply.code(503).send({
+      error:
+        "Invoice minting is not configured: set LNBITS_URL and LNBITS_SUPPLIER_INVOICE_KEY",
+    });
+  }
+  try {
+    return await mintInvoice(request.body as MintRequest, lnbitsMintFn);
   } catch (err) {
     reply.code(400).send({ error: (err as Error).message });
   }
