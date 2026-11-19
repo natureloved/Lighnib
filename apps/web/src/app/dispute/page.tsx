@@ -159,8 +159,19 @@ function DisputeInner() {
               </SelectTrigger>
               <SelectContent>
                 {receipts.map((r) => (
-                  <SelectItem key={r.id} value={r.id}>
-                    {r.id}, {r.vendorName}, {r.amountSats.toLocaleString()} sats
+                  <SelectItem
+                    key={r.id}
+                    value={r.id}
+                    className="h-auto items-start py-2"
+                  >
+                    <span className="flex min-w-0 flex-col">
+                      <span className="truncate text-sm font-medium">
+                        {r.id} · {r.amountSats.toLocaleString()} sats
+                      </span>
+                      <span className="truncate text-xs text-muted-foreground">
+                        {r.vendorName}
+                      </span>
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
