@@ -369,7 +369,7 @@ nav a.active::after {
 }
 .metrics-strip > div:first-child { border-top: none; padding-top: 2px; }
 .metrics-strip strong { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--ink); }
-.metrics-strip span { font-size: 13px; color: var(--muted); }
+.metrics-strip span { font-size: 13px; color: var(--muted-foreground); }
 
 /* Dispute state machine: chips in a flow, arrows between them. */
 .state-flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -396,7 +396,7 @@ footer.site-footer {
   text-align: center;
 }
 footer.site-footer a {
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
