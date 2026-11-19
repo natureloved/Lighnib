@@ -37,7 +37,9 @@ function DisputeInner() {
   const [receiptId, setReceiptId] = useState(preselected);
   const [dispute, setDispute] = useState<Dispute | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     api.listReceipts().then(setReceipts).catch(() => undefined);
@@ -67,8 +69,24 @@ function DisputeInner() {
 
   async function timeoutCheck() {
     if (!dispute) return;
-    const d = await api.timeoutCheckDispute(dispute.id);
-    setDispute(d);
+    setError(null);
+    setStatus(null);
+    setChecking(true);
+    try {
+      const d = await api.timeoutCheckDispute(dispute.id);
+      setDispute(d);
+      if (d.state === "REFUNDED") {
+        setStatus("Hold window passed, auto-refunded to the buyer.");
+      } else {
+        setStatus(
+          `Still inside the hold window, deadline ${new Date(d.deadlineAt).toLocaleString()}.`
+        );
+      }
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setChecking(false);
+    }
   }
 
   return (
@@ -214,9 +232,12 @@ function DisputeInner() {
               variant="outline"
               className="mt-2.5 h-12 w-full rounded-[14px] border-primary bg-card text-base font-semibold hover:bg-secondary"
               onClick={timeoutCheck}
+              disabled={checking}
             >
-              Check timeout
+              {checking ? "Checking…" : "Check timeout"}
             </Button>
+            {status && <div className="ok">{status}</div>}
+            {error && <div className="error">{error}</div>}
           </div>
       )}
     </>
