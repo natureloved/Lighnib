@@ -235,9 +235,9 @@ export default function WalletPage() {
                     <span>
                       <strong>BLOCKED, {b.kind === "overspend" ? "Overspend" : "Wrong supplier"}</strong>{" "}
                       · {b.reason}
-                      {b.amountSats !== undefined &&
+                      {b.amountSats != null &&
                         ` · ${b.amountSats.toLocaleString()} sats`}
-                      {b.amountFiat !== undefined &&
+                      {b.amountFiat != null &&
                         ` · ${LOCALE.currencySymbol}${b.amountFiat.toLocaleString()}`}{" "}
                       · {new Date(b.at).toLocaleString()}
                     </span>
