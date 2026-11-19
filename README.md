@@ -104,6 +104,23 @@ Demo data is seeded by `npm run seed` (1 merchant + 1 supplier + 1 named
 mediator + 10 bound receipts + 2 blocked payments). No real funds, no
 token, no account to create.
 
+## How suppliers join
+
+A supplier mints each invoice in their own Lightning wallet (Rizful, Zeus,
+Alby Hub, or any wallet that can add a memo), with the memo
+`Lighnib:order#ID:supplierId`. Before a merchant can pay, the invoice
+payment hash must be registered with Lighnib, so the app can check the
+invoice really belongs to the supplier named in the memo. In the demo,
+registration is done by the operator: seed data, or the mint endpoint,
+which mints and registers in one call.
+
+In the pilot, joining is agent-assisted. The onboarding agent verifies the
+trader with the market association, helps them set up their wallet, adds
+their supplier ID to the list, and registers their invoices. There is no
+self-serve supplier signup yet, and that is deliberate: the supplier
+allowlist is a security control, and letting anyone add themselves to it
+would defeat it. A verified supplier registry is a Phase 2 item.
+
 ## Setup
 
 One command: `docker compose up --build` (web + api + LNbits ≥ 1.7.1).
