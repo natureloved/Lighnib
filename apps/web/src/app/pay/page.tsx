@@ -46,6 +46,8 @@ const SUPPLIERS: { id: string; label: string; vendorName: string }[] = [
   },
 ];
 
+const DEMO_AMOUNTS = [100, 1000, 10000, 46667];
+
 const OUTLINE_BTN =
   "mt-2.5 h-12 w-full rounded-[14px] border-primary bg-card text-base font-semibold hover:bg-secondary";
 
@@ -53,6 +55,7 @@ export default function PayPage() {
   const router = useRouter();
   const [invoice, setInvoice] = useState("");
   const [supplierId, setSupplierId] = useState("supplier-balogun-001");
+  const [demoAmount, setDemoAmount] = useState(100);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<Awaited<ReturnType<typeof api.createReceipt>> | null>(null);
@@ -83,10 +86,12 @@ export default function PayPage() {
       const result = await api.mintInvoice({
         supplierId,
         orderId: `ORD-DEMO-${Date.now().toString(36).toUpperCase()}`,
-        amountSats: 100,
+        amountSats: demoAmount,
       });
       setInvoice(result.paymentRequest);
-      setStatus(`Fresh invoice ready, 100 sats for ${supplier.vendorName}.`);
+      setStatus(
+        `Fresh invoice ready, ${demoAmount.toLocaleString()} sats for ${supplier.vendorName}.`
+      );
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -204,6 +209,33 @@ export default function PayPage() {
             <p className="small">
               App go decode am, check say the invoice belong to this supplier,
               check your scope, before wallet ever see am.
+            </p>
+            <p className="small" style={{ margin: "12px 0 6px" }}>
+              Demo invoice amount
+            </p>
+            <div
+              className="flex flex-wrap gap-2"
+              role="group"
+              aria-label="Demo invoice amount"
+            >
+              {DEMO_AMOUNTS.map((a) => (
+                <Button
+                  key={a}
+                  type="button"
+                  variant={demoAmount === a ? "default" : "outline"}
+                  className="h-9 rounded-full px-3 text-sm"
+                  onClick={() => setDemoAmount(a)}
+                  disabled={
+                    minting || busy || !scope || supplierId === "supplier-999"
+                  }
+                >
+                  {a.toLocaleString()} sats
+                </Button>
+              ))}
+            </div>
+            <p className="small">
+              Pick 46,667 sats to see the over-scope refusal, the app refuses
+              it before the wallet ever sees it.
             </p>
             <Button
               variant="outline"
