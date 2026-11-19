@@ -27,19 +27,21 @@ export default function LoginPage() {
   const [budgetNgn, setBudgetNgn] = useState<number>(LOCALE.demoDailyBudgetNgn);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [demoBusy, setDemoBusy] = useState(false);
   const [session, setSessionState] = useState(getSession());
 
   useEffect(() => subscribeSession(() => setSessionState(getSession())), []);
 
-  async function connect() {
+  async function connect(uriToUse?: string) {
     setError(null);
-    if (!isValidNwcUri(uri)) {
+    const value = uriToUse ?? uri;
+    if (!isValidNwcUri(value)) {
       setError("That no be valid wallet connection code. Check am from your wallet.");
       return;
     }
     setBusy(true);
     try {
-      const pubkey = connectWallet(uri, LOCALE.sessionExpiryHours * 3600_000);
+      const pubkey = connectWallet(value, LOCALE.sessionExpiryHours * 3600_000);
       const budgetSats = ngnToSats(budgetNgn, LOCALE.demoBtcPriceNgn);
       const scope = await api.login({
         walletPubkey: pubkey,
@@ -54,6 +56,19 @@ export default function LoginPage() {
       setError((e as Error).message);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function connectWithDemo() {
+    setError(null);
+    setDemoBusy(true);
+    try {
+      const { nwcUri } = await api.getDemoLogin();
+      await connect(nwcUri);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setDemoBusy(false);
     }
   }
 
@@ -163,11 +178,23 @@ export default function LoginPage() {
 
           <Button
             className="mt-4 h-12 w-full rounded-[14px] text-base font-semibold active:scale-[0.985]"
-            onClick={connect}
-            disabled={busy || !uri}
+            onClick={() => connect()}
+            disabled={busy || demoBusy || !uri}
           >
             {busy ? "Connecting…" : "Connect wallet to log in"}
           </Button>
+          <Button
+            variant="outline"
+            className="mt-2.5 h-12 w-full rounded-[14px] border-primary bg-card text-base font-semibold hover:bg-secondary"
+            onClick={connectWithDemo}
+            disabled={busy || demoBusy}
+          >
+            {demoBusy ? "Fetching demo wallet…" : "Use demo wallet"}
+          </Button>
+          <p className="small">
+            No wallet yet? The demo wallet logs you in with test sats only,
+            no connection code to paste.
+          </p>
           {error && <div className="error">{error}</div>}
         </CardContent>
       </Card>

@@ -59,6 +59,7 @@ import {
   mintInvoice,
   type MintRequest,
 } from "./invoices";
+import { getDemoLogin } from "./demo-login";
 
 const app = Fastify({ logger: true });
 app.register(cors, { origin: true });
@@ -149,7 +150,7 @@ app.post("/api/invoices", async (request, reply) => {
   }
 });
 /*
- * POST /api/invoices/mint — supplier invoice minting (Phase 1 friction fix).
+ * POST /api/invoices/mint, supplier invoice minting (Phase 1 friction fix).
  * Mints the invoice in the supplier's LNbits wallet AND records the INV-9
  * binding in one call, so the merchant can pay it straight away. The API
  * reaches LNbits only here, with the supplier invoice key from env
@@ -189,6 +190,21 @@ app.post("/api/invoices/check", async (request) => {
 app.post("/api/invoices/decode", async (request) => {
   const { invoice } = request.body as { invoice: string };
   return decodeInvoice(invoice);
+});
+/*
+ * GET /api/demo-login, one-tap demo wallet login (judge friction fix).
+ * Returns the pre-funded demo merchant connection URI, with the relay
+ * param swapped to the live tunnel host when the recover status file
+ * exists. Demo-only, test sats only; the same URI is already shared
+ * with judges via the Devpost zip (demo-login.txt). 503 when no demo
+ * credentials are configured.
+ */
+app.get("/api/demo-login", async (_request, reply) => {
+  try {
+    return await getDemoLogin();
+  } catch (err) {
+    reply.code(503).send({ error: (err as Error).message });
+  }
 });
 
 /* --- Bound receipts (INV-5, INV-6) --- */

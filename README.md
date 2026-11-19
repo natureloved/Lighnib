@@ -52,12 +52,13 @@ Note: Blitz keeps its NWC balance separate from its main balance, so fund the NW
 
 ### Fastest path: pre-funded demo merchant (30 s, no setup)
 
-A seeded demo merchant is already funded with test sats. Its NWC
-connection string is in the Devpost submission's Additional info
-upload (judges only). Paste that string into `/login`. Test sats
-only, clearly labelled, revoke any time. Use this if you skip the
-wallet setup above. After login, open `/pay` and tap "Get a demo
-invoice" for a fresh 100-sat invoice, no invoice needed beforehand.
+A seeded demo merchant is already funded with test sats. On `/login`,
+tap "Use demo wallet", no pasting, no setup. The connection string in
+the Devpost submission's Additional info upload (demo-login.txt) remains
+the backup if the button ever fails. Test sats only, clearly labelled,
+revoke any time. Use this if you skip the wallet setup above. After
+login, open `/pay` and tap "Get a demo invoice" for a fresh 100-sat
+invoice, no invoice needed beforehand.
 
 ### Happy path (2 min)
 
@@ -67,8 +68,9 @@ invoice" for a fresh 100-sat invoice, no invoice needed beforehand.
    1 named mediator + 10 bound receipts + 2 blocked payments, all on
    local test sats). The seed prints the merchant NWC URI to paste at
    login. Requires local LNbits 1.7.1 + the local NWC relay, see Setup.
-2. **Log in** (30 s): open `/login`, paste the merchant NWC connection URI
-   from the seed output. Scope shows ₦50,000/day. No password, no form.
+2. **Log in** (30 s): open `/login`, tap "Use demo wallet" (or paste the
+   merchant connection URI from the seed output). Scope shows ₦50,000/day.
+   No password, no form.
 3. **Pay** (1 min): open `/pay`, pick supplier-balogun-001 (the seeded
    demo supplier), tap "Get a demo invoice" for a fresh 100-sat
    invoice, then pay it. A bound receipt appears on settlement,

@@ -93,6 +93,8 @@ export const api = {
       memo: string;
     }>(`/api/invoices/mint`, { method: "POST", body: JSON.stringify(input) }),
 
+  getDemoLogin: () => req<{ nwcUri: string }>("/api/demo-login"),
+
   createReceipt: (input: Record<string, unknown>) =>
     req<BoundReceipt>("/api/receipts", { method: "POST", body: JSON.stringify(input) }),
   listReceipts: () => req<BoundReceipt[]>("/api/receipts"),
