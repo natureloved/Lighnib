@@ -130,7 +130,7 @@ export default function PayPage() {
         )}
         <div className="pay-grid">
         {scope && (
-          <Card>
+          <Card className="mb-5">
             <CardContent className="pt-6">
               <p className="small" style={{ margin: 0 }}>
                 Scope remaining
@@ -147,7 +147,7 @@ export default function PayPage() {
           </Card>
         )}
 
-        <Card>
+        <Card className="mb-5">
           <CardContent className="pt-6">
             <Label htmlFor="supplier">Supplier</Label>
             <Select value={supplierId} onValueChange={setSupplierId}>

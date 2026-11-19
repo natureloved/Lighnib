@@ -127,7 +127,7 @@ export default function LoginPage() {
       <h1>{LOCALE.copy.loginTitle}</h1>
       <p>{LOCALE.copy.loginBody}</p>
 
-      <Card>
+      <Card className="mb-5">
         <CardContent className="pt-6">
           <Label htmlFor="nwc-uri">Wallet connection code (from your wallet)</Label>
           <Input
@@ -172,7 +172,7 @@ export default function LoginPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="mb-5">
         <CardHeader>
           <CardTitle>Wallets wey work</CardTitle>
         </CardHeader>

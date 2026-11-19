@@ -65,7 +65,7 @@ export default function Home() {
 
       <p className="small">{LOCALE.honestLine}</p>
 
-      <Card>
+      <Card className="mb-5">
         <CardHeader>
           <CardTitle>How e work</CardTitle>
         </CardHeader>
@@ -105,7 +105,7 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="mb-5">
         <CardHeader>
           <CardTitle>Numbers so far</CardTitle>
         </CardHeader>
@@ -138,7 +138,7 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="mb-5">
         <CardHeader>
           <CardTitle>Wallets wey work</CardTitle>
         </CardHeader>

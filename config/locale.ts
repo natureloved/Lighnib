@@ -53,8 +53,9 @@ export const LOCALE = {
     "Alby Hub (≥ v1.19.0)",
     "Zeus",
     "LNbits NWC",
-    "Mutiny",
     "Coinos",
+    "Blitz",
+    "Rizful",
   ] as const,
 
   /** Honest security line, verbatim in pitch + README. */

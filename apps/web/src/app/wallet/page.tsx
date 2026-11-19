@@ -121,7 +121,7 @@ export default function WalletPage() {
             </div>
           )}
           {!revoked && <p>No wallet connected. <Link href="/login">Log in</Link> first.</p>}
-          <Card>
+          <Card className="mb-5">
             <CardHeader>
               <CardTitle>Wallets wey work</CardTitle>
             </CardHeader>
@@ -146,7 +146,7 @@ export default function WalletPage() {
     <>
       <BlurFade delay={0}>
         <h1>{LOCALE.copy.walletTitle}</h1>
-        <Card>
+        <Card className="mb-5">
           <CardHeader>
             <CardTitle>Connection</CardTitle>
           </CardHeader>
@@ -207,7 +207,7 @@ export default function WalletPage() {
             us how much remain, so the app dey track spend itself.)
           </p>
         </div>
-        <Card>
+        <Card className="mb-5">
           <CardHeader>
             <CardTitle>History</CardTitle>
           </CardHeader>
@@ -247,7 +247,7 @@ export default function WalletPage() {
             )}
           </CardContent>
         </Card>
-        <Card>
+        <Card className="mb-5">
           <CardHeader>
             <CardTitle>{LOCALE.copy.revokeLabel}</CardTitle>
           </CardHeader>

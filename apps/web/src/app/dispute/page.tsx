@@ -95,7 +95,7 @@ function DisputeInner() {
           am. Production dispute (hours/days) na next iteration.
         </p>
 
-        <Card>
+        <Card className="mb-5">
           <CardContent className="pt-6">
             <h2>How a dispute moves</h2>
             <div className="state-flow">
@@ -139,7 +139,7 @@ function DisputeInner() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="mb-5">
           <CardContent className="pt-6">
             <h2>Mediator</h2>
             <p>
@@ -150,7 +150,7 @@ function DisputeInner() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="mb-5">
           <CardContent className="pt-6">
             <Label htmlFor="receipt">Bound receipt</Label>
             <Select value={receiptId} onValueChange={setReceiptId}>

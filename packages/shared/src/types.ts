@@ -101,6 +101,7 @@ export const SUPPORTED_WALLETS = [
   "Alby Hub (≥ v1.19.0)",
   "Zeus",
   "LNbits NWC",
-  "Mutiny",
   "Coinos",
+  "Blitz",
+  "Rizful",
 ] as const;
