@@ -18,6 +18,7 @@ set -u
 REPO="$HOME/workspace/lighnib"
 LOG="/tmp/lighnib-recover.log"
 STATUS="/tmp/lighnib-recover-status.json"
+DEPLOYED_URL_FILE="/tmp/lighnib-last-deployed-api-url"
 CLOUDFLARED="$HOME/cloudflared"
 mkdir -p "$(dirname "$LOG")"
 exec >>"$LOG" 2>&1
@@ -27,10 +28,13 @@ echo "=== recover run $(date -u +%FT%TZ) ==="
 port_up() { # port_up <port> : true if something listens on localhost:<port>
   (exec 3<>/dev/tcp/127.0.0.1/"$1") 2>/dev/null
 }
-http_ok() { # http_ok <url> : true on HTTP 2xx/3xx within 8s
+tunnel_alive() { # tunnel_alive <url> : true if the tunnel reaches the API
+  # GET /health: 2xx/3xx = alive. 403 = alive too: the Cloudflare edge
+  # blocks datacenter IPs, so the tunnel answers 403 even when healthy.
+  # Only connection failure (000), 5xx, or 404 on /health count as dead.
   local code
-  code=$(curl -s -m 8 -o /dev/null -w "%{http_code}" "$1" 2>/dev/null || echo 000)
-  case "$code" in 2*|3*) return 0;; *) return 1;; esac
+  code=$(curl -s -m 8 -o /dev/null -w "%{http_code}" "$1/health" 2>/dev/null || echo 000)
+  case "$code" in 2*|3*|403) return 0;; *) return 1;; esac
 }
 tunnel_url() { # tunnel_url <port> : first trycloudflare URL from the tunnel log
   grep -oE "https://[a-z0-9-]+\.trycloudflare\.com" "/tmp/tunnel2-$1.log" 2>/dev/null | head -1
@@ -69,7 +73,7 @@ port_up 3001 && echo "API up on 3001" || echo "API FAILED to start"
 # and start fresh ones; quick-tunnel URLs change on every restart.
 need_tunnel=0
 API_URL=$(tunnel_url 3001); RELAY_URL=$(tunnel_url 7777)
-if [ -z "$API_URL" ] || ! http_ok "$API_URL/"; then
+if [ -z "$API_URL" ] || ! tunnel_alive "$API_URL"; then
   echo "API tunnel dead/missing ($API_URL), will re-tunnel"; need_tunnel=1
 fi
 if [ -z "$RELAY_URL" ]; then
@@ -104,13 +108,24 @@ if [ -n "$API_URL" ] && [ -n "$RELAY_URL" ]; then
   # from the repo root also uploads the whole monorepo, so the
   # @lighnib/shared workspace package resolves (deploying from apps/web
   # alone fails npm install with a 404 for @lighnib/shared).
-  CUR_API=$(cd "$REPO" && npx vercel env ls --environment=production 2>/dev/null | grep NEXT_PUBLIC_API_URL | awk '{print $2}' | head -1)
-  if [ "$CUR_API" != "$API_URL" ]; then
-    echo "Vercel NEXT_PUBLIC_API_URL: $CUR_API -> $API_URL"
+  # Skip the redeploy when the API URL is unchanged. We keep a local
+  # record of the last successfully deployed URL: `vercel env ls` returns
+  # an encrypted blob, so it cannot be read back for comparison. The
+  # record is only updated after a successful redeploy, so a failed
+  # deploy (e.g. the daily cap) is retried on the next run.
+  LAST_DEPLOYED=$(cat "$DEPLOYED_URL_FILE" 2>/dev/null || echo "")
+  if [ "$LAST_DEPLOYED" != "$API_URL" ]; then
+    echo "Vercel NEXT_PUBLIC_API_URL: $LAST_DEPLOYED -> $API_URL"
     cd "$REPO" && printf "%s" "$API_URL" | npx vercel env rm NEXT_PUBLIC_API_URL --environment=production --yes 2>/dev/null || true
     cd "$REPO" && printf "%s" "$API_URL" | npx vercel env add NEXT_PUBLIC_API_URL --environment=production 2>/dev/null
-    cd "$REPO" && npx vercel --prod --yes 2>&1 | tail -2
-    echo "Vercel redeployed with API $API_URL"
+    if cd "$REPO" && npx vercel --prod --yes > /tmp/vercel-deploy.log 2>&1; then
+      tail -2 /tmp/vercel-deploy.log
+      echo "Vercel redeployed with API $API_URL"
+      printf "%s" "$API_URL" > "$DEPLOYED_URL_FILE"
+    else
+      tail -2 /tmp/vercel-deploy.log
+      echo "Vercel redeploy FAILED for API $API_URL, record not updated"
+    fi
   else
     echo "Vercel API URL unchanged ($API_URL), no redeploy"
   fi
