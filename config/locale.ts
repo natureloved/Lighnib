@@ -85,6 +85,35 @@ export const LOCALE = {
     voiceLabel:
       "Spoken readout: English voice reading Pidgin text (Web Speech API). No dedicated Pidgin voice.",
 
+    /** Landing page (home) copy: problem, trust split, receipt proof, CTA. */
+    landingProblemTitle: "Paying a supplier is a trust problem",
+    landingProblemBody:
+      "Cash is slow and risky. Passwords get shared. And when money goes missing, nobody can prove what was paid.",
+    landingTrustTitle: "How the trust works",
+    landingTrustRows: [
+      {
+        label: "Budget",
+        text: "Enforced by the wallet. If a payment would break the budget, the wallet refuses.",
+      },
+      {
+        label: "Supplier",
+        text: "Enforced by the app plus bound receipt. The app checks the invoice before the wallet ever sees it.",
+      },
+      {
+        label: "Mediator",
+        text: "Sees any mismatch. Judges from the same bound receipt, and the release is public.",
+      },
+    ] as const,
+    landingReceiptTitle: "What a receipt proves",
+    landingReceiptBody:
+      "Every payment lands as a bound receipt: amount, supplier, purpose, payment hash. Anyone can verify it, and the mediator judges from the same receipt.",
+    landingReceiptSampleNote: "Sample receipt, demo data.",
+    landingReceiptLiveNote: "Latest receipt from the live demo.",
+    landingCtaTitle: "Try it now",
+    landingCtaBody:
+      "Connect your Lightning wallet with test sats. No password, no form, and the spending dies the moment you revoke.",
+    landingJudgeNote: "Judge? The 5-minute guide is in the README.",
+
     /** Pay-flow refusal messages, the exact words the merchant sees. */
     payInvalidInvoice:
       "Invoice no valid, check the invoice code from your supplier.",
