@@ -22,8 +22,9 @@
 //      in sats at the demo rate; supplier invoice-only. Permissions are
 //      GROUP names (pay, invoice, lookup, …), not method names.
 //   4. Log the merchant in through the real API (scope creation).
-//   5. Pay 10 supplier invoices live (100 sats each) → 10 bound receipts
-//      created + verified through the real API.
+//   5. Pay 10 supplier invoices live (varied amounts, 3 suppliers,
+//      SEED_RECEIPTS table) → 10 bound receipts created + verified
+//      through the real API.
 //   6. Blocked #1 (wallet): a ₦70,000-equivalent invoice is paid DIRECTLY
 //      via NWC, bypassing the app, the wallet refuses with verbatim
 //      QUOTA_EXCEEDED. This is the wallet-side backstop; in the web flow
@@ -75,13 +76,35 @@ const MEDIATOR = "Lagos market association";
 const DAILY_BUDGET_NGN = 50_000;
 const OVER_BUDGET_NGN = 70_000;
 const DEMO_BTC_PRICE_NGN = 150_000_000; // demo placeholder rate, not a live price
-const RECEIPT_COUNT = Number(process.env.SEED_RECEIPTS || "10");
-const RECEIPT_SATS = Number(process.env.SEED_RECEIPT_SATS || "100");
 const FUND_SATS = Number(process.env.SEED_FUND_SATS || "100000");
 
 const ngnToSats = (ngn) => Math.round((ngn / DEMO_BTC_PRICE_NGN) * 100_000_000); // same rounding as packages/shared conversion.ts
+const satsToNgn = (sats) => Math.round((sats / 100_000_000) * DEMO_BTC_PRICE_NGN);
 const SCOPE_SATS = ngnToSats(DAILY_BUDGET_NGN); // 33,333
 const OVER_BUDGET_SATS = ngnToSats(OVER_BUDGET_NGN); // 46,667
+
+// Diversified demo receipts: varied amounts across all three demo
+// suppliers, with realistic market purposes and the naira value at the
+// demo rate (100 sats = ₦150, never ₦0). Total 21,900 sats, inside the
+// 33,333-sat daily scope with room to spare.
+// The demo seed uses ONE supplier wallet behind the three demo supplier
+// labels (same model as the mint endpoint, which mints every supplier
+// invoice from the one supplier wallet); the INV-9 binding is per
+// payment hash, which is what the app enforces.
+const SEED_RECEIPTS = [
+  { amountSats: 100, supplierId: "supplier-balogun-001", vendorName: "Balogun provisions, Mama Nkechi", purpose: "10 bags of rice" },
+  { amountSats: 200, supplierId: "supplier-001", vendorName: "Mama Nkechi provisions", purpose: "Carton of milk + sugar" },
+  { amountSats: 350, supplierId: "supplier-002", vendorName: "Balogun textiles", purpose: "5 yards ankara fabric" },
+  { amountSats: 500, supplierId: "supplier-balogun-001", vendorName: "Balogun provisions, Mama Nkechi", purpose: "2 bags garri" },
+  { amountSats: 750, supplierId: "supplier-001", vendorName: "Mama Nkechi provisions", purpose: "Cooking oil + seasoning" },
+  { amountSats: 1000, supplierId: "supplier-002", vendorName: "Balogun textiles", purpose: "School uniform fabric, 3 sets" },
+  { amountSats: 1500, supplierId: "supplier-balogun-001", vendorName: "Balogun provisions, Mama Nkechi", purpose: "3 cartons noodles" },
+  { amountSats: 2500, supplierId: "supplier-001", vendorName: "Mama Nkechi provisions", purpose: "Tomatoes + pepper crates" },
+  { amountSats: 5000, supplierId: "supplier-002", vendorName: "Balogun textiles", purpose: "Lace fabric restock, 10 yards" },
+  { amountSats: 10000, supplierId: "supplier-balogun-001", vendorName: "Balogun provisions, Mama Nkechi", purpose: "Frozen chicken cartons, weekly restock" },
+];
+const RECEIPT_COUNT = SEED_RECEIPTS.length;
+const RECEIPT_TOTAL_SATS = SEED_RECEIPTS.reduce((s, r) => s + r.amountSats, 0);
 
 const out = {
   seededAt: new Date().toISOString(),
@@ -292,7 +315,7 @@ out.scope = {
 };
 log(`scope created: ${scope.id}, ₦${DAILY_BUDGET_NGN.toLocaleString()}/day (${SCOPE_SATS.toLocaleString()} sats)`);
 
-// --- 5. Ten bound receipts, paid live ---------------------------------------
+// --- 5. Ten bound receipts, paid live (diversified table above) --------
 const client = new NWCClient({ nostrWalletConnectUrl: merchantNWC.uri });
 const info = await client.getInfo();
 log(`NWC connected: alias=${info.alias} methods=${(info.methods || []).join(",")}`);
@@ -304,35 +327,37 @@ async function createInvoice(apiKey, amountSats, memo) {
   });
 }
 
-for (let i = 1; i <= RECEIPT_COUNT; i++) {
-  const orderId = `ORD-SEED-${stamp}-${String(i).padStart(2, "0")}`;
-  const memo = `Lighnib:order#${orderId}:${SUPPLIER_ID}`;
-  const inv = await createInvoice(supplier.adminkey, RECEIPT_SATS, memo);
+for (let i = 0; i < SEED_RECEIPTS.length; i++) {
+  const row = SEED_RECEIPTS[i];
+  const n = i + 1;
+  const orderId = `ORD-SEED-${stamp}-${String(n).padStart(2, "0")}`;
+  const memo = `Lighnib:order#${orderId}:${row.supplierId}`;
+  const inv = await createInvoice(supplier.adminkey, row.amountSats, memo);
   await j("POST", `${API_URL}/api/invoices`, {
     body: {
       paymentHash: inv.payment_hash,
-      supplierId: SUPPLIER_ID,
+      supplierId: row.supplierId,
       orderId,
-      amountSats: RECEIPT_SATS,
+      amountSats: row.amountSats,
       memo,
     },
   });
   // Scope state machine: LOGGED_IN/RECEIPTED → PAYING before the wallet
   // is asked (same order as the web flow), then settle after payment.
   await j("POST", `${API_URL}/api/scope/${scope.id}/begin-payment`, {
-    body: { amountSats: RECEIPT_SATS },
+    body: { amountSats: row.amountSats },
   });
   const paid = await client.payInvoice({ invoice: inv.payment_request });
-  if (!paid?.preimage) fail(`receipt ${i}: wallet did not return a preimage`);
+  if (!paid?.preimage) fail(`receipt ${n}: wallet did not return a preimage`);
   const receipt = await j("POST", `${API_URL}/api/receipts`, {
     body: {
-      id: `rcpt_seed_${stamp}_${String(i).padStart(2, "0")}`,
+      id: `rcpt_seed_${stamp}_${String(n).padStart(2, "0")}`,
       orderId,
-      supplierId: SUPPLIER_ID,
-      vendorName: SUPPLIER_NAME,
-      purpose: `Demo order ${i}, provisions from Balogun market`,
-      amountSats: RECEIPT_SATS,
-      amountFiat: 0,
+      supplierId: row.supplierId,
+      vendorName: row.vendorName,
+      purpose: row.purpose,
+      amountSats: row.amountSats,
+      amountFiat: satsToNgn(row.amountSats),
       currency: "NGN",
       paymentHash: inv.payment_hash,
       preimage: paid.preimage,
@@ -340,16 +365,16 @@ for (let i = 1; i <= RECEIPT_COUNT; i++) {
     },
   });
   const verified = await j("GET", `${API_URL}/api/receipts/${receipt.id}/verify`);
-  if (!verified.valid) fail(`receipt ${i}: API verification failed`);
+  if (!verified.valid) fail(`receipt ${n}: API verification failed`);
   await j("POST", `${API_URL}/api/scope/${scope.id}/settle-payment`, {
-    body: { amountSats: RECEIPT_SATS },
+    body: { amountSats: row.amountSats },
   });
   // Store the FULL bound receipt (incl. preimage + Nostr event) so a
   // third party can verify it offline from this file alone, paste it
   // into /receipts "Verify a receipt you receive". No secrets: the
   // preimage is public settlement proof, not a credential.
   out.receipts.push(receipt);
-  log(`receipt ${i}/${RECEIPT_COUNT}: ${receipt.id}, ${RECEIPT_SATS} sats, verified`);
+  log(`receipt ${n}/${RECEIPT_COUNT}: ${receipt.id}, ${row.amountSats.toLocaleString()} sats (₦${satsToNgn(row.amountSats).toLocaleString()}), ${row.vendorName}, verified`);
 }
 
 // --- 6. Blocked #1, wallet refuses over-budget (QUOTA_EXCEEDED, verbatim) ---
@@ -428,7 +453,7 @@ out.merchant = {
   walletPubkey: merchantNWC.pubkey,
   scopeId: scope.id,
   fundedTestSats: SKIP_FUND ? 0 : FUND_SATS,
-  spentTestSats: RECEIPT_COUNT * RECEIPT_SATS,
+  spentTestSats: RECEIPT_TOTAL_SATS,
 };
 const demoDataPath = join(SEED_DIR, "demo-data.json");
 writeFileSync(demoDataPath, JSON.stringify(out, null, 2));

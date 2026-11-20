@@ -23,8 +23,10 @@ test("seed numbers agree with the shared conversion (login page, scope, seed)", 
   // The over-budget demo invoice must exceed the scope, or the wallet
   // refusal demo is meaningless.
   assert.ok(ngnToSats(70_000, DEMO_BTC_NGN) > ngnToSats(50_000, DEMO_BTC_NGN));
-  // Ten 100-sat receipts fit inside the scope with room to spare.
-  assert.ok(10 * 100 < ngnToSats(50_000, DEMO_BTC_NGN));
+  // The diversified seed total fits inside the scope with room to spare.
+  const seedTotal = [100, 200, 350, 500, 750, 1000, 1500, 2500, 5000, 10000].reduce((a, b) => a + b, 0);
+  assert.equal(seedTotal, 21_900);
+  assert.ok(seedTotal < ngnToSats(50_000, DEMO_BTC_NGN));
 });
 
 test("demo-data.json contract: 1+1+1+10+2, no secrets, all receipts verified", () => {
@@ -42,20 +44,29 @@ test("demo-data.json contract: 1+1+1+10+2, no secrets, all receipts verified", (
   const scope = data.scope as Record<string, unknown>;
   assert.equal(scope.dailyBudgetSats, 33_333);
   assert.equal(scope.dailyBudgetFiat, 50_000);
-  // 10 receipts, all verified, all for the allowlisted supplier.
+  // 10 receipts, all verified, diversified across the three demo suppliers.
   // Each entry is the FULL bound receipt (incl. preimage + Nostr event),
   // so a third party can verify it offline from this file alone.
   const receipts = data.receipts as Record<string, unknown>[];
   assert.equal(receipts.length, 10);
-  for (const r of receipts) {
+  const expectedAmounts = [100, 200, 350, 500, 750, 1000, 1500, 2500, 5000, 10000];
+  const allowedSuppliers = new Set(["supplier-balogun-001", "supplier-001", "supplier-002"]);
+  const seenSuppliers = new Set<string>();
+  for (let i = 0; i < receipts.length; i++) {
+    const r = receipts[i];
     assert.equal(verifyReceipt(r as never), true);
-    assert.equal(r.amountSats, 100);
-    assert.equal(r.supplierId, "supplier-balogun-001");
+    assert.equal(r.amountSats, expectedAmounts[i]);
+    // Naira value at the demo rate (100 sats = ₦150), never ₦0.
+    assert.equal(r.amountFiat, Math.round((r.amountSats as number) * 1.5));
+    assert.ok(allowedSuppliers.has(r.supplierId as string));
+    seenSuppliers.add(r.supplierId as string);
     assert.equal(r.status, "SETTLED");
     assert.match(String(r.paymentHash), /^[0-9a-f]{64}$/);
     assert.match(String(r.preimage), /^[0-9a-f]{64}$/);
     assert.ok((r.nostrEvent as Record<string, unknown>).content);
   }
+  // All three demo suppliers appear at least once.
+  assert.equal(seenSuppliers.size, 3);
   // 2 blocked payments: wallet QUOTA_EXCEEDED + app INV-9, in that order.
   const blocked = data.blocked as Record<string, unknown>[];
   assert.equal(blocked.length, 2);
