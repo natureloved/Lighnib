@@ -262,7 +262,7 @@ export default function Home() {
           </Button>
           <p className="small">
             <Link
-              href="https://github.com/natureloved/Lighnib#judge-5-min-guide"
+              href="https://github.com/natureloved/Lighnib#judge-5-min-guide-start-here"
               target="_blank"
               rel="noreferrer"
             >

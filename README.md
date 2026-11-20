@@ -39,6 +39,8 @@ You need: a phone or laptop, and any NWC wallet: [Alby Hub](https://albyhub.com)
 
 Note: Blitz keeps its NWC balance separate from its main balance, so fund the NWC side before paying. Rizful is custodial and browser-based, no app to install.
 
+Demo rate: ₦84,000,000 per BTC, checked 20 Nov 2026. At that rate ₦50,000 is about 59,524 sats. The rate is a demo snapshot, not a live feed.
+
 ### If you do not have a wallet yet (3 min)
 
 1. **Install Alby Hub** (≥ v1.19.0) from [albyhub.com](https://albyhub.com), or install
@@ -80,7 +82,13 @@ invoice, no invoice needed beforehand.
    purpose + hash + preimage). Copy any receipt JSON and paste it into
    "Verify a receipt you receive", the check runs in your own browser
    (no trust in our server) with a server cross-check: preimage hashes
-   to the payment hash, the public Nostr receipt matches the card. Hit
+   to the payment hash, the public Nostr receipt matches the card. What
+   that check proves is the cryptographic relationship between the
+   preimage and the payment hash. It does not by itself authenticate
+   the supplier, the order, or the purpose: those claims depend on how
+   the binding was established and protected, the supplier minted the
+   invoice with the Lighnib memo and the hash was registered before
+   payment. Hit
    "Explain this receipt" for the AI explainer (template fallback when
    no LLM key is set) and "Replay readout" to hear it spoken.
    Open the app as `http://localhost:3000` (not `127.0.0.1`, Next 16
@@ -156,9 +164,15 @@ is bound to its purchase (INV-9) and lands as a verifiable bound receipt
   logout: the secret is wiped from memory and the scope is revoked
   server-side, so a revoked scope never pays again.
 - **Blast radius:** one scope, ₦50,000/day. A stolen secret can spend
-  at most that day's budget, only to allowlisted suppliers (the app
-  refuses anything else before the wallet is asked), and every spend
-  leaves a bound receipt that names the supplier.
+  at most that day's budget. The wallet's configured permissions and
+  budget are the backstop: the wallet enforces the budget, not the
+  payee. The app-side supplier allowlist is not a wallet-level
+  restriction. An attacker holding the secret could pay through another
+  NWC client and bypass Lighnib's app-side supplier check entirely.
+  What the allowlist does is refuse non-allowlisted invoices inside
+  Lighnib before the wallet is asked, and every spend leaves a bound
+  receipt that names the supplier, so a bypass is visible after the
+  fact.
 - **Budget enforced by the wallet.** The wallet returns
   `QUOTA_EXCEEDED` on overspend. The app re-checks the scope before
   every payment as a backstop.
