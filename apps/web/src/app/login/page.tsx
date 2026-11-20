@@ -21,6 +21,9 @@ import { BlurFade } from "@/components/ui/blur-fade";
  * The NWC secret is pasted here and lives in browser memory ONLY -
  * never localStorage, never the server, never logs (INV-8).
  */
+const SCOPE_PRESETS = [10_000, 25_000, 50_000, 100_000];
+const SCOPE_MIN_NGN = 1_000;
+const SCOPE_MAX_NGN = 200_000;
 export default function LoginPage() {
   const router = useRouter();
   const [uri, setUri] = useState("");
@@ -32,8 +35,24 @@ export default function LoginPage() {
 
   useEffect(() => subscribeSession(() => setSessionState(getSession())), []);
 
+  function scopeError(): string | null {
+    if (
+      !Number.isInteger(budgetNgn) ||
+      budgetNgn < SCOPE_MIN_NGN ||
+      budgetNgn > SCOPE_MAX_NGN
+    ) {
+      return `Pick a daily scope between ₦${SCOPE_MIN_NGN.toLocaleString()} and ₦${SCOPE_MAX_NGN.toLocaleString()}.`;
+    }
+    return null;
+  }
+
   async function connect(uriToUse?: string) {
     setError(null);
+    const bad = scopeError();
+    if (bad) {
+      setError(bad);
+      return;
+    }
     const value = uriToUse ?? uri;
     if (!isValidNwcUri(value)) {
       setError("That no be valid wallet connection code. Check am from your wallet.");
@@ -61,6 +80,11 @@ export default function LoginPage() {
 
   async function connectWithDemo() {
     setError(null);
+    const bad = scopeError();
+    if (bad) {
+      setError(bad);
+      return;
+    }
     setDemoBusy(true);
     try {
       const { nwcUri } = await api.getDemoLogin();
@@ -160,16 +184,40 @@ export default function LoginPage() {
           </p>
 
           <Label htmlFor="budget">Daily scope ({LOCALE.currencySymbol})</Label>
+          <p className="small">
+            The scope na your daily spending limit. The login na the
+            permission: pick a budget, the wallet go enforce am. Pass am
+            and the wallet go refuse the payment.
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Daily scope presets">
+            {SCOPE_PRESETS.map((a) => (
+              <Button
+                key={a}
+                type="button"
+                variant={budgetNgn === a ? "default" : "outline"}
+                className="h-10 rounded-full px-4 text-sm font-semibold"
+                onClick={() => setBudgetNgn(a)}
+              >
+                {LOCALE.currencySymbol}
+                {a.toLocaleString()}
+              </Button>
+            ))}
+          </div>
           <Input
             id="budget"
             type="number"
-            min={1000}
+            min={SCOPE_MIN_NGN}
+            max={SCOPE_MAX_NGN}
             step={1000}
             value={budgetNgn}
             onChange={(e) => setBudgetNgn(Number(e.target.value))}
             className="mt-2 h-12 text-base"
+            aria-label="Custom daily scope in naira"
           />
           <p className="small">
+            {Number.isFinite(budgetNgn) && budgetNgn >= 1
+              ? `That na about ${ngnToSats(budgetNgn, LOCALE.demoBtcPriceNgn).toLocaleString()} sats at the demo rate.`
+              : "Type a scope to see how many sats e be."}{" "}
             Demo scope: {LOCALE.currencySymbol}
             {LOCALE.demoDailyBudgetNgn.toLocaleString()}/day. Wallet go enforce
             am, pass am and wallet go refuse am.
@@ -192,7 +240,8 @@ export default function LoginPage() {
           </Button>
           <p className="small">
             No wallet yet? The demo wallet logs you in with test sats only,
-            no connection code to paste.
+            no connection code to paste. E go use the daily scope you pick
+            above.
           </p>
           {error && <div className="error">{error}</div>}
         </CardContent>
