@@ -10,6 +10,8 @@
  */
 
 import { hexToBytes, sha256Hex } from "./sha256";
+import { satsToNgn } from "./conversion";
+import { LOCALE } from "./locale";
 import type { BoundReceipt } from "./types";
 
 export interface ReceiptInput {
@@ -147,10 +149,22 @@ export function verifyReceipt(receipt: BoundReceipt): boolean {
 
 /** Human-readable receipt line, used by the AI explainer + voice readout. */
 export function receiptSummary(receipt: BoundReceipt, currencySymbol: string): string {
+  const fiat = receiptFiat(receipt);
   return (
-    `You pay ${currencySymbol}${receipt.amountFiat.toLocaleString()} ` +
+    `You pay ${currencySymbol}${fiat.toLocaleString()} ` +
     `(${receipt.amountSats.toLocaleString()} sats) to ${receipt.vendorName} ` +
     `for ${receipt.purpose}. Receipt ${receipt.id}, payment hash ` +
     `${receipt.paymentHash.slice(0, 12)}… confirmed.`
   );
+}
+
+/**
+ * Fiat value of a receipt in the current locale currency.
+ * Receipts minted before the fiat fix carry amountFiat 0; derive it
+ * from the sats at the demo rate instead of showing zero.
+ */
+export function receiptFiat(receipt: BoundReceipt): number {
+  return receipt.amountFiat > 0
+    ? receipt.amountFiat
+    : satsToNgn(receipt.amountSats, LOCALE.demoBtcPriceNgn);
 }

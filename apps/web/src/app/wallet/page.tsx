@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { LOCALE, remainingBudgetSats, scopeStateLabel } from "@lighnib/shared";
+import { LOCALE, receiptFiat, remainingBudgetSats, scopeStateLabel } from "@lighnib/shared";
 import type { BoundReceipt } from "@lighnib/shared";
 import { api } from "@/lib/api";
 import LockSeal from "@/components/LockSeal";
@@ -223,7 +223,7 @@ export default function WalletPage() {
                     <span>
                       <strong>
                         {r.amountSats.toLocaleString()} sats · {LOCALE.currencySymbol}
-                        {r.amountFiat.toLocaleString()}
+                        {receiptFiat(r).toLocaleString()}
                       </strong>{" "}
                       to {r.vendorName} · {r.purpose} · Settled{" "}
                       {new Date(r.settledAt).toLocaleString()}

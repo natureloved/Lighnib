@@ -7,6 +7,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   buildBoundReceipt,
+  receiptFiat,
   receiptSummary,
   hexToBytes,
   sha256Hex,
@@ -92,4 +93,15 @@ test("receiptSummary is a readable Pidgin/English line", () => {
   assert.match(s, /Mama Nkechi provisions/);
   assert.match(s, /12,500 sats/);
   assert.match(s, /10 bags of rice/);
+});
+
+test("receiptFiat derives naira from sats when the stored fiat is zero", () => {
+  const r = buildBoundReceipt(receiptInput({ amountSats: 100, amountFiat: 0 }));
+  assert.equal(receiptFiat(r), 150);
+  assert.match(receiptSummary(r, "₦"), /₦150 \(100 sats\)/);
+});
+
+test("receiptFiat keeps a stored fiat when one is present", () => {
+  const r = buildBoundReceipt(receiptInput());
+  assert.equal(receiptFiat(r), 12_500);
 });

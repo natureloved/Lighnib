@@ -19,7 +19,7 @@
  */
 
 import type { BoundReceipt, Scope } from "@lighnib/shared";
-import { LOCALE, remainingBudgetSats } from "@lighnib/shared";
+import { LOCALE, remainingBudgetSats, satsToNgn } from "@lighnib/shared";
 
 /** Map a budget-check reason code to the plain-words refusal a merchant sees. */
 export function budgetRefusalMessage(reason: string | undefined, remainingSats: number): string {
@@ -134,7 +134,7 @@ export async function runPayFlow(
     vendorName: supplierName,
     purpose: decoded.description ?? "supplier order",
     amountSats,
-    amountFiat: 0,
+    amountFiat: satsToNgn(amountSats, LOCALE.demoBtcPriceNgn),
     currency: LOCALE.currency,
     paymentHash: decoded.paymentHash,
     preimage,

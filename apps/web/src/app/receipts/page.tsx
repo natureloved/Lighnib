@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { LOCALE, verifyReceiptDetail, type ReceiptVerificationDetail } from "@lighnib/shared";
+import { LOCALE, receiptFiat, verifyReceiptDetail, type ReceiptVerificationDetail } from "@lighnib/shared";
 import { api } from "@/lib/api";
 import { speak, stopSpeaking, VOICE_LABEL } from "@/lib/voice";
 import type { BoundReceipt } from "@lighnib/shared";
@@ -208,7 +208,7 @@ export default function ReceiptsPage() {
             </h2>
             <p>
               {LOCALE.currencySymbol}
-              {r.amountFiat.toLocaleString()} · {r.purpose}
+              {receiptFiat(r).toLocaleString()} · {r.purpose}
             </p>
             <p className="small">Order: {r.orderId} · Supplier: {r.supplierId}</p>
             <p className="small mono">hash: {r.paymentHash}</p>

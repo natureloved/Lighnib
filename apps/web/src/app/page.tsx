@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { LOCALE, type BoundReceipt } from "@lighnib/shared";
+import { LOCALE, receiptFiat, type BoundReceipt } from "@lighnib/shared";
 import { api } from "@/lib/api";
 import LockSeal from "@/components/LockSeal";
 import { Button } from "@/components/ui/button";
@@ -182,12 +182,8 @@ export default function Home() {
               {r.vendorName}, {r.amountSats.toLocaleString()} sats
             </h2>
             <p>
-              {r.amountFiat > 0 && (
-                <>
-                  {LOCALE.currencySymbol}
-                  {r.amountFiat.toLocaleString()} ·{" "}
-                </>
-              )}
+              {LOCALE.currencySymbol}
+              {receiptFiat(r).toLocaleString()} ·{" "}
               {r.purpose}
             </p>
             <p className="small">
