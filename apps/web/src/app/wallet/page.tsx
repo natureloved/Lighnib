@@ -175,8 +175,7 @@ export default function WalletPage() {
             <div>
               <h2>{LOCALE.copy.scopeLabel}</h2>
               <p className="till-sub">
-                {LOCALE.currencySymbol}
-                {s.dailyBudgetFiat.toLocaleString()} / day
+                {s.dailyBudgetSats.toLocaleString()} sats / day
               </p>
             </div>
             <div
