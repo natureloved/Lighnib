@@ -10,6 +10,7 @@ import { runPayFlow } from "@/lib/pay-flow";
 import { getSession, setSession, subscribeSession } from "@/lib/session";
 import { speak, stopSpeaking, VOICE_LABEL } from "@/lib/voice";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
@@ -56,6 +57,8 @@ export default function PayPage() {
   const [invoice, setInvoice] = useState("");
   const [supplierId, setSupplierId] = useState("supplier-balogun-001");
   const [demoAmount, setDemoAmount] = useState(100);
+  const [amountText, setAmountText] = useState("100");
+  const [mintedRequest, setMintedRequest] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [receipt, setReceipt] = useState<Awaited<ReturnType<typeof api.createReceipt>> | null>(null);
@@ -69,6 +72,27 @@ export default function PayPage() {
 
   const scope = session.scope;
 
+  function clearStaleInvoice(nextAmount: number) {
+    if (invoice && mintedRequest && invoice === mintedRequest) {
+      setInvoice("");
+      setMintedRequest(null);
+      setStatus(
+        `Amount changed to ${nextAmount.toLocaleString()} sats. Tap Get a demo invoice for a fresh one.`
+      );
+    }
+  }
+
+  function applyAmount(raw: string) {
+    setAmountText(raw);
+    const n = Number(raw);
+    if (raw.trim() !== "" && Number.isInteger(n) && n >= 1 && n <= 3333333) {
+      if (n !== demoAmount) {
+        setDemoAmount(n);
+        clearStaleInvoice(n);
+      }
+    }
+  }
+
   async function mintDemoInvoice() {
     setError(null);
     setStatus(null);
@@ -80,17 +104,29 @@ export default function PayPage() {
       setError("This supplier cannot mint invoices on the demo.");
       return;
     }
+    const amountSats = Number(amountText);
+    if (
+      !Number.isInteger(amountSats) ||
+      amountSats < 1 ||
+      amountSats > 3333333
+    ) {
+      setError("Type an amount between 1 and 3,333,333 sats.");
+      return;
+    }
+    if (amountSats !== demoAmount) setDemoAmount(amountSats);
     setMinting(true);
     try {
       const supplier = SUPPLIERS.find((s) => s.id === supplierId) ?? SUPPLIERS[0];
       const result = await api.mintInvoice({
         supplierId,
         orderId: `ORD-DEMO-${Date.now().toString(36).toUpperCase()}`,
-        amountSats: demoAmount,
+        amountSats,
       });
       setInvoice(result.paymentRequest);
+      setMintedRequest(result.paymentRequest);
+      setAmountText(String(amountSats));
       setStatus(
-        `Fresh invoice ready, ${demoAmount.toLocaleString()} sats for ${supplier.vendorName}.`
+        `Fresh invoice ready, ${amountSats.toLocaleString()} sats for ${supplier.vendorName}.`
       );
     } catch (e) {
       setError((e as Error).message);
@@ -224,7 +260,7 @@ export default function PayPage() {
                   type="button"
                   variant={demoAmount === a ? "default" : "outline"}
                   className="h-9 rounded-full px-3 text-sm"
-                  onClick={() => setDemoAmount(a)}
+                  onClick={() => applyAmount(String(a))}
                   disabled={
                     minting || busy || !scope || supplierId === "supplier-999"
                   }
@@ -232,6 +268,36 @@ export default function PayPage() {
                   {a.toLocaleString()} sats
                 </Button>
               ))}
+            </div>
+            <div className="mt-3 flex items-center gap-2">
+              <Input
+                id="demo-amount"
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={3333333}
+                value={amountText}
+                onChange={(e) => applyAmount(e.target.value)}
+                onBlur={() => {
+                  const n = Number(amountText);
+                  if (
+                    amountText.trim() === "" ||
+                    !Number.isInteger(n) ||
+                    n < 1 ||
+                    n > 3333333
+                  ) {
+                    setAmountText(String(demoAmount));
+                  }
+                }}
+                disabled={
+                  minting || busy || !scope || supplierId === "supplier-999"
+                }
+                aria-label="Custom demo invoice amount in sats"
+                className="h-11 w-36 rounded-xl text-base"
+              />
+              <span className="small" style={{ margin: 0 }}>
+                sats, or type your own amount
+              </span>
             </div>
             <p className="small">
               Pick 46,667 sats to see the over-scope refusal, the app refuses
