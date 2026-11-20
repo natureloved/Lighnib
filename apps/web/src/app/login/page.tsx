@@ -141,8 +141,7 @@ export default function LoginPage() {
               <span style={{ width: `${spentPct}%` }} />
             </div>
             <p className="till-meta">
-              Daily scope: {LOCALE.currencySymbol}
-              {s.dailyBudgetFiat.toLocaleString()} / day
+              Daily scope: {s.dailyBudgetSats.toLocaleString()} sats / day
               <br />
               Spent today:{" "}
               {s.spentTodaySats.toLocaleString()} sats · Expires{" "}
