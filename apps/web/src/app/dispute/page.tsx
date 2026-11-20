@@ -175,7 +175,7 @@ function DisputeInner() {
               <SelectTrigger id="receipt" className="mt-2 h-12 rounded-xl text-base">
                 <SelectValue placeholder="- pick a receipt -" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="max-h-[320px]">
                 {receipts.map((r) => (
                   <SelectItem
                     key={r.id}

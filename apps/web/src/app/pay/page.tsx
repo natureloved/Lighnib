@@ -199,8 +199,9 @@ export default function PayPage() {
           </div>
         )}
         <div className="pay-grid">
+        <div style={{ display: "grid", gap: 20, alignContent: "start" }}>
         {scope && (
-          <Card className="mb-5">
+          <Card>
             <CardContent className="pt-6">
               <p className="small" style={{ margin: 0 }}>
                 Scope remaining
@@ -216,6 +217,27 @@ export default function PayPage() {
             </CardContent>
           </Card>
         )}
+
+        <Card>
+          <CardContent className="pt-6">
+            <h2 style={{ fontSize: 20, margin: "0 0 12px" }}>How e work</h2>
+            <ol style={{ margin: 0, paddingLeft: 20, display: "grid", gap: 10 }}>
+              <li>
+                App go decode the invoice, check say e belong to this
+                supplier, check your scope, before wallet ever see am.
+              </li>
+              <li>
+                Your wallet go pay am. The scope na the limit, pass am and
+                wallet go refuse am.
+              </li>
+              <li>
+                Receipt go land, bound to the payment. If wahala come, the
+                market association mediator go see this same receipt.
+              </li>
+            </ol>
+          </CardContent>
+        </Card>
+        </div>
 
         <Card className="mb-5">
           <CardContent className="pt-6">
