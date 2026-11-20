@@ -194,7 +194,6 @@ export default function WalletPage() {
             </div>
           </div>
           <p className="till-amount amount">
-            <small>{LOCALE.currencySymbol}</small>
             <NumberTicker value={remaining} className="text-white" />{" "}
             <small>sats remain today</small>
           </p>

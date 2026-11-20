@@ -33,7 +33,7 @@ const DEMO_RECEIPT: BoundReceipt = {
   vendorName: "Balogun provisions, Mama Nkechi",
   purpose: "Demo order, provisions from Balogun market",
   amountSats: 100,
-  amountFiat: 150,
+  amountFiat: 84,
   currency: "NGN",
   paymentHash:
     "a2ce78f405bfe51746057adee07ae6c61a5da5350cf57d60996a8753805c0d74",

@@ -13,13 +13,13 @@ import {
   xofToSats,
 } from "../packages/shared/src/index";
 
-const DEMO_BTC_NGN = 150_000_000; // demo placeholder rate (see config/locale.ts)
+const DEMO_BTC_NGN = 84_000_000; // market rate as of Fri 2026-11-20 (see config/locale.ts)
 
 test("NGN → sats at the demo rate", () => {
-  // ₦50,000 at ₦150,000,000/BTC = 33,333 sats.
-  assert.equal(ngnToSats(50_000, DEMO_BTC_NGN), 33_333);
-  // ₦70,000 (the demo over-budget invoice) = 46,667 sats.
-  assert.equal(ngnToSats(70_000, DEMO_BTC_NGN), 46_667);
+  // ₦50,000 at ₦84,000,000/BTC = 59,524 sats.
+  assert.equal(ngnToSats(50_000, DEMO_BTC_NGN), 59_524);
+  // ₦70,000 (the demo over-budget invoice) = 83,333 sats.
+  assert.equal(ngnToSats(70_000, DEMO_BTC_NGN), 83_333);
   assert.equal(ngnToSats(0, DEMO_BTC_NGN), 0);
 });
 

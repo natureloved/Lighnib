@@ -1,5 +1,5 @@
 /**
- * invoices.ts, POST /api/invoices/mint — supplier invoice minting.
+ * invoices.ts, POST /api/invoices/mint - supplier invoice minting.
  *
  * The friction fix: before this endpoint, a supplier minted an invoice in
  * their own wallet, then the hash had to be registered with the API by a
@@ -9,7 +9,7 @@
  * away. The merchant flow is unchanged: paste invoice → INV-9 check →
  * wallet pays → bound receipt.
  *
- * SECURITY — read before touching this file:
+ * SECURITY - read before touching this file:
  * - This is the ONE place the API talks to LNbits. It uses the supplier
  *   wallet's INVOICE key from env (LNBITS_SUPPLIER_INVOICE_KEY), never
  *   from the request body and never logged. The invoice key can mint
@@ -36,7 +36,7 @@ export const MINTABLE_SUPPLIERS: Record<string, string> = {
   "supplier-002": "Balogun textiles",
 };
 
-/** Pilot per-order bounds, in sats. Max ≈ ₦5M at the demo rate. */
+/** Pilot per-order bounds, in sats. Max ≈ ₦2.8M at the demo rate. */
 export const MIN_MINT_SATS = 1;
 export const MAX_MINT_SATS = 3_333_333;
 

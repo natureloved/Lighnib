@@ -47,7 +47,7 @@ const SUPPLIERS: { id: string; label: string; vendorName: string }[] = [
   },
 ];
 
-const DEMO_AMOUNTS = [100, 1000, 10000, 46667];
+const DEMO_AMOUNTS = [100, 1000, 10000, 83333];
 
 const OUTLINE_BTN =
   "mt-2.5 h-12 w-full rounded-[14px] border-primary bg-card text-base font-semibold hover:bg-secondary";
@@ -300,7 +300,7 @@ export default function PayPage() {
               </span>
             </div>
             <p className="small">
-              Pick 46,667 sats to see the over-scope refusal, the app refuses
+              Pick 83,333 sats to see the over-scope refusal, the app refuses
               it before the wallet ever sees it.
             </p>
             <Button

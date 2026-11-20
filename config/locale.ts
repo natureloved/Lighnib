@@ -37,11 +37,13 @@ export const LOCALE = {
   demoInvoiceNgn: 12_500,
 
   /**
-   * Placeholder BTC price used ONLY for demo NGN↔sats display.
-   * Not a live price. Live conversion must come from a rate source
-   * (see packages/shared conversion helpers, which take the rate as input).
+   * BTC price used for demo NGN↔sats display. Market rate as of
+   * Fri 2026-11-20 (Bitget/CoinGecko-fed pages: ₦83.4M–₦84.6M/BTC),
+   * a snapshot, not a live feed. Live conversion must come from a
+   * rate source (see packages/shared conversion helpers, which take
+   * the rate as input). Re-check and re-snapshot before the pilot.
    */
-  demoBtcPriceNgn: 150_000_000,
+  demoBtcPriceNgn: 84_000_000,
 
   /** NIP-47 hold window: disputes must be decided within minutes. */
   holdWindowMinutes: 10,

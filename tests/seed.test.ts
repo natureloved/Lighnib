@@ -13,13 +13,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { ngnToSats, verifyReceipt } from "../packages/shared/src/index";
+import { ngnToSats, satsToNgn, verifyReceipt } from "../packages/shared/src/index";
 
-const DEMO_BTC_NGN = 150_000_000; // demo placeholder rate (config/locale.ts)
+const DEMO_BTC_NGN = 84_000_000; // market rate as of Fri 2026-11-20 (config/locale.ts)
 
 test("seed numbers agree with the shared conversion (login page, scope, seed)", () => {
-  assert.equal(ngnToSats(50_000, DEMO_BTC_NGN), 33_333);
-  assert.equal(ngnToSats(70_000, DEMO_BTC_NGN), 46_667);
+  assert.equal(ngnToSats(50_000, DEMO_BTC_NGN), 59_524);
+  assert.equal(ngnToSats(70_000, DEMO_BTC_NGN), 83_333);
   // The over-budget demo invoice must exceed the scope, or the wallet
   // refusal demo is meaningless.
   assert.ok(ngnToSats(70_000, DEMO_BTC_NGN) > ngnToSats(50_000, DEMO_BTC_NGN));
@@ -42,7 +42,7 @@ test("demo-data.json contract: 1+1+1+10+2, no secrets, all receipts verified", (
   assert.equal((data.mediator as Record<string, unknown>).name, "Lagos market association");
   // Scope matches the demo numbers.
   const scope = data.scope as Record<string, unknown>;
-  assert.equal(scope.dailyBudgetSats, 33_333);
+  assert.equal(scope.dailyBudgetSats, 59_524);
   assert.equal(scope.dailyBudgetFiat, 50_000);
   // 10 receipts, all verified, diversified across the three demo suppliers.
   // Each entry is the FULL bound receipt (incl. preimage + Nostr event),
@@ -56,8 +56,8 @@ test("demo-data.json contract: 1+1+1+10+2, no secrets, all receipts verified", (
     const r = receipts[i];
     assert.equal(verifyReceipt(r as never), true);
     assert.equal(r.amountSats, expectedAmounts[i]);
-    // Naira value at the demo rate (100 sats = ₦150), never ₦0.
-    assert.equal(r.amountFiat, Math.round((r.amountSats as number) * 1.5));
+    // Naira value at the demo rate (100 sats = ₦84), never ₦0.
+    assert.equal(r.amountFiat, satsToNgn(r.amountSats as number, DEMO_BTC_NGN));
     assert.ok(allowedSuppliers.has(r.supplierId as string));
     seenSuppliers.add(r.supplierId as string);
     assert.equal(r.status, "SETTLED");

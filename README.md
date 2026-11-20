@@ -44,9 +44,9 @@ Note: Blitz keeps its NWC balance separate from its main balance, so fund the NW
 1. **Install Alby Hub** (≥ v1.19.0) from [albyhub.com](https://albyhub.com), or install
    [Zeus](https://zeusln.app). Alby Hub is the tested path.
 2. **Fund it with Mutinynet test sats** from a Mutinynet faucet.
-   You need enough for the ₦50,000/day demo budget (about 33,333 sats).
+   You need enough for the ₦50,000/day demo budget (about 59,524 sats).
 3. **Create an NWC connection** in Alby Hub: methods **pay_invoice
-   only**, budget **₦50,000/day** (33,333 sats), expiry **24 hours**.
+   only**, budget **₦50,000/day** (59,524 sats), expiry **24 hours**.
    Copy the connection string (`nostr+walletconnect://...`).
 4. Paste it into Lighnib `/login` and connect. Skip to step 2 below.
 

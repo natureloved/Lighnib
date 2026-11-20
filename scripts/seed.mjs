@@ -75,17 +75,17 @@ const SUPPLIER_NAME = "Balogun provisions, Mama Nkechi";
 const MEDIATOR = "Lagos market association";
 const DAILY_BUDGET_NGN = 50_000;
 const OVER_BUDGET_NGN = 70_000;
-const DEMO_BTC_PRICE_NGN = 150_000_000; // demo placeholder rate, not a live price
+const DEMO_BTC_PRICE_NGN = 84_000_000; // market rate as of Fri 2026-11-20, snapshot, not a live price
 const FUND_SATS = Number(process.env.SEED_FUND_SATS || "100000");
 
 const ngnToSats = (ngn) => Math.round((ngn / DEMO_BTC_PRICE_NGN) * 100_000_000); // same rounding as packages/shared conversion.ts
 const satsToNgn = (sats) => Math.round((sats / 100_000_000) * DEMO_BTC_PRICE_NGN);
 const SCOPE_SATS = ngnToSats(DAILY_BUDGET_NGN); // 33,333
-const OVER_BUDGET_SATS = ngnToSats(OVER_BUDGET_NGN); // 46,667
+const OVER_BUDGET_SATS = ngnToSats(OVER_BUDGET_NGN); // 83,333
 
 // Diversified demo receipts: varied amounts across all three demo
 // suppliers, with realistic market purposes and the naira value at the
-// demo rate (100 sats = ₦150, never ₦0). Total 21,900 sats, inside the
+// demo rate (100 sats = ₦84, never ₦0). Total 21,900 sats, inside the
 // 33,333-sat daily scope with room to spare.
 // The demo seed uses ONE supplier wallet behind the three demo supplier
 // labels (same model as the mint endpoint, which mints every supplier
@@ -381,7 +381,7 @@ for (let i = 0; i < SEED_RECEIPTS.length; i++) {
 const overOrderId = `ORD-SEED-${stamp}-OVER`;
 const invOver = await createInvoice(
   supplier.adminkey,
-  OVER_BUDGET_SATS, // 46,667 sats = ₦70,000 at the demo rate
+  OVER_BUDGET_SATS, // 83,333 sats = ₦70,000 at the demo rate
   `Lighnib:order#${overOrderId}:${SUPPLIER_ID}`,
 );
 await j("POST", `${API_URL}/api/invoices`, {

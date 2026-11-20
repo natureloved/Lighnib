@@ -1,10 +1,10 @@
 {
-  "seededAt": "2026-11-20T11:24:23.901Z",
+  "seededAt": "2026-11-20T11:39:08.175Z",
   "market": "Lagos, Nigeria",
   "merchant": {
-    "walletId": "b79c61ecaa4b4cd4b500acf5881058c7",
-    "walletPubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-    "scopeId": "scope_mwow63fk_5423zr",
+    "walletId": "90f0e123b2f54fc19f8804c1ca9437dc",
+    "walletPubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+    "scopeId": "scope_mwowp1v0_whgryn",
     "fundedTestSats": 100000,
     "spentTestSats": 21900
   },
@@ -16,217 +16,217 @@
     "name": "Lagos market association"
   },
   "scope": {
-    "id": "scope_mwow63fk_5423zr",
-    "dailyBudgetSats": 33333,
+    "id": "scope_mwowp1v0_whgryn",
+    "dailyBudgetSats": 59524,
     "dailyBudgetFiat": 50000,
     "currency": "NGN",
-    "expiresAt": "2026-11-20T19:24:25.184Z",
+    "expiresAt": "2026-11-20T19:39:09.612Z",
     "state": "LOGGED_IN"
   },
   "receipts": [
     {
-      "id": "rcpt_seed_202611201124_01",
-      "orderId": "ORD-SEED-202611201124-01",
+      "id": "rcpt_seed_202611201139_01",
+      "orderId": "ORD-SEED-202611201139-01",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions, Mama Nkechi",
       "purpose": "10 bags of rice",
       "amountSats": 100,
-      "amountFiat": 150,
+      "amountFiat": 84,
       "currency": "NGN",
-      "paymentHash": "01735eb895e8f9db95a73555335035ac6ada0856d0eed21e4aebb98c2248fe0b",
-      "preimage": "2a94b3c177040bbf2dce7ecd782b3260362547ae0c1e29d2e01a38ccad3c5660",
-      "settledAt": "2026-11-20T11:24:27.831Z",
+      "paymentHash": "6933023a527faa4037bb6f502908ab0a2051ce7bd35187621992b1be4745a982",
+      "preimage": "7e9ddac35a655f22219e7290547e27c1be9635e8e3b9fe8e7d438bf00694ae74",
+      "settledAt": "2026-11-20T11:39:12.317Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_01\",\"orderId\":\"ORD-SEED-202611201124-01\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions, Mama Nkechi\",\"purpose\":\"10 bags of rice\",\"amountSats\":100,\"paymentHash\":\"01735eb895e8f9db95a73555335035ac6ada0856d0eed21e4aebb98c2248fe0b\",\"preimage\":\"2a94b3c177040bbf2dce7ecd782b3260362547ae0c1e29d2e01a38ccad3c5660\",\"settledAt\":\"2026-11-20T11:24:27.831Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_01\",\"orderId\":\"ORD-SEED-202611201139-01\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions, Mama Nkechi\",\"purpose\":\"10 bags of rice\",\"amountSats\":100,\"paymentHash\":\"6933023a527faa4037bb6f502908ab0a2051ce7bd35187621992b1be4745a982\",\"preimage\":\"7e9ddac35a655f22219e7290547e27c1be9635e8e3b9fe8e7d438bf00694ae74\",\"settledAt\":\"2026-11-20T11:39:12.317Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611201124_02",
-      "orderId": "ORD-SEED-202611201124-02",
+      "id": "rcpt_seed_202611201139_02",
+      "orderId": "ORD-SEED-202611201139-02",
       "supplierId": "supplier-001",
       "vendorName": "Mama Nkechi provisions",
       "purpose": "Carton of milk + sugar",
       "amountSats": 200,
-      "amountFiat": 300,
+      "amountFiat": 168,
       "currency": "NGN",
-      "paymentHash": "939fe6eb06f3638ba848ec896c1d80d738b566be64cd2d8b0660427f004411ed",
-      "preimage": "76a18de5328ed13e8b536fff885fcda520f9a645d011186b9254a48caafb1c14",
-      "settledAt": "2026-11-20T11:24:30.391Z",
+      "paymentHash": "46e8d0619276f6c295fc3dda34a60c1fd6091d95f8203bcd577b348215ea3dda",
+      "preimage": "5660c6348866054396d5d4149200b515f67f454e12502f485e3969a2920d8f88",
+      "settledAt": "2026-11-20T11:39:14.979Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_02\",\"orderId\":\"ORD-SEED-202611201124-02\",\"supplierId\":\"supplier-001\",\"vendor\":\"Mama Nkechi provisions\",\"purpose\":\"Carton of milk + sugar\",\"amountSats\":200,\"paymentHash\":\"939fe6eb06f3638ba848ec896c1d80d738b566be64cd2d8b0660427f004411ed\",\"preimage\":\"76a18de5328ed13e8b536fff885fcda520f9a645d011186b9254a48caafb1c14\",\"settledAt\":\"2026-11-20T11:24:30.391Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_02\",\"orderId\":\"ORD-SEED-202611201139-02\",\"supplierId\":\"supplier-001\",\"vendor\":\"Mama Nkechi provisions\",\"purpose\":\"Carton of milk + sugar\",\"amountSats\":200,\"paymentHash\":\"46e8d0619276f6c295fc3dda34a60c1fd6091d95f8203bcd577b348215ea3dda\",\"preimage\":\"5660c6348866054396d5d4149200b515f67f454e12502f485e3969a2920d8f88\",\"settledAt\":\"2026-11-20T11:39:14.979Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611201124_03",
-      "orderId": "ORD-SEED-202611201124-03",
+      "id": "rcpt_seed_202611201139_03",
+      "orderId": "ORD-SEED-202611201139-03",
       "supplierId": "supplier-002",
       "vendorName": "Balogun textiles",
       "purpose": "5 yards ankara fabric",
       "amountSats": 350,
-      "amountFiat": 525,
+      "amountFiat": 294,
       "currency": "NGN",
-      "paymentHash": "321b9d4672a359ab145757a19025b53fd17547d5a68092d141293e1799180c46",
-      "preimage": "e4b4fd6c56a5e06e671650b8ad7eb9a58e3acfebdb0abe93f01eb1cedc151d76",
-      "settledAt": "2026-11-20T11:24:33.031Z",
+      "paymentHash": "23d8234c543b5f1f0020c5c662bcfc113c4db4dec6ba587f6c153c69cb6b5274",
+      "preimage": "cb496793761a8cd698bbd219a5a6967d9cdff33851a2dcd739625902617e27c1",
+      "settledAt": "2026-11-20T11:39:17.558Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_03\",\"orderId\":\"ORD-SEED-202611201124-03\",\"supplierId\":\"supplier-002\",\"vendor\":\"Balogun textiles\",\"purpose\":\"5 yards ankara fabric\",\"amountSats\":350,\"paymentHash\":\"321b9d4672a359ab145757a19025b53fd17547d5a68092d141293e1799180c46\",\"preimage\":\"e4b4fd6c56a5e06e671650b8ad7eb9a58e3acfebdb0abe93f01eb1cedc151d76\",\"settledAt\":\"2026-11-20T11:24:33.031Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_03\",\"orderId\":\"ORD-SEED-202611201139-03\",\"supplierId\":\"supplier-002\",\"vendor\":\"Balogun textiles\",\"purpose\":\"5 yards ankara fabric\",\"amountSats\":350,\"paymentHash\":\"23d8234c543b5f1f0020c5c662bcfc113c4db4dec6ba587f6c153c69cb6b5274\",\"preimage\":\"cb496793761a8cd698bbd219a5a6967d9cdff33851a2dcd739625902617e27c1\",\"settledAt\":\"2026-11-20T11:39:17.558Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611201124_04",
-      "orderId": "ORD-SEED-202611201124-04",
+      "id": "rcpt_seed_202611201139_04",
+      "orderId": "ORD-SEED-202611201139-04",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions, Mama Nkechi",
       "purpose": "2 bags garri",
       "amountSats": 500,
-      "amountFiat": 750,
+      "amountFiat": 420,
       "currency": "NGN",
-      "paymentHash": "12cbba673f80da647d9bdedc6113f2d38499f2d470d6bb7ba0495f8d2d0ed2fc",
-      "preimage": "2871cceb57e0ba6b6366bed84ceb457d2a4e025ddf59724c9864aab604285d9b",
-      "settledAt": "2026-11-20T11:24:35.769Z",
+      "paymentHash": "7310637daeb62e06983dbff68f5ad0d1af9dcb0671886697ece62566b29b7801",
+      "preimage": "149aaa2938987bcc25142c486d75604274d2f1982495647f68dc24493d7768fb",
+      "settledAt": "2026-11-20T11:39:20.209Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_04\",\"orderId\":\"ORD-SEED-202611201124-04\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions, Mama Nkechi\",\"purpose\":\"2 bags garri\",\"amountSats\":500,\"paymentHash\":\"12cbba673f80da647d9bdedc6113f2d38499f2d470d6bb7ba0495f8d2d0ed2fc\",\"preimage\":\"2871cceb57e0ba6b6366bed84ceb457d2a4e025ddf59724c9864aab604285d9b\",\"settledAt\":\"2026-11-20T11:24:35.769Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_04\",\"orderId\":\"ORD-SEED-202611201139-04\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions, Mama Nkechi\",\"purpose\":\"2 bags garri\",\"amountSats\":500,\"paymentHash\":\"7310637daeb62e06983dbff68f5ad0d1af9dcb0671886697ece62566b29b7801\",\"preimage\":\"149aaa2938987bcc25142c486d75604274d2f1982495647f68dc24493d7768fb\",\"settledAt\":\"2026-11-20T11:39:20.209Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611201124_05",
-      "orderId": "ORD-SEED-202611201124-05",
+      "id": "rcpt_seed_202611201139_05",
+      "orderId": "ORD-SEED-202611201139-05",
       "supplierId": "supplier-001",
       "vendorName": "Mama Nkechi provisions",
       "purpose": "Cooking oil + seasoning",
       "amountSats": 750,
-      "amountFiat": 1125,
+      "amountFiat": 630,
       "currency": "NGN",
-      "paymentHash": "4a67ab53644d4d6d4b7f08cb1b516e499cecd10559d8f3c70fd3a2dad7469831",
-      "preimage": "d6bf35586291091cc2b09b4c2e31f2360815110e8e17c48cefb69e161e3f8580",
-      "settledAt": "2026-11-20T11:24:38.371Z",
+      "paymentHash": "c9a9bc511ea2c42754202efc4d2279a231c50ebc1a2f647e1ba8373030f799cc",
+      "preimage": "f8638f1c4a38027e157f8b25025f5c05d0abb1a7353862ab27e7c5a6725cd938",
+      "settledAt": "2026-11-20T11:39:22.800Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_05\",\"orderId\":\"ORD-SEED-202611201124-05\",\"supplierId\":\"supplier-001\",\"vendor\":\"Mama Nkechi provisions\",\"purpose\":\"Cooking oil + seasoning\",\"amountSats\":750,\"paymentHash\":\"4a67ab53644d4d6d4b7f08cb1b516e499cecd10559d8f3c70fd3a2dad7469831\",\"preimage\":\"d6bf35586291091cc2b09b4c2e31f2360815110e8e17c48cefb69e161e3f8580\",\"settledAt\":\"2026-11-20T11:24:38.371Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_05\",\"orderId\":\"ORD-SEED-202611201139-05\",\"supplierId\":\"supplier-001\",\"vendor\":\"Mama Nkechi provisions\",\"purpose\":\"Cooking oil + seasoning\",\"amountSats\":750,\"paymentHash\":\"c9a9bc511ea2c42754202efc4d2279a231c50ebc1a2f647e1ba8373030f799cc\",\"preimage\":\"f8638f1c4a38027e157f8b25025f5c05d0abb1a7353862ab27e7c5a6725cd938\",\"settledAt\":\"2026-11-20T11:39:22.800Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611201124_06",
-      "orderId": "ORD-SEED-202611201124-06",
+      "id": "rcpt_seed_202611201139_06",
+      "orderId": "ORD-SEED-202611201139-06",
       "supplierId": "supplier-002",
       "vendorName": "Balogun textiles",
       "purpose": "School uniform fabric, 3 sets",
       "amountSats": 1000,
-      "amountFiat": 1500,
+      "amountFiat": 840,
       "currency": "NGN",
-      "paymentHash": "2cd7f1adcef40b253ee9096b3bb0c18b99ad0ddb7aea2d0123554e0775688ee0",
-      "preimage": "f145cd97ce2fe11de49443d65ef0fafff28f85acddb910f18d9f510f42dde5d5",
-      "settledAt": "2026-11-20T11:24:41.043Z",
+      "paymentHash": "f55f573c9eec069a3d7bf67edd6e0cdfa64bb182e9714c06a1c1f578a442a374",
+      "preimage": "e95c96102506140651b72d1b16facdab80c19c85d6b30a1af3292b51322bc26e",
+      "settledAt": "2026-11-20T11:39:25.436Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_06\",\"orderId\":\"ORD-SEED-202611201124-06\",\"supplierId\":\"supplier-002\",\"vendor\":\"Balogun textiles\",\"purpose\":\"School uniform fabric, 3 sets\",\"amountSats\":1000,\"paymentHash\":\"2cd7f1adcef40b253ee9096b3bb0c18b99ad0ddb7aea2d0123554e0775688ee0\",\"preimage\":\"f145cd97ce2fe11de49443d65ef0fafff28f85acddb910f18d9f510f42dde5d5\",\"settledAt\":\"2026-11-20T11:24:41.043Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_06\",\"orderId\":\"ORD-SEED-202611201139-06\",\"supplierId\":\"supplier-002\",\"vendor\":\"Balogun textiles\",\"purpose\":\"School uniform fabric, 3 sets\",\"amountSats\":1000,\"paymentHash\":\"f55f573c9eec069a3d7bf67edd6e0cdfa64bb182e9714c06a1c1f578a442a374\",\"preimage\":\"e95c96102506140651b72d1b16facdab80c19c85d6b30a1af3292b51322bc26e\",\"settledAt\":\"2026-11-20T11:39:25.436Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611201124_07",
-      "orderId": "ORD-SEED-202611201124-07",
+      "id": "rcpt_seed_202611201139_07",
+      "orderId": "ORD-SEED-202611201139-07",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions, Mama Nkechi",
       "purpose": "3 cartons noodles",
       "amountSats": 1500,
-      "amountFiat": 2250,
+      "amountFiat": 1260,
       "currency": "NGN",
-      "paymentHash": "7e6857dafba38cd86c6382e06fac55a60af9607ae82b1e68abc6c3051fe25ba2",
-      "preimage": "05e2c1aa172feb8c8285f7d8cf2a75aad171d9eab728ac30e16bc20da95fed2e",
-      "settledAt": "2026-11-20T11:24:43.580Z",
+      "paymentHash": "23f13ee66c93542ccbdb9c242362ff7085aca2552799aef6586fd52717603dc8",
+      "preimage": "116abb1cdcb3d98540cd4f9ecf331627db0e036fb104897b82a9376e94043867",
+      "settledAt": "2026-11-20T11:39:28.016Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_07\",\"orderId\":\"ORD-SEED-202611201124-07\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions, Mama Nkechi\",\"purpose\":\"3 cartons noodles\",\"amountSats\":1500,\"paymentHash\":\"7e6857dafba38cd86c6382e06fac55a60af9607ae82b1e68abc6c3051fe25ba2\",\"preimage\":\"05e2c1aa172feb8c8285f7d8cf2a75aad171d9eab728ac30e16bc20da95fed2e\",\"settledAt\":\"2026-11-20T11:24:43.580Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_07\",\"orderId\":\"ORD-SEED-202611201139-07\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions, Mama Nkechi\",\"purpose\":\"3 cartons noodles\",\"amountSats\":1500,\"paymentHash\":\"23f13ee66c93542ccbdb9c242362ff7085aca2552799aef6586fd52717603dc8\",\"preimage\":\"116abb1cdcb3d98540cd4f9ecf331627db0e036fb104897b82a9376e94043867\",\"settledAt\":\"2026-11-20T11:39:28.016Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611201124_08",
-      "orderId": "ORD-SEED-202611201124-08",
+      "id": "rcpt_seed_202611201139_08",
+      "orderId": "ORD-SEED-202611201139-08",
       "supplierId": "supplier-001",
       "vendorName": "Mama Nkechi provisions",
       "purpose": "Tomatoes + pepper crates",
       "amountSats": 2500,
-      "amountFiat": 3750,
+      "amountFiat": 2100,
       "currency": "NGN",
-      "paymentHash": "18c82fd1e66509b92e31627a8033cdc092dc6b77232295403698e3e95a6e8f07",
-      "preimage": "e9fb21938340d7ca711702d60201526cf8474b9f6ff943b77ee680c394634f57",
-      "settledAt": "2026-11-20T11:24:46.096Z",
+      "paymentHash": "0303f2b03edd4d5645750b101620c5ef2c961ec5d965c6b7ecd7c69bb933059a",
+      "preimage": "110753af20406ca516a9a1679334d85144ff662ff61100fa4553e0adfc156f14",
+      "settledAt": "2026-11-20T11:39:30.732Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_08\",\"orderId\":\"ORD-SEED-202611201124-08\",\"supplierId\":\"supplier-001\",\"vendor\":\"Mama Nkechi provisions\",\"purpose\":\"Tomatoes + pepper crates\",\"amountSats\":2500,\"paymentHash\":\"18c82fd1e66509b92e31627a8033cdc092dc6b77232295403698e3e95a6e8f07\",\"preimage\":\"e9fb21938340d7ca711702d60201526cf8474b9f6ff943b77ee680c394634f57\",\"settledAt\":\"2026-11-20T11:24:46.096Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_08\",\"orderId\":\"ORD-SEED-202611201139-08\",\"supplierId\":\"supplier-001\",\"vendor\":\"Mama Nkechi provisions\",\"purpose\":\"Tomatoes + pepper crates\",\"amountSats\":2500,\"paymentHash\":\"0303f2b03edd4d5645750b101620c5ef2c961ec5d965c6b7ecd7c69bb933059a\",\"preimage\":\"110753af20406ca516a9a1679334d85144ff662ff61100fa4553e0adfc156f14\",\"settledAt\":\"2026-11-20T11:39:30.732Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611201124_09",
-      "orderId": "ORD-SEED-202611201124-09",
+      "id": "rcpt_seed_202611201139_09",
+      "orderId": "ORD-SEED-202611201139-09",
       "supplierId": "supplier-002",
       "vendorName": "Balogun textiles",
       "purpose": "Lace fabric restock, 10 yards",
       "amountSats": 5000,
-      "amountFiat": 7500,
+      "amountFiat": 4200,
       "currency": "NGN",
-      "paymentHash": "56770278706a65bdc823b35de83b92a2580bb0a021e9226221e3d27dbb49440f",
-      "preimage": "10bdd3ad0770ee526bf17d181d3272de957f008fe2eeea7a6632eb40afc6e5ce",
-      "settledAt": "2026-11-20T11:24:48.709Z",
+      "paymentHash": "1a1c5ce489b549d4b7c4ba3990b0c93e2a59023d77e7f019ff32c08716495d34",
+      "preimage": "a95d9c8677a9eb6119140d53c893021fced2cbe46fa7f6d5066fb57cd7e4c359",
+      "settledAt": "2026-11-20T11:39:33.518Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_09\",\"orderId\":\"ORD-SEED-202611201124-09\",\"supplierId\":\"supplier-002\",\"vendor\":\"Balogun textiles\",\"purpose\":\"Lace fabric restock, 10 yards\",\"amountSats\":5000,\"paymentHash\":\"56770278706a65bdc823b35de83b92a2580bb0a021e9226221e3d27dbb49440f\",\"preimage\":\"10bdd3ad0770ee526bf17d181d3272de957f008fe2eeea7a6632eb40afc6e5ce\",\"settledAt\":\"2026-11-20T11:24:48.709Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_09\",\"orderId\":\"ORD-SEED-202611201139-09\",\"supplierId\":\"supplier-002\",\"vendor\":\"Balogun textiles\",\"purpose\":\"Lace fabric restock, 10 yards\",\"amountSats\":5000,\"paymentHash\":\"1a1c5ce489b549d4b7c4ba3990b0c93e2a59023d77e7f019ff32c08716495d34\",\"preimage\":\"a95d9c8677a9eb6119140d53c893021fced2cbe46fa7f6d5066fb57cd7e4c359\",\"settledAt\":\"2026-11-20T11:39:33.518Z\"}"
       }
     },
     {
-      "id": "rcpt_seed_202611201124_10",
-      "orderId": "ORD-SEED-202611201124-10",
+      "id": "rcpt_seed_202611201139_10",
+      "orderId": "ORD-SEED-202611201139-10",
       "supplierId": "supplier-balogun-001",
       "vendorName": "Balogun provisions, Mama Nkechi",
       "purpose": "Frozen chicken cartons, weekly restock",
       "amountSats": 10000,
-      "amountFiat": 15000,
+      "amountFiat": 8400,
       "currency": "NGN",
-      "paymentHash": "9f8d639ee3a469ea0f9c2e5422fbb1b34733fa872679b900dedeaf434308953a",
-      "preimage": "27a71cafa28d88c44acb6a664927c044d4837425afc3106fa4773a3e4d20f47b",
-      "settledAt": "2026-11-20T11:24:51.237Z",
+      "paymentHash": "939550a3d8acc34c6e49dc2da6a9d4f8d78a3f09faee4086c881b7e7238b83f9",
+      "preimage": "2d63956689cdacd29e195635f5fd3ca646527bac6532d580daae3a8698cf93a0",
+      "settledAt": "2026-11-20T11:39:36.457Z",
       "status": "SETTLED",
       "nostrEvent": {
         "kind": 1,
-        "pubkey": "1461ec2d826283aa8de811e75c69e46960d36ca2fa47727cf3ccaaef7b3f8cdc",
-        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201124_10\",\"orderId\":\"ORD-SEED-202611201124-10\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions, Mama Nkechi\",\"purpose\":\"Frozen chicken cartons, weekly restock\",\"amountSats\":10000,\"paymentHash\":\"9f8d639ee3a469ea0f9c2e5422fbb1b34733fa872679b900dedeaf434308953a\",\"preimage\":\"27a71cafa28d88c44acb6a664927c044d4837425afc3106fa4773a3e4d20f47b\",\"settledAt\":\"2026-11-20T11:24:51.237Z\"}"
+        "pubkey": "c0472926c970ef4ed3e0de28c75dece1210b6070a5394b9aefb1a1f0eb625fd7",
+        "content": "{\"type\":\"lighnib-receipt\",\"receiptId\":\"rcpt_seed_202611201139_10\",\"orderId\":\"ORD-SEED-202611201139-10\",\"supplierId\":\"supplier-balogun-001\",\"vendor\":\"Balogun provisions, Mama Nkechi\",\"purpose\":\"Frozen chicken cartons, weekly restock\",\"amountSats\":10000,\"paymentHash\":\"939550a3d8acc34c6e49dc2da6a9d4f8d78a3f09faee4086c881b7e7238b83f9\",\"preimage\":\"2d63956689cdacd29e195635f5fd3ca646527bac6532d580daae3a8698cf93a0\",\"settledAt\":\"2026-11-20T11:39:36.457Z\"}"
       }
     }
   ],
   "blocked": [
     {
       "kind": "wallet-quota-exceeded",
-      "orderId": "ORD-SEED-202611201124-OVER",
-      "amountSats": 46667,
+      "orderId": "ORD-SEED-202611201139-OVER",
+      "amountSats": 83333,
       "amountNgn": 70000,
       "walletError": "QUOTA_EXCEEDED The wallet has exceeded its spending quota.",
       "note": "Direct NWC pay, bypassing the app, the wallet itself refuses. In the web flow the app scope check (INV-2) refuses the same invoice first."
     },
     {
       "kind": "app-inv9-unknown-hash",
-      "orderId": "ORD-SEED-202611201124-OVER-WRONG",
+      "orderId": "ORD-SEED-202611201139-OVER-WRONG",
       "amountSats": 50,
       "supplierId": "supplier-other-999",
       "appRefusal": "UNKNOWN_INVOICE_HASH",

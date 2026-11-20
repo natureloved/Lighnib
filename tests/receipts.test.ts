@@ -97,8 +97,8 @@ test("receiptSummary is a readable Pidgin/English line", () => {
 
 test("receiptFiat derives naira from sats when the stored fiat is zero", () => {
   const r = buildBoundReceipt(receiptInput({ amountSats: 100, amountFiat: 0 }));
-  assert.equal(receiptFiat(r), 150);
-  assert.match(receiptSummary(r, "₦"), /₦150 \(100 sats\)/);
+  assert.equal(receiptFiat(r), 84);
+  assert.match(receiptSummary(r, "₦"), /₦84 \(100 sats\)/);
 });
 
 test("receiptFiat keeps a stored fiat when one is present", () => {
