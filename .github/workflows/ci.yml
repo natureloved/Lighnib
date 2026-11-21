@@ -1,0 +1,28 @@
+name: CI
+
+# Clean-clone build + Docker test on every push to main (Nov 21 review,
+# item 6). A fresh checkout runs npm ci, the full test suite, the
+# typecheck, the production build, and the API Docker image build, so a
+# build failure like the import.meta/CommonJS mismatch can never again
+# reach the demo unnoticed.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Build API Docker image
+        run: docker build -f apps/api/Dockerfile -t lighnib-api:ci .
