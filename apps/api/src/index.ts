@@ -37,10 +37,13 @@ import {
   decodeInvoice,
   getMetrics,
   getReceipt,
+  getReceiptByHash,
   listBlocked,
   listReceipts,
+  reconcilePayment,
   recordBlocked,
   recordBinding,
+  validateBindingMemo,
   verifyPastedReceipt,
   verifyReceiptById,
 } from "./receipts";
@@ -60,6 +63,7 @@ import {
   type MintRequest,
 } from "./invoices";
 import { getDemoLogin } from "./demo-login";
+import { checkOperatorKey } from "./operator";
 
 const app = Fastify({ logger: true });
 app.register(cors, { origin: true });
@@ -118,8 +122,11 @@ app.post("/api/scope/:id/begin-payment", async (request, reply) => {
 app.post("/api/scope/:id/settle-payment", async (request, reply) => {
   try {
     const { id } = request.params as { id: string };
-    const { amountSats } = request.body as { amountSats: number };
-    return settlePayment(id, amountSats);
+    const { amountSats, paymentHash } = request.body as {
+      amountSats: number;
+      paymentHash?: string;
+    };
+    return settlePayment(id, amountSats, paymentHash);
   } catch (err) {
     reply.code(400).send({ error: (err as Error).message });
   }
@@ -142,9 +149,30 @@ app.post("/api/scope/:id/revoke", async (request, reply) => {
 });
 
 /* --- Invoices / INV-9 --- */
+/*
+ * POST /api/invoices is operator-only. The binding registry is the ONLY
+ * supplier enforcement Lighnib has, so anyone who can write it can make
+ * any invoice look like any supplier's. The caller must send the
+ * LIGHNIB_OPERATOR_KEY in the x-operator-key header. The manual
+ * two-step flow (mint in wallet, then register here) is for the
+ * operator's seed scripts only; the app and the judges use the mint
+ * endpoint, which builds its own binding server-side.
+ */
+const OPERATOR_KEY = process.env.LIGHNIB_OPERATOR_KEY;
 app.post("/api/invoices", async (request, reply) => {
+  const check = checkOperatorKey(request.headers, OPERATOR_KEY);
+  if (check === "not-configured") {
+    return reply.code(503).send({
+      error: "Binding registration is not configured: set LIGHNIB_OPERATOR_KEY",
+    });
+  }
+  if (check === "unauthorized") {
+    return reply.code(401).send({ error: "Operator key required" });
+  }
   try {
-    return recordBinding(request.body as Parameters<typeof recordBinding>[0]);
+    const binding = request.body as Parameters<typeof recordBinding>[0];
+    validateBindingMemo(binding);
+    return recordBinding(binding);
   } catch (err) {
     reply.code(400).send({ error: (err as Error).message });
   }
@@ -211,6 +239,30 @@ app.get("/api/demo-login", async (_request, reply) => {
 app.post("/api/receipts", async (request, reply) => {
   try {
     return createReceipt(request.body as Parameters<typeof createReceipt>[0]);
+  } catch (err) {
+    reply.code(400).send({ error: (err as Error).message });
+  }
+});
+app.get("/api/receipts/by-hash/:hash", async (request, reply) => {
+  const receipt = getReceiptByHash((request.params as { hash: string }).hash);
+  if (!receipt) return reply.code(404).send({ error: "Unknown payment hash" });
+  return receipt;
+});
+/*
+ * POST /api/receipts/reconcile, the recovery path for an uncertain
+ * payment (Nov 21 review, item 7). The wallet paid but the settle or
+ * receipt step failed; the caller passes the preimage the wallet
+ * returned. The preimage is verified against the hash before anything
+ * is recorded, and both the receipt and the scope spend are idempotent
+ * by payment hash, so calling this twice is safe. This is the ONLY
+ * supported retry path after an ambiguous result: never re-pay the
+ * same invoice blind.
+ */
+app.post("/api/receipts/reconcile", async (request, reply) => {
+  try {
+    return reconcilePayment(
+      request.body as Parameters<typeof reconcilePayment>[0],
+    );
   } catch (err) {
     reply.code(400).send({ error: (err as Error).message });
   }

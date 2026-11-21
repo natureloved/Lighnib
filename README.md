@@ -5,8 +5,9 @@
 > **The login IS the spending permission.** There is no password and no
 > separate payment step. Connect your Lightning wallet and the connection
 > itself is the credential; its budget is the permission scope. Revoke
-> the login and the spending dies instantly. Separate systems cannot do
-> that.
+> the login and spending from this login dies instantly. (The wallet
+> connection itself is revoked inside the wallet, not by logging out of
+> Lighnib.) Separate systems cannot do that.
 
 Lighnib is wallet-as-key for local commerce (Dakar Bitcoin Hack 2026). A
 merchant logs in to a supplier portal by connecting their Lightning wallet -
@@ -19,13 +20,17 @@ verdict below). No password, no screenshot, no bank, no NIN.
 **Live demo:** https://lighnib.vercel.app
 **Repo:** https://github.com/natureloved/Lighnib (public, MIT)
 
-**Demo videos (silent screen recordings of the real app on test sats,
-with burned-in Pidgin captions, narration scripts alongside):**
-`~/workspace/demo-videos/lighnib/lighnib-90s.mp4` (84 s) and
-`lighnib-3min.mp4` (112 s). They are **not committed to this repo**
-(kept out by design); upload them with the submission. The videos have
-no audio track, this VM has no voices, so captions + the narration
-scripts carry the words.
+**What this is:** Lighnib is an internet-accessible prototype
+demonstrating an NWC wallet connection, app-side supplier checks and
+receipt verification using a FakeWallet demo. Live escrow and
+mediator-controlled fund release are not implemented. All demo payments
+settle inside one LNbits instance via FakeWallet and are never routed
+across the Lightning network; there is no real-network (regtest,
+testnet, or mainnet) payment evidence yet.
+
+**Demo video:** the 90-second walkthrough is public on YouTube:
+https://youtu.be/HdtUWpjpB2A. The video files themselves are not
+committed to this repo (kept out by design).
 
 **Honest security line:** Budget enforced by the wallet. Supplier enforced
 by the app + bound receipt. Mediator sees any mismatch.
@@ -49,7 +54,11 @@ Demo rate: ₦84,000,000 per BTC, checked 20 Nov 2026. At that rate ₦50,000 is
    You need enough for the ₦50,000/day demo budget (about 59,524 sats).
 3. **Create an NWC connection** in Alby Hub: methods **pay_invoice
    only**, budget **₦50,000/day** (59,524 sats), expiry **24 hours**.
-   Copy the connection string (`nostr+walletconnect://...`).
+   Copy the connection string (`nostr+walletconnect://...`). Set the
+   same budget in the wallet when you create the connection: the amount
+   you pick in Lighnib is an app-side limit, and Lighnib cannot verify
+   the wallet's own budget (no `get_budget` support on the demo
+   provider). Wallet budget not verified.
 4. Paste it into Lighnib `/login` and connect. Skip to step 2 below.
 
 ### Fastest path: pre-funded demo merchant (30 s, no setup)
@@ -81,14 +90,10 @@ invoice, no invoice needed beforehand.
    Every settled payment is a bound receipt card (amount + vendor +
    purpose + hash + preimage). Copy any receipt JSON and paste it into
    "Verify a receipt you receive", the check runs in your own browser
-   (no trust in our server) with a server cross-check: preimage hashes
-   to the payment hash, the public Nostr receipt matches the card. What
-   that check proves is the cryptographic relationship between the
-   preimage and the payment hash. It does not by itself authenticate
-   the supplier, the order, or the purpose: those claims depend on how
-   the binding was established and protected, the supplier minted the
-   invoice with the Lighnib memo and the hash was registered before
-   payment. Hit
+   (no trust in our server) with a server cross-check. The verifier
+   checks that the preimage matches the payment hash and that the
+   receipt fields match their embedded record. Supplier and order
+   details are not yet independently authenticated. Hit
    "Explain this receipt" for the AI explainer (template fallback when
    no LLM key is set) and "Replay readout" to hear it spoken.
    Open the app as `http://localhost:3000` (not `127.0.0.1`, Next 16
@@ -114,6 +119,25 @@ Demo data is seeded by `npm run seed` (1 merchant + 1 supplier + 1 named
 mediator + 10 bound receipts + 2 blocked payments). No real funds, no
 token, no account to create.
 
+## Wallet compatibility (tested vs listed)
+
+"Wallets wey work" lists wallets that support NWC. Only one combination
+was tested end to end in this project; the rest are listed from their
+own NWC support, not from a test run here.
+
+| Wallet | Tested end to end here | Network | Methods | Budget |
+| --- | --- | --- | --- | --- |
+| LNbits NWC (demo merchant connection) | Yes, login + pay + receipt on the live demo | LNbits FakeWallet, no real Lightning routing | pay_invoice only | App-side limit + app-tracked spend (provider has no `get_budget`) |
+| Alby Hub (≥ v1.19.0) | No, listed as the recommended path, not tested in this project | Mutinynet test sats (per judge guide) | pay_invoice only | Wallet-side, set when the connection is created |
+| Zeus | No | Mutinynet test sats | pay_invoice only | Wallet-side |
+| Coinos | No | Mutinynet test sats | pay_invoice only | Wallet-side |
+| Blitz | No, and its NWC balance is separate from its main balance | Mutinynet test sats | pay_invoice only | Wallet-side |
+| Rizful | No, custodial, browser-based | Mutinynet test sats | pay_invoice only | Wallet-side |
+
+Phoenix has NO NWC and is not supported. A wallet is added to the
+tested column only after a login + pay + receipt run is recorded
+against it.
+
 ## How suppliers join
 
 A supplier mints each invoice in their own Lightning wallet (Rizful, Zeus,
@@ -122,7 +146,12 @@ Alby Hub, or any wallet that can add a memo), with the memo
 payment hash must be registered with Lighnib, so the app can check the
 invoice really belongs to the supplier named in the memo. In the demo,
 registration is done by the operator: seed data, or the mint endpoint,
-which mints and registers in one call.
+which mints and registers in one call. The manual registration route
+(`POST /api/invoices`) is operator-only: it needs the
+`LIGHNIB_OPERATOR_KEY` in the `x-operator-key` header, and a binding
+whose memo names a different supplier or order than the body claims is
+refused. Anyone could otherwise register any hash under any supplier,
+which would make the INV-9 check worthless.
 
 In the pilot, joining is agent-assisted. The onboarding agent verifies the
 trader with the market association, helps them set up their wallet, adds
@@ -137,7 +166,7 @@ One command: `docker compose up --build` (web + api + LNbits ≥ 1.7.1).
 Or local dev: `npm install && npm run dev` (web :3000, api :3001) plus
 `bash scripts/start-lnbits.sh` (LNbits :5000) and
 `node scripts/local-relay.mjs 7777` (Nostr relay). Then `npm run seed`.
-See `docker-compose.yml` and `scripts/`. Node 20+, npm 10+.
+See `docker-compose.yml` and `scripts/`. Node 22+, npm 10+.
 
 ## Architecture
 
@@ -162,7 +191,9 @@ is bound to its purchase (INV-9) and lands as a verifiable bound receipt
   never in localStorage, never on the server, never in logs. Short
   expiry (24h demo). Least privilege: `pay_invoice` only. Revoke =
   logout: the secret is wiped from memory and the scope is revoked
-  server-side, so a revoked scope never pays again.
+  server-side, so a revoked scope never pays again. The wallet
+  connection itself is not revoked by logging out: a connection string
+  copied earlier still pays until it is revoked inside the wallet.
 - **Blast radius:** one scope, ₦50,000/day. A stolen secret can spend
   at most that day's budget. The wallet's configured permissions and
   budget are the backstop: the wallet enforces the budget, not the
@@ -251,18 +282,17 @@ The mediator becomes a hold-capable service (Alby Hub hold invoices).
   viewport). LCP is not emitted in this headless build, FCP + load
   event are the reported paint metrics. No fix was needed; the happy
   path works on a slow connection.
-- **Demo videos:** 90-sec (`lighnib-90s.mp4`, 84 s) and 3-min
-  (`lighnib-3min.mp4`, 112 s), assembled with ffmpeg from real
+- **Demo video:** the current 90-second walkthrough (redo, Nov 20,
+  voiced with a Nigerian-accent TTS, word-by-word captions) is linked
+  on the Devpost submission. It was assembled with ffmpeg from real
   Playwright recordings of the production build on test sats (login →
   pay → bound receipt → receipts → wallet → both enforcers → dispute
-  cut, plus a second clip: scope raised to ₦100,000/day in one tap -
-  a new connection, because a wallet budget is fixed per NWC
-  connection, and the refused ₦70,000 invoice then settling).
-  Title/section cards + burned-in Pidgin captions; narration scripts
-  alongside. **Silent** (no audio track, this VM has no voices;
-  Playwright captures no audio). Nothing in them is faked.
+  cut, plus the refused ₦70,000 invoice then settling at a raised
+  scope). Nothing in it is faked. The 3-minute version was never
+  built; the earlier silent cuts are superseded.
 - **Clean-clone test:** fresh copy minus node_modules/.local/data/.git,
-  `npm install` (14 s), `npm test` **80/80**, typecheck + build pass,
+  `npm install` (14 s), `npm test` **113/113** (Nov 21, was 80/80),
+  typecheck + build pass,
   dev servers on alternate ports (api :3301 healthy, all 6 routes 200
   on web :3200), total under 1 minute. A true `git clone` of the
   private repo was not possible on this VM (gh CLI is not authed; the
@@ -409,7 +439,7 @@ npm install
 npm run dev        # web :3000 + api :3001 (concurrently)
 npm run seed       # demo world: 1 merchant + 1 supplier + 1 mediator + 10 receipts + 2 blocked
 npm run e2e:live   # live end-to-end check of the web pay flow (needs seed + dev servers)
-npm test           # state-machine + INV-1–INV-9 + web-flow + seed + Wednesday + Thursday unit tests (80)
+npm test           # state-machine + INV-1–INV-9 + web-flow + seed + Wednesday + Thursday + operator-binding + payment-reconcile unit tests (113)
 npm run build      # build all workspaces
 npm run typecheck  # tsc -b (root) + per-workspace typechecks
 ```
@@ -483,7 +513,9 @@ Mitigations, built in:
   request carrying a secret key (HTTP 400, INV-8 guard).
 - **Short expiry**, a working day (8 h). Expired sessions refuse use.
 - **Revoke = logout**, one connection, one revocation. Revoke the login
-  and spending dies instantly. (This is also the answer to "why not
+  and spending from this login dies instantly. The wallet connection
+  itself is revoked inside the wallet, not by logging out of Lighnib.
+  (This is also the answer to "why not
   NIP-98 + NWC separately?": one connection, one revocation, scope
   travels with identity.)
 - **Least privilege**, `pay_invoice` only. No balance reads, no history.
@@ -492,8 +524,10 @@ Mitigations, built in:
 **Trust assumptions (never claim "trustless"):** the NWC wallet + LNbits
 are trusted to enforce the budget; the merchant is trusted to keep their
 wallet secret; the mediator is trusted to rule honestly (the bound receipt
-limits dishonesty, a release only goes to a party named in the receipt,
-and the release is public).
+limits dishonesty, and any release would only go to a party named in the
+receipt). Live mediator release is not implemented in the MVP: the
+receipt is the evidence the mediator would rule from, and no release
+moves funds today.
 
 **Versions that matter:** LNbits **≥ 1.7.1** (critical vuln 2026-11-08,
 1.7.0 2026-11-10, 1.7.1 2026-11-11 rotates auth keys, update alone is

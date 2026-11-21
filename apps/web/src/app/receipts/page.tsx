@@ -150,6 +150,7 @@ export default function ReceiptsPage() {
               need trust our server, and we cross-check am against the API too.
               Na the preimage be the proof: e must hash to the payment hash.
             </p>
+            <p className="small">{LOCALE.copy.verifyProofLimit}</p>
             <Label htmlFor="pasted-receipt">Receipt JSON</Label>
             <Textarea
               id="pasted-receipt"
@@ -171,11 +172,12 @@ export default function ReceiptsPage() {
                 <p>
                   <strong>
                     {pasteChecks.valid
-                      ? "Receipt valid, na real, settled payment."
+                      ? "Checks pass: preimage matches the payment hash."
                       : "Receipt INVALID, no trust am."}
                   </strong>
                 </p>
                 <CheckList checks={pasteChecks} />
+                <p className="small">{LOCALE.copy.verifyProofLimit}</p>
                 {pasteServer === true && (
                   <p className="small">Server cross-check agree: valid.</p>
                 )}

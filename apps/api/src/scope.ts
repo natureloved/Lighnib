@@ -62,12 +62,29 @@ export function beginPayment(id: string, amountSats: number): Scope {
   return next;
 }
 
-/** After wallet settlement, record the spend (PAYING → RECEIPTED). */
-export function settlePayment(id: string, amountSats: number): Scope {
+/** After wallet settlement, record the spend (PAYING → RECEIPTED).
+ *  Idempotent per payment hash: a reconcile that replays the same hash
+ *  returns the scope unchanged instead of double-counting the spend. */
+const settledPaymentHashes = new Map<string, Set<string>>();
+
+export function settlePayment(
+  id: string,
+  amountSats: number,
+  paymentHash?: string,
+): Scope {
   const scope = scopes.get(id);
   if (!scope) throw new Error(`Unknown scope: ${id}`);
+  if (paymentHash) {
+    const settled = settledPaymentHashes.get(id);
+    if (settled?.has(paymentHash)) return scope;
+  }
   const next = recordSpend(scope, amountSats);
   scopes.set(id, next);
+  if (paymentHash) {
+    const settled = settledPaymentHashes.get(id) ?? new Set<string>();
+    settled.add(paymentHash);
+    settledPaymentHashes.set(id, settled);
+  }
   return next;
 }
 

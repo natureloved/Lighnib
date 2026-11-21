@@ -68,6 +68,9 @@ if ! port_up 3001; then
   export LNBITS_URL="http://127.0.0.1:5000"
   if [ -f "$REPO/seed/.demo-credentials.json" ]; then
     export LNBITS_SUPPLIER_INVOICE_KEY="$(python3 -c 'import json,os;print(json.load(open(os.path.join(os.environ["HOME"],"workspace/lighnib/seed/.demo-credentials.json")))["supplierInvoiceKey"])' 2>/dev/null)"
+    # Operator key for POST /api/invoices (binding registration is
+    # operator-only since the Nov 21 review). Same file, same pattern.
+    export LIGHNIB_OPERATOR_KEY="$(python3 -c 'import json,os;print(json.load(open(os.path.join(os.environ["HOME"],"workspace/lighnib/seed/.demo-credentials.json")))["operatorKey"])' 2>/dev/null)"
   fi
   cd "$REPO" && setsid nohup npm run dev > /tmp/dev-run.log 2>&1 < /dev/null &
   for _ in $(seq 1 30); do port_up 3001 && break; sleep 2; done

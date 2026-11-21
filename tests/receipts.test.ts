@@ -105,3 +105,29 @@ test("receiptFiat keeps a stored fiat when one is present", () => {
   const r = buildBoundReceipt(receiptInput());
   assert.equal(receiptFiat(r), 12_500);
 });
+
+test("KNOWN LIMITATION: tampering BOTH copies of a field passes the verifier", () => {
+  // The verifier checks that the receipt fields match their embedded
+  // Nostr event record, but no event signature is verified. Changing
+  // the vendor and amount in the receipt AND in the embedded content
+  // together passes every check (Nov 21 review). This test documents
+  // the limitation so nobody mistakes the verifier for authentication
+  // of the supplier, order, or purpose. The fix is a signed canonical
+  // receipt, a Phase 1 hardening item, not a demo change.
+  const r = buildBoundReceipt(receiptInput());
+  const content = JSON.parse(r.nostrEvent.content) as Record<string, unknown>;
+  const tampered = {
+    ...r,
+    vendorName: "Somebody else",
+    amountSats: 99_999,
+    nostrEvent: {
+      ...r.nostrEvent,
+      content: JSON.stringify({
+        ...content,
+        vendor: "Somebody else",
+        amountSats: 99_999,
+      }),
+    },
+  };
+  assert.equal(verifyReceipt(tampered), true);
+});

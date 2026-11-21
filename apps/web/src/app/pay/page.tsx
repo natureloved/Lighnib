@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { LOCALE } from "@lighnib/shared";
+import { LOCALE, satsToNgn } from "@lighnib/shared";
 import { api } from "@/lib/api";
-import { payInvoice } from "@/lib/nwc-client";
-import { runPayFlow } from "@/lib/pay-flow";
+import { lookupInvoice, payInvoice } from "@/lib/nwc-client";
+import { PaymentUncertainError, runPayFlow } from "@/lib/pay-flow";
 import { getSession, setSession, subscribeSession } from "@/lib/session";
 import { speak, stopSpeaking, VOICE_LABEL } from "@/lib/voice";
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,8 @@ export default function PayPage() {
   const [mintedRequest, setMintedRequest] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [uncertain, setUncertain] = useState<PaymentUncertainError | null>(null);
+  const [checking, setChecking] = useState(false);
   const [receipt, setReceipt] = useState<Awaited<ReturnType<typeof api.createReceipt>> | null>(null);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -140,6 +142,7 @@ export default function PayPage() {
     setStatus(null);
     setReceipt(null);
     setExplanation(null);
+    setUncertain(null);
     if (!scope) {
       setError("Log in first, connect your wallet on the Login page.");
       return;
@@ -171,9 +174,73 @@ export default function PayPage() {
         colors: ["#f2b705", "#0b1f14", "#ffffff"],
       });
     } catch (e) {
-      setError((e as Error).message);
+      // An uncertain payment is not a failed payment: the wallet may
+      // have paid. Show the reconcile path, never a blind retry.
+      if (e instanceof PaymentUncertainError) {
+        setUncertain(e);
+        setError(LOCALE.copy.payUncertain);
+      } else {
+        setError((e as Error).message);
+      }
     } finally {
       setBusy(false);
+    }
+  }
+
+  /**
+   * Reconcile an uncertain payment (Nov 21 review, item 7). Asks the
+   * wallet first whether the payment settled; a lookup failure is not
+   * proof of failure, because the preimage the wallet already returned
+   * is settlement proof by itself. The API verifies the preimage
+   * against the hash before recording anything, and the receipt and
+   * the scope spend are both idempotent by payment hash.
+   */
+  async function checkPaymentStatus() {
+    if (!uncertain || !scope) return;
+    setChecking(true);
+    setError(null);
+    setStatus(null);
+    try {
+      if (!uncertain.preimage) {
+        // No settlement proof at all: the payment did not go through.
+        await api.cancelPayment(scope.id);
+        setUncertain(null);
+        setStatus(LOCALE.copy.payNotSettled);
+        return;
+      }
+      let preimage = uncertain.preimage;
+      try {
+        const found = await lookupInvoice(uncertain.paymentHash);
+        if (found.state === "settled" && found.preimage) {
+          preimage = found.preimage;
+        }
+      } catch {
+        // Wallet could not confirm; the held preimage still proves
+        // settlement, and the API checks it before recording.
+        setStatus("Wallet could not confirm the payment, reconciling from the preimage your wallet returned.");
+      }
+      const result = await api.reconcilePayment({
+        scopeId: scope.id,
+        paymentHash: uncertain.paymentHash,
+        preimage,
+        orderId: uncertain.orderId,
+        supplierId: uncertain.supplierId,
+        vendorName: uncertain.supplierName,
+        purpose: uncertain.purpose,
+        amountSats: uncertain.amountSats,
+        amountFiat: satsToNgn(uncertain.amountSats, LOCALE.demoBtcPriceNgn),
+        currency: LOCALE.currency,
+        payerPubkey: session.walletPubkey ?? "",
+      });
+      if (result.scope) setSession({ scope: result.scope });
+      setReceipt(result.receipt);
+      setExplanation(null);
+      setUncertain(null);
+      setStatus(LOCALE.copy.payReconciled);
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setChecking(false);
     }
   }
 
@@ -342,6 +409,15 @@ export default function PayPage() {
             </Button>
             {status && <div className="ok">{status}</div>}
             {error && <div className="error">{error}</div>}
+            {uncertain && (
+              <Button
+                className="mt-2.5 h-12 w-full rounded-[14px] text-base font-semibold active:scale-[0.985]"
+                onClick={checkPaymentStatus}
+                disabled={checking || !scope}
+              >
+                {checking ? "Checking…" : "Check payment status"}
+              </Button>
+            )}
           </CardContent>
         </Card>
         </div>

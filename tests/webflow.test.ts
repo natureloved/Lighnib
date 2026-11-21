@@ -23,6 +23,7 @@ import {
   type Scope,
 } from "../packages/shared/src/index";
 import {
+  PaymentUncertainError,
   runPayFlow,
   type PayFlowApi,
 } from "../apps/web/src/lib/pay-flow";
@@ -60,6 +61,9 @@ function stubApi(opts: {
   };
   registry?: InvoiceBindingRegistry;
   payShouldThrow?: Error;
+  settleShouldThrow?: Error;
+  createReceiptShouldThrow?: Error;
+  explainShouldThrow?: Error;
 } = { scope: liveScope() }): {
   api: PayFlowApi;
   calls: string[];
@@ -113,6 +117,7 @@ function stubApi(opts: {
     },
     settlePayment: async (_id, amountSats) => {
       calls.push("settlePayment");
+      if (opts.settleShouldThrow) throw opts.settleShouldThrow;
       scope = recordSpend(scope, amountSats);
       return scope;
     },
@@ -125,10 +130,12 @@ function stubApi(opts: {
     },
     createReceipt: async (input) => {
       calls.push("createReceipt");
+      if (opts.createReceiptShouldThrow) throw opts.createReceiptShouldThrow;
       return buildBoundReceipt(input as unknown as Parameters<typeof buildBoundReceipt>[0]);
     },
     explainReceipt: async () => {
       calls.push("explainReceipt");
+      if (opts.explainShouldThrow) throw opts.explainShouldThrow;
       return { text: "You pay 100 sats to Balogun provisions for 2 bags of rice.", source: "template" as const };
     },
   };
@@ -371,4 +378,60 @@ test("api client: body-less POSTs send an empty JSON object", async () => {
     assert.equal(s.method, "POST");
     assert.equal(s.body, "{}");
   }
+});
+
+/** Uncertain payments (Nov 21 review, item 7): the wallet paid, but a
+ *  later API step failed. The flow must say UNCERTAIN, not failed, and
+ *  carry the preimage so the UI can reconcile instead of retrying blind. */
+test("wallet paid but settle fails: PaymentUncertainError, scope stays PAYING, no blind retry", async () => {
+  const s = stubApi({ settleShouldThrow: new Error("API down") });
+  const pay = stubPay();
+  const speak = stubSpeak();
+  let caught: unknown;
+  try {
+    await runPayFlow(s.api, pay.fn, speak.fn, { ...INPUT, scope: s.scope() });
+  } catch (e) {
+    caught = e;
+  }
+  assert.ok(caught instanceof PaymentUncertainError);
+  const uncertain = caught as PaymentUncertainError;
+  assert.equal(uncertain.code, "PAYMENT_UNCERTAIN");
+  assert.equal(uncertain.paymentHash, PAYMENT_HASH);
+  assert.equal(uncertain.preimage, PREIMAGE);
+  assert.equal(uncertain.amountSats, 100);
+  assert.equal(pay.calls, 1);
+  assert.equal(s.scope().state, "PAYING");
+  assert.equal(s.scope().spentTodaySats, 0);
+  assert.ok(!s.calls.includes("cancelPayment"));
+  assert.equal(speak.spoken.length, 0);
+});
+
+test("wallet paid but receipt creation fails: PaymentUncertainError with the receipt fields", async () => {
+  const s = stubApi({ createReceiptShouldThrow: new Error("API down") });
+  const pay = stubPay();
+  await assert.rejects(
+    runPayFlow(s.api, pay.fn, () => {}, { ...INPUT, scope: s.scope() }),
+    (e: unknown) =>
+      e instanceof PaymentUncertainError &&
+      (e as PaymentUncertainError).orderId === "ORD-WEBFLOW-1" &&
+      (e as PaymentUncertainError).supplierId === SUPPLIER_ID,
+  );
+  // The scope settled (spend recorded) but the receipt is missing:
+  // reconcile, not a re-pay, is the recovery path.
+  assert.equal(s.scope().state, "RECEIPTED");
+  assert.equal(s.scope().spentTodaySats, 100);
+});
+
+test("explainer fails after settlement: receipt still returned, plain summary spoken", async () => {
+  const s = stubApi({ explainShouldThrow: new Error("LLM down") });
+  const pay = stubPay();
+  const speak = stubSpeak();
+  const result = await runPayFlow(s.api, pay.fn, speak.fn, {
+    ...INPUT,
+    scope: s.scope(),
+  });
+  assert.equal(result.receipt.amountSats, 100);
+  assert.equal(result.explanationSource, "template");
+  assert.match(result.explanation, /100 sats/);
+  assert.equal(speak.spoken.length, 1);
 });

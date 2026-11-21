@@ -147,6 +147,8 @@ export default function LoginPage() {
               {s.spentTodaySats.toLocaleString()} sats · Expires{" "}
               {new Date(s.expiresAt).toLocaleTimeString()} ·{" "}
               {scopeStateLabel(s.state)}
+              <br />
+              {LOCALE.copy.walletBudgetNotVerified}
             </p>
           </div>
           <p className="small">{LOCALE.honestLine}</p>
@@ -186,9 +188,8 @@ export default function LoginPage() {
 
           <Label htmlFor="budget">Daily scope ({LOCALE.currencySymbol})</Label>
           <p className="small">
-            The scope na your daily spending limit. The login na the
-            permission: pick a budget, the wallet go enforce am. Pass am
-            and the wallet go refuse the payment.
+            {LOCALE.copy.scopeAppSideNote} Pass am and Lighnib go refuse the
+            payment before wallet see am.
           </p>
           <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Daily scope presets">
             {SCOPE_PRESETS.map((a) => (
@@ -220,8 +221,8 @@ export default function LoginPage() {
               ? `That na about ${ngnToSats(budgetNgn, LOCALE.demoBtcPriceNgn).toLocaleString()} sats at the demo rate.`
               : "Type a scope to see how many sats e be."}{" "}
             Demo scope: {LOCALE.currencySymbol}
-            {LOCALE.demoDailyBudgetNgn.toLocaleString()}/day. Wallet go enforce
-            am, pass am and wallet go refuse am.
+            {LOCALE.demoDailyBudgetNgn.toLocaleString()}/day. Lighnib go
+            refuse pass am; the wallet enforces its own budget separately.
           </p>
 
           <Button
@@ -255,6 +256,11 @@ export default function LoginPage() {
         <CardContent>
           <p className="small">{LOCALE.supportedWallets.join(" · ")}</p>
           <p className="small">Phoenix has NO NWC, e no dey supported.</p>
+          <p className="small">
+            Only the demo wallet (LNbits NWC) was tested end-to-end here.
+            The others support NWC, but their login and pay flow was not
+            tested in this project.
+          </p>
         </CardContent>
       </Card>
 

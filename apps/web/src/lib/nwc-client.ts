@@ -5,9 +5,11 @@
  * @getalby/sdk's NWCClient from browser memory only (NwcSessionMemory.use)
  * and is never stored, logged, or sent to the API.
  *
- * Least privilege (INV-8): the only method this module exposes is
- * payInvoice. No balance reads, no transaction history, no get_info -
- * the wallet pubkey (identity) is parsed from the connection URI itself.
+ * Least privilege (INV-8): this module exposes payInvoice (spend) and
+ * lookupInvoice (read-only status check for the reconcile path, no
+ * funds movement). No balance reads, no transaction history, no
+ * get_info - the wallet pubkey (identity) is parsed from the
+ * connection URI itself.
  */
 
 "use client";
@@ -49,6 +51,36 @@ export async function payInvoice(invoice: string): Promise<PayResult> {
         throw new Error("Wallet did not return a preimage, payment not settled");
       }
       return { preimage: res.preimage, feesPaidSats: res.fees_paid ?? 0 };
+    } finally {
+      (client as unknown as { close?: () => void }).close?.();
+    }
+  });
+}
+
+export interface LookupResult {
+  state: "settled" | "pending" | "failed" | "accepted";
+  preimage: string;
+  settledAt: number;
+  amountSats: number;
+}
+
+/**
+ * Look up an invoice by payment hash, read-only. Used only by the
+ * reconcile path after an uncertain payment: it asks the WALLET
+ * whether the payment settled, independent of what the app recorded.
+ * Throws when the wallet does not support lookup_invoice.
+ */
+export async function lookupInvoice(paymentHash: string): Promise<LookupResult> {
+  return nwcSession.use(async (secret) => {
+    const client = new NWCClient({ nostrWalletConnectUrl: secret });
+    try {
+      const tx = await client.lookupInvoice({ payment_hash: paymentHash });
+      return {
+        state: tx.state,
+        preimage: tx.preimage ?? "",
+        settledAt: tx.settled_at ?? 0,
+        amountSats: tx.amount ?? 0,
+      };
     } finally {
       (client as unknown as { close?: () => void }).close?.();
     }

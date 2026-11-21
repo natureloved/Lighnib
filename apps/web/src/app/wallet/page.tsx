@@ -30,6 +30,8 @@ type BlockedAttempt = {
  * so "remaining" is the live tracked spend, not the snapshot from login
  * time. Revoke = logout (INV-4): wipes the NWC secret from browser memory
  * and revokes the scope server-side. A revoked scope never pays again.
+ * The wallet connection itself is NOT revoked here: a connection string
+ * copied earlier still pays until it is revoked inside the wallet.
  */
 export default function WalletPage() {
   const [session, setSessionState] = useState(getSession());
@@ -116,8 +118,8 @@ export default function WalletPage() {
           <h1>{LOCALE.copy.walletTitle}</h1>
           {revoked && (
             <div className="ok">
-              Revoked, logout done. Spending don die instantly; the connection
-              no fit pay again.
+              Logged out. This login no fit pay again. To revoke the wallet
+              connection itself, revoke am inside your wallet.
             </div>
           )}
           {!revoked && <p>No wallet connected. <Link href="/login">Log in</Link> first.</p>}
@@ -128,6 +130,11 @@ export default function WalletPage() {
             <CardContent>
               <p className="small">{LOCALE.supportedWallets.join(" · ")}</p>
               <p className="small">Phoenix has NO NWC, e no dey supported.</p>
+              <p className="small">
+                Only the demo wallet (LNbits NWC) was tested end-to-end here.
+                The others support NWC, but their login and pay flow was not
+                tested in this project.
+              </p>
             </CardContent>
           </Card>
         </BlurFade>
@@ -202,7 +209,8 @@ export default function WalletPage() {
           <p className="till-meta">
             Spent today: {s.spentTodaySats.toLocaleString()} sats · Wallet dey
             enforce the budget. Server dey re-check am too. (Wallet no fit tell
-            us how much remain, so the app dey track spend itself.)
+            us how much remain, so the app dey track spend itself.){" "}
+            {LOCALE.copy.walletBudgetNotVerified}
           </p>
         </div>
         <Card className="mb-5">

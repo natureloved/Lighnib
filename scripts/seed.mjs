@@ -50,7 +50,7 @@
 
 import { spawn } from "node:child_process";
 import { randomBytes, createHash } from "node:crypto";
-import { writeFileSync, chmodSync, existsSync, mkdirSync } from "node:fs";
+import { writeFileSync, chmodSync, existsSync, mkdirSync, readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -59,6 +59,31 @@ import { NWCClient } from "@getalby/sdk";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SEED_DIR = join(ROOT, "seed");
+
+/*
+ * Operator key for POST /api/invoices (binding registration is
+ * operator-only since the Nov 21 review: the registry is the only
+ * supplier enforcement, so an open write route makes it worthless).
+ * Precedence: LIGHNIB_OPERATOR_KEY env, then the key already stored in
+ * seed/.demo-credentials.json, else a fresh key generated here and
+ * persisted with the creds file. The API must run with the SAME key
+ * (recover.sh exports it from the creds file); without it the route
+ * answers 503 and seeding fails loudly, by design.
+ */
+function resolveOperatorKey() {
+  if (process.env.LIGHNIB_OPERATOR_KEY) return process.env.LIGHNIB_OPERATOR_KEY;
+  const credsPath = join(SEED_DIR, ".demo-credentials.json");
+  try {
+    if (existsSync(credsPath)) {
+      const stored = JSON.parse(readFileSync(credsPath, "utf8"));
+      if (stored.operatorKey) return stored.operatorKey;
+    }
+  } catch {
+    // Corrupt creds file: fall through to generating a fresh key.
+  }
+  return randomBytes(16).toString("hex");
+}
+const OPERATOR_KEY = resolveOperatorKey();
 
 const LNBITS_URL = process.env.LNBITS_URL || "http://127.0.0.1:5000";
 const API_URL = process.env.API_URL || "http://localhost:3001";
@@ -126,10 +151,11 @@ function fail(msg) {
   process.exit(1);
 }
 
-async function j(method, url, { token, apiKey, body } = {}) {
+async function j(method, url, { token, apiKey, operatorKey, body } = {}) {
   const headers = { "Content-Type": "application/json" };
   if (token) headers.Authorization = `Bearer ${token}`;
   if (apiKey) headers["X-Api-Key"] = apiKey;
+  if (operatorKey) headers["x-operator-key"] = operatorKey;
   const res = await fetch(url, {
     method,
     headers,
@@ -334,6 +360,7 @@ for (let i = 0; i < SEED_RECEIPTS.length; i++) {
   const memo = `Lighnib:order#${orderId}:${row.supplierId}`;
   const inv = await createInvoice(supplier.adminkey, row.amountSats, memo);
   await j("POST", `${API_URL}/api/invoices`, {
+    operatorKey: OPERATOR_KEY,
     body: {
       paymentHash: inv.payment_hash,
       supplierId: row.supplierId,
@@ -385,6 +412,7 @@ const invOver = await createInvoice(
   `Lighnib:order#${overOrderId}:${SUPPLIER_ID}`,
 );
 await j("POST", `${API_URL}/api/invoices`, {
+  operatorKey: OPERATOR_KEY,
   body: {
     paymentHash: invOver.payment_hash,
     supplierId: SUPPLIER_ID,
@@ -459,6 +487,7 @@ const demoDataPath = join(SEED_DIR, "demo-data.json");
 writeFileSync(demoDataPath, JSON.stringify(out, null, 2));
 const creds = {
   note: "DEMO CREDENTIALS, bearer secrets. Never commit, never share, never log. Mode 600.",
+  operatorKey: OPERATOR_KEY,
   merchantNwcUri: merchantNWC.uri,
   supplierNwcUri: supplierNWC.uri,
   merchantAdminKey: merchant.adminkey,

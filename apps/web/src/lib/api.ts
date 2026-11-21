@@ -45,10 +45,10 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ amountSats }),
     }),
-  settlePayment: (id: string, amountSats: number) =>
+  settlePayment: (id: string, amountSats: number, paymentHash?: string) =>
     req<Scope>(`/api/scope/${id}/settle-payment`, {
       method: "POST",
-      body: JSON.stringify({ amountSats }),
+      body: JSON.stringify({ amountSats, paymentHash }),
     }),
   cancelPayment: (id: string) =>
     req<Scope>(`/api/scope/${id}/cancel-payment`, { method: "POST" }),
@@ -97,6 +97,25 @@ export const api = {
 
   createReceipt: (input: Record<string, unknown>) =>
     req<BoundReceipt>("/api/receipts", { method: "POST", body: JSON.stringify(input) }),
+  getReceiptByHash: (paymentHash: string) =>
+    req<BoundReceipt>(`/api/receipts/by-hash/${paymentHash}`),
+  reconcilePayment: (input: {
+    scopeId: string;
+    paymentHash: string;
+    preimage: string;
+    orderId: string;
+    supplierId: string;
+    vendorName: string;
+    purpose: string;
+    amountSats: number;
+    amountFiat: number;
+    currency: "NGN" | "XOF";
+    payerPubkey: string;
+  }) =>
+    req<{ receipt: BoundReceipt; scope: Scope | undefined; settled: boolean }>(
+      "/api/receipts/reconcile",
+      { method: "POST", body: JSON.stringify(input) },
+    ),
   listReceipts: () => req<BoundReceipt[]>("/api/receipts"),
   listBlocked: () =>
     req<

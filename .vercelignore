@@ -1,0 +1,20 @@
+# Local-only runtime data (LNbits install, venv, logs) - never deploy
+.local
+# Next.js build/cache output
+.next
+# Dependencies (reinstalled by Vercel at build)
+node_modules
+# Local runtime data + demo credentials (NWC URIs, LNbits keys) - never upload
+data
+seed
+# Local env + Vercel CLI state
+.env.local
+.vercel
+# Logs
+*.log
+# Not needed for the web build
+tests
+scripts
+docker-compose.yml
+logo-showcase.html
+og-banner.html

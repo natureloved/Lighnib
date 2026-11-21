@@ -7,7 +7,9 @@
 import {
   buildBoundReceipt,
   decodeBolt11,
+  hexToBytes,
   parseLighnibMemo,
+  sha256Hex,
   verifyReceipt,
   verifyReceiptDetail,
   type ReceiptVerificationDetail,
@@ -15,10 +17,11 @@ import {
   type BindingCheck,
   type BoundReceipt,
   type InvoiceBinding,
+  type Scope,
 } from "@lighnib/shared";
+import { getScope, settlePayment } from "./scope";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 
 export const bindings = new InvoiceBindingRegistry();
 
@@ -31,7 +34,15 @@ const receipts = new Map<string, BoundReceipt>();
  * startup, so the seeded history survives restarts and tunnel churn.
  * The file holds only public receipt data (hashes, preimages, amounts).
  */
-const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "data");
+/**
+ * __dirname is the Node CommonJS module directory. The API tsconfig uses
+ * module CommonJS, so import.meta is not available here (TS1343). Under
+ * tsx (dev) __dirname is apps/api/src; in the built dist/ it is
+ * apps/api/dist. In both cases ../data resolves to apps/api/data.
+ */
+declare const __dirname: string;
+
+const DATA_DIR = join(__dirname, "..", "data");
 const RECEIPTS_FILE = join(DATA_DIR, "receipts.json");
 
 function loadReceipts(): void {
@@ -64,6 +75,30 @@ export function recordBinding(binding: InvoiceBinding): InvoiceBinding {
   return binding;
 }
 
+/**
+ * Validate a binding's memo against its supplier/order fields, for the
+ * public POST /api/invoices route. A binding whose memo names a
+ * different supplier or order than the body claims is a cross-supplier
+ * registration attempt: refuse it. A missing or malformed memo is
+ * refused too: the memo is the binding's evidence. (The mint endpoint
+ * builds its own memo server-side, so it does not go through this
+ * check; recordBinding itself stays a plain registry write.)
+ */
+export function validateBindingMemo(binding: InvoiceBinding): void {
+  const memo = parseLighnibMemo(binding.memo ?? "");
+  if (!memo) {
+    throw new Error(
+      "Binding requires a Lighnib memo (Lighnib:order#<orderId>:<supplierId>)",
+    );
+  }
+  if (memo.supplierId !== binding.supplierId) {
+    throw new Error("Binding memo supplier does not match the registered supplier");
+  }
+  if (memo.orderId !== binding.orderId) {
+    throw new Error("Binding memo order does not match the registered order");
+  }
+}
+
 export function checkBinding(
   paymentHash: string,
   expectedSupplierId?: string,
@@ -83,12 +118,81 @@ export function decodeInvoice(invoice: string) {
   };
 }
 
-/** INV-5/INV-6: build a bound receipt only from settled-payment data. */
+/** INV-5/INV-6: build a bound receipt only from settled-payment data.
+ *  Idempotent by payment hash: a payment that was settled once must
+ *  never produce a second receipt. A retry or reconcile that replays
+ *  the same hash returns the receipt that already exists. */
 export function createReceipt(input: Parameters<typeof buildBoundReceipt>[0]): BoundReceipt {
+  const existing = getReceiptByHash(input.paymentHash);
+  if (existing) {
+    // The preimage must still match the hash: a replay with a wrong
+    // preimage is refused, never silently accepted as the real receipt.
+    if (
+      sha256Hex(hexToBytes(input.preimage)) !== input.paymentHash.toLowerCase()
+    ) {
+      throw new Error("INV-6: preimage does not match payment hash, not a settled payment");
+    }
+    return existing;
+  }
   const receipt = buildBoundReceipt(input);
   receipts.set(receipt.id, receipt);
   saveReceipts();
   return receipt;
+}
+
+export function getReceiptByHash(paymentHash: string): BoundReceipt | undefined {
+  const hash = paymentHash.toLowerCase();
+  for (const r of receipts.values()) {
+    if (r.paymentHash === hash) return r;
+  }
+  return undefined;
+}
+
+/**
+ * Reconcile an uncertain payment (Nov 21 review, item 7): the wallet
+ * paid, but the settle/receipt step failed, so the merchant does not
+ * know whether the money moved. The caller passes the preimage the
+ * wallet returned (or that a lookup_invoice returned). The preimage is
+ * settlement proof: buildBoundReceipt refuses it unless it hashes to
+ * the payment hash. The receipt is created idempotently by hash, and
+ * the scope spend is recorded idempotently too, but only while the
+ * scope is still PAYING. A scope that already settled (RECEIPTED) is
+ * left alone; a scope in any other state is reported, not forced.
+ * Never retry a payment blind: this endpoint is the recovery path.
+ */
+export function reconcilePayment(input: {
+  scopeId: string;
+  paymentHash: string;
+  preimage: string;
+  orderId: string;
+  supplierId: string;
+  vendorName: string;
+  purpose: string;
+  amountSats: number;
+  amountFiat: number;
+  currency: BoundReceipt["currency"];
+  payerPubkey: string;
+}): { receipt: BoundReceipt; scope: Scope | undefined; settled: boolean } {
+  const receipt = createReceipt({
+    id: `rcpt_${Date.now().toString(36)}`,
+    orderId: input.orderId,
+    supplierId: input.supplierId,
+    vendorName: input.vendorName,
+    purpose: input.purpose,
+    amountSats: input.amountSats,
+    amountFiat: input.amountFiat,
+    currency: input.currency,
+    paymentHash: input.paymentHash,
+    preimage: input.preimage,
+    payerPubkey: input.payerPubkey,
+  });
+  const scope = getScope(input.scopeId);
+  let settled = false;
+  if (scope && scope.state === "PAYING") {
+    settlePayment(scope.id, input.amountSats, input.paymentHash);
+    settled = true;
+  }
+  return { receipt, scope: getScope(input.scopeId), settled };
 }
 
 export function getReceipt(id: string): BoundReceipt | undefined {
@@ -173,9 +277,12 @@ export function getMetrics(): {
 /**
  * Third-party verify: a verifier pastes a receipt JSON they received
  * (e.g. from a merchant's phone) and gets per-check results. No stored
- * state is consulted, the receipt proves itself via the preimage/hash
- * binding and the Nostr event cross-check. Malformed input is a
- * verification failure, not a crash.
+ * state is consulted. The checks prove the preimage matches the payment
+ * hash and that the receipt fields match their embedded record. They do
+ * NOT authenticate the supplier, order, or purpose: changing the same
+ * field in both the receipt and the embedded record passes, because no
+ * event signature is verified. Malformed input is a verification failure,
+ * not a crash.
  */
 export function verifyPastedReceipt(input: unknown): {
   valid: boolean;

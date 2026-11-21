@@ -12,14 +12,68 @@
  * On a wallet refusal (e.g. QUOTA_EXCEEDED) the scope is returned to
  * LOGGED_IN via cancelPayment and NO receipt is created.
  *
+ * On an ambiguous result (the wallet paid, but settlePayment or
+ * createReceipt then failed), the flow throws PaymentUncertainError
+ * instead of a generic error. The payment may already have moved, so
+ * the UI must NOT offer a blind retry: it offers a reconcile check
+ * (wallet lookup_invoice + POST /api/receipts/reconcile), which
+ * recovers the receipt idempotently by payment hash.
+ *
  * The caller passes the real api client + the real browser-side payInvoice
  * in production; tests pass stubs. Nothing in here touches the NWC secret
  *, payInvoiceFn is the only function that ever sees an invoice payment,
  * and it runs client-side (INV-8).
  */
 
+/**
+ * Thrown when the wallet paid but the settle/receipt step failed.
+ * Carries everything the reconcile path needs: the payment hash, the
+ * preimage the wallet returned (settlement proof), and the receipt
+ * fields, so the UI can recover without re-paying. The `code` lets the
+ * page tell this apart from an ordinary failure.
+ */
+export class PaymentUncertainError extends Error {
+  readonly code = "PAYMENT_UNCERTAIN";
+  readonly paymentHash: string;
+  readonly preimage: string;
+  readonly amountSats: number;
+  readonly supplierId: string;
+  readonly supplierName: string;
+  readonly orderId: string;
+  readonly purpose: string;
+  readonly invoice: string;
+
+  constructor(details: {
+    paymentHash: string;
+    preimage: string;
+    amountSats: number;
+    supplierId: string;
+    supplierName: string;
+    orderId: string;
+    purpose: string;
+    invoice: string;
+    cause?: unknown;
+  }) {
+    super(LOCALE.copy.payUncertain);
+    this.paymentHash = details.paymentHash;
+    this.preimage = details.preimage;
+    this.amountSats = details.amountSats;
+    this.supplierId = details.supplierId;
+    this.supplierName = details.supplierName;
+    this.orderId = details.orderId;
+    this.purpose = details.purpose;
+    this.invoice = details.invoice;
+    if (details.cause !== undefined) this.cause = details.cause;
+  }
+}
+
 import type { BoundReceipt, Scope } from "@lighnib/shared";
-import { LOCALE, remainingBudgetSats, satsToNgn } from "@lighnib/shared";
+import {
+  LOCALE,
+  receiptSummary,
+  remainingBudgetSats,
+  satsToNgn,
+} from "@lighnib/shared";
 
 /** Map a budget-check reason code to the plain-words refusal a merchant sees. */
 export function budgetRefusalMessage(reason: string | undefined, remainingSats: number): string {
@@ -47,7 +101,11 @@ export interface PayFlowApi {
     amountSats: number,
   ) => Promise<{ allowed: boolean; reason?: string; remainingSats: number }>;
   beginPayment: (scopeId: string, amountSats: number) => Promise<Scope>;
-  settlePayment: (scopeId: string, amountSats: number) => Promise<Scope>;
+  settlePayment: (
+    scopeId: string,
+    amountSats: number,
+    paymentHash?: string,
+  ) => Promise<Scope>;
   cancelPayment: (scopeId: string) => Promise<Scope>;
   createReceipt: (input: Record<string, unknown>) => Promise<BoundReceipt>;
   explainReceipt: (
@@ -126,29 +184,61 @@ export async function runPayFlow(
   }
 
   // 5. Settlement → bound receipt (INV-5/INV-6).
-  const settledScope = await api.settlePayment(scope.id, amountSats);
-  const receipt = await api.createReceipt({
-    id: `rcpt_${Date.now().toString(36)}`,
-    orderId: decoded.memo?.orderId ?? "unknown",
-    supplierId,
-    vendorName: supplierName,
-    purpose: decoded.description ?? "supplier order",
-    amountSats,
-    amountFiat: satsToNgn(amountSats, LOCALE.demoBtcPriceNgn),
-    currency: LOCALE.currency,
-    paymentHash: decoded.paymentHash,
-    preimage,
-    payerPubkey: walletPubkey,
-  });
+  // The wallet already paid at this point. If either call fails, the
+  // payment is UNCERTAIN, not failed: throw PaymentUncertainError with
+  // the preimage, so the UI reconciles instead of retrying blind.
+  let settledScope: Scope;
+  let receipt: BoundReceipt;
+  try {
+    settledScope = await api.settlePayment(
+      scope.id,
+      amountSats,
+      decoded.paymentHash,
+    );
+    receipt = await api.createReceipt({
+      id: `rcpt_${Date.now().toString(36)}`,
+      orderId: decoded.memo?.orderId ?? "unknown",
+      supplierId,
+      vendorName: supplierName,
+      purpose: decoded.description ?? "supplier order",
+      amountSats,
+      amountFiat: satsToNgn(amountSats, LOCALE.demoBtcPriceNgn),
+      currency: LOCALE.currency,
+      paymentHash: decoded.paymentHash,
+      preimage,
+      payerPubkey: walletPubkey,
+    });
+  } catch (e) {
+    throw new PaymentUncertainError({
+      paymentHash: decoded.paymentHash,
+      preimage,
+      amountSats,
+      supplierId,
+      supplierName,
+      orderId: decoded.memo?.orderId ?? "unknown",
+      purpose: decoded.description ?? "supplier order",
+      invoice: trimmed,
+      cause: e,
+    });
+  }
 
-  // 6. AI explainer + spoken readout.
-  const expl = await api.explainReceipt(receipt.id);
-  speakFn(expl.text);
+  // 6. AI explainer + spoken readout. Non-fatal: the receipt already
+  // exists, so a failed explainer falls back to a plain summary.
+  let explanation = receiptSummary(receipt, LOCALE.currencySymbol);
+  let explanationSource: "llm" | "template" = "template";
+  try {
+    const expl = await api.explainReceipt(receipt.id);
+    explanation = expl.text;
+    explanationSource = expl.source;
+  } catch {
+    // Keep the plain summary above.
+  }
+  speakFn(explanation);
 
   return {
     receipt,
-    explanation: expl.text,
-    explanationSource: expl.source,
+    explanation,
+    explanationSource,
     scope: settledScope,
   };
 }

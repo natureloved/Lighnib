@@ -141,8 +141,12 @@ export function verifyReceiptDetail(receipt: BoundReceipt): ReceiptVerificationD
 }
 
 /** Verify a bound receipt: settled, complete, preimage matches hash,
- *  and the public Nostr event content matches the receipt fields
- *  (so a tampered amount/vendor cannot pass as the same receipt). */
+ *  and the public Nostr event content matches the receipt fields.
+ *  That cross-check catches a tamper of ONE copy only. Changing the
+ *  same field in both the receipt and the embedded record passes,
+ *  because no event signature is verified. The verifier therefore
+ *  proves the cryptographic relationship (preimage/hash) and field
+ *  consistency, not the supplier, order, or purpose. */
 export function verifyReceipt(receipt: BoundReceipt): boolean {
   return verifyReceiptDetail(receipt).valid;
 }

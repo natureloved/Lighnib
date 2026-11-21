@@ -27,7 +27,7 @@ export const LOCALE = {
   tagline: "Small Lightning payments, locked.",
   oneLiner: "Your wallet is the key. Lighnib it.",
   nameMeaning:
-    "Lighnib, Pidgin 'hold am' (hold it). Hold budget (login) + hold funds (mediator).",
+    "Lighnib, Pidgin 'hold am' (hold it). Hold budget (login) + hold the record (the mediator judges from the bound receipt).",
 
   /** Demo scope: the budget a login carries. */
   demoDailyBudgetNgn: 50_000,
@@ -72,14 +72,15 @@ export const LOCALE = {
     payTitle: "Pay supplier",
     payBody: "Pay invoice from your scoped connection. Every payment get bound receipt.",
     receiptTitle: "Receipt",
-    receiptBody: "This receipt na proof of wetin you pay, who you pay, and why.",
+    receiptBody:
+      "This receipt show wetin you pay, who you pay, and why. E no prove the supplier by itself: the verifier only check say the preimage match the payment hash and the receipt fields match their embedded record.",
     disputeTitle: "Open dispute",
     disputeBody:
       "Something wrong with this payment? Open dispute, the market association mediator go see the same receipt.",
     walletTitle: "Your wallet",
     revokeLabel: "Revoke login (logout)",
     revokeBody:
-      "Revoke na logout. Once you revoke, spending die instantly, the connection no fit pay again.",
+      "Revoke na logout for Lighnib. E clear this browser session and stop this login from paying. To revoke the wallet connection itself, revoke am inside your wallet.",
     overBudget:
       "This invoice pass your daily scope. Wallet go refuse am. Raise scope or split the order.",
     wrongSupplier:
@@ -103,17 +104,17 @@ export const LOCALE = {
       },
       {
         label: "Mediator",
-        text: "Sees any mismatch. Judges from the same bound receipt, and the release is public.",
+        text: "Sees any mismatch. Judges from the same bound receipt. Live mediator release is not implemented.",
       },
     ] as const,
     landingReceiptTitle: "What a receipt proves",
     landingReceiptBody:
-      "Every payment lands as a bound receipt: amount, supplier, purpose, payment hash. Anyone can verify it, and the mediator judges from the same receipt.",
+      "Every payment lands as a bound receipt: amount, supplier, purpose, payment hash. The verifier checks that the preimage matches the payment hash and that the receipt fields match their embedded record. Supplier and order details are not yet independently authenticated.",
     landingReceiptSampleNote: "Sample receipt, demo data.",
     landingReceiptLiveNote: "Latest receipt from the live demo.",
     landingCtaTitle: "Try it now",
     landingCtaBody:
-      "Connect your Lightning wallet with test sats. No password, no form, and the spending dies the moment you revoke.",
+      "Connect your Lightning wallet with test sats. No password, no form. Spending from this login dies the moment you log out; to kill the wallet connection itself, revoke am inside your wallet.",
     landingJudgeNote: "Judge? The 5-minute guide is in the README.",
 
     /** Pay-flow refusal messages, the exact words the merchant sees. */
@@ -132,6 +133,19 @@ export const LOCALE = {
     /** Over-budget refusal, with the live remaining shown. */
     payOverBudget: (remainingSats: number) =>
       `This invoice pass your daily scope. Wallet go refuse am. Remaining: ${remainingSats.toLocaleString()} sats. Raise scope or split the order.`,
+    /** Ambiguous payment result: the wallet may have paid, but the
+     *  receipt was not recorded. Never a blind retry. */
+    payUncertain:
+      "Payment status unclear. Your wallet may have paid, but Lighnib could not save the receipt. Do NOT pay again yet. Tap Check payment status to confirm, or check your receipts first.",
+    payReconciled: "Payment confirmed, receipt don land.",
+    payNotSettled:
+      "Payment did not go through. Safe to try again.",
+    /** App-side scope note: the picked budget is a Lighnib limit, the
+     *  wallet enforces its own budget, set when the connection was
+     *  created, and Lighnib cannot read it. */
+    scopeAppSideNote:
+      "This scope na a Lighnib app-side limit. The wallet enforces its own budget, set when the connection was created. Wallet budget not verified.",
+    walletBudgetNotVerified: "Wallet budget not verified.",
 
     /** Plain-words scope states, never show the raw state code. */
     scopeStates: {
@@ -152,8 +166,11 @@ export const LOCALE = {
       hashFormat: "Payment hash na real hash",
       preimageFormat: "Preimage na real preimage",
       preimageMatchesHash: "Preimage hash to the payment hash (na real payment)",
-      nostrEventMatches: "Public receipt record match the card (nobody tamper am)",
+      nostrEventMatches: "Public receipt record match the card",
     } as const,
+    /** The verifier's limit, in plain words, shown on the verify card. */
+    verifyProofLimit:
+      "The verifier checks that the preimage matches the payment hash and that the receipt fields match their embedded record. Supplier and order details are not yet independently authenticated.",
   },
 } as const;
 

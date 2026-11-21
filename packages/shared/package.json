@@ -13,5 +13,8 @@
     "typecheck": "tsc --noEmit"
   },
   "types": "./dist/packages/shared/src/index.d.ts",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=22"
+  }
 }

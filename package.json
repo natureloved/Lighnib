@@ -1,5 +1,5 @@
 {
-  "description": "Lighnib \u2014 Small Lightning payments, locked. Wallet-as-key for local commerce (Dakar Bitcoin Hack 2026).",
+  "description": "Lighnib — Small Lightning payments, locked. Wallet-as-key for local commerce (Dakar Bitcoin Hack 2026).",
   "devDependencies": {
     "@types/node": "^26.6.6",
     "concurrently": "^9.1.2",
@@ -28,5 +28,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "engines": {
+    "node": ">=22"
+  }
 }
